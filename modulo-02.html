@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&family=Space+Grotesk:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-tint": "#904d00", "on-primary-container": "#fffbff", "surface-dim": "#dcdad3", "outline": "#887364", "primary": "#8d4b00", "secondary-fixed": "#d8e3fb", "tertiary-fixed": "#95f8a7", "secondary-fixed-dim": "#bcc7de", "on-tertiary-container": "#f7fff3", "on-secondary-container": "#586377", "on-tertiary-fixed-variant": "#005323", "surface-container-highest": "#e5e2db", "secondary-container": "#d5e0f8", "surface": "#fcf9f2", "on-primary-fixed-variant": "#6e3900", "outline-variant": "#dbc2b0", "on-error-container": "#93000a", "surface-variant": "#e5e2db", "error-container": "#ffdad6", "inverse-primary": "#ffb77d", "on-tertiary": "#ffffff", "tertiary": "#006b2f", "error": "#ba1a1a", "on-secondary": "#ffffff", "surface-container": "#f0eee7", "on-primary": "#ffffff", "surface-container-low": "#f6f3ec", "on-surface": "#1c1c18", "surface-container-lowest": "#ffffff", "secondary": "#545f73", "primary-fixed-dim": "#ffb77d", "on-tertiary-fixed": "#00210a", "on-surface-variant": "#554336", "tertiary-fixed-dim": "#79db8d", "surface-container-high": "#ebe8e1", "inverse-surface": "#31312c", "on-secondary-fixed-variant": "#3c475a", "tertiary-container": "#1e8642", "on-background": "#1c1c18", "inverse-on-surface": "#f3f0e9", "primary-fixed": "ffdcc3", "background": "#fcf9f2", "surface-bright": "#fcf9f2", "primary-container": "#b15f00", "on-error": "#ffffff", "on-secondary-fixed": "#111c2d", "on-primary-fixed": "#2f1500" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-lg": "1.25rem", "margin": "1rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-md": "0.875rem", "gutter": "1rem", "space-xl": "1.75rem" }, "fontFamily": { "label-sm": ["JetBrains Mono"], "label-md": ["JetBrains Mono"], "display-mobile": ["Space Grotesk"], "headline-lg": ["Space Grotesk"], "body-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "headline-md": ["Space Grotesk"], "label-lg": ["JetBrains Mono"], "display": ["Space Grotesk"], "headline-sm": ["Space Grotesk"] }, "fontSize": { "label-sm": ["10px", { "lineHeight": "12px", "fontWeight": "500" }], "label-md": ["11px", { "lineHeight": "14px", "fontWeight": "500" }], "display-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "30px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }], "headline-md": ["20px", { "lineHeight": "26px", "fontWeight": "600" }], "label-lg": ["13px", { "lineHeight": "16px", "fontWeight": "600" }], "display": ["34px", { "lineHeight": "40px", "fontWeight": "700" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="ApiEcuador Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UlQJxWXBlQShHpvGcG09sZTVFRQSsHUu9I47mQvYa2NlaIqdGXgY2IHURbzw4wirZS5n2SjzpSrjk3-ZlJG53vrz5TJrfBVNlXOHAhdEwfwDUgttgTCtGWD4JvGCGzlmb8mFO5Wsa_Ke1g0G_sf-vjkZRFuInbHvSfqw0PVdW0cYyVmvXAAdAEGaDCT2TRvKUuUCKIyFhu718oyf4m_H5YM8O7ZkQ1L8gQa-QaljiyR59nQCAEBN8E0xs"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-primary leading-none">ApiEcuador</span><span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-medium mt-0.5">Ecuador Apícola</span></div></div><div class="flex items-center gap-space-xs"><button aria-label="Alertas de Trashumancia" class="w-11 h-11 flex items-center justify-center relative rounded-full text-on-surface-variant active:bg-surface-container-high"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-error rounded-full ring-2 ring-surface"></span></button><div class="w-11 h-11 flex items-center justify-center"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOXli5YGSoYIEEpTZfYHz98HUYdcWph2gkapWu-M2kEcgC32RiBf9chnAwnKq6jT6fGwhujQQKP64scoFYK36aRsmloRa6H1Lu2KV_YDqX3kqbfSCMKLAGjP19FXwQgHvOSBFZcSWivBSLxKsN1MxsmQ-qham78KdNFk815ZjxMbHjwxHj6d96rwc2hmU0bu9kjDIM4KYEhvRcM2COY1G-JKHycBMdmEzscUhouDwenp0N115kLdn8"/></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full pb-8">
+<!-- Interactive Header & Search Deck -->
+<section class="px-gutter pt-space-md flex flex-col gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+          Fenología Apícola 2024-2025
+        </span>
+<span class="font-label-sm text-label-sm bg-surface-container-high px-2 py-0.5 rounded text-on-surface-variant font-medium">
+          EC-GEO v4.2
+        </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight leading-tight">
+        Curvas de Floración
+      </h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Planificación estacional de pecoreo y trashumancia por gradiente altitudinal ecuatoriano.
+      </p>
+</div>
+<!-- Active Month & Flow Thermometer Bento -->
+<div class="bg-surface-container rounded-xl p-space-md shadow-sm flex flex-col gap-space-md relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 bg-primary/5 rounded-full pointer-events-none blur-2xl"></div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[24px]">calendar_month</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface font-bold leading-tight">
+              Noviembre — Diciembre
+            </div>
+<div class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px] text-tertiary">water_drop</span>
+              Pico de transición serrana e inicio de costa
+            </div>
+</div>
+</div>
+<div class="bg-tertiary-container/15 px-2.5 py-1 rounded-full flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-label-sm text-label-sm text-tertiary font-bold uppercase tracking-wider">Flujo Alto</span>
+</div>
+</div>
+<!-- General Honeyflow Gauge / Scale -->
+<div class="flex flex-col gap-space-xs bg-surface-container-lowest p-space-sm rounded-lg">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Presión de Néctar Nacional</span>
+<span class="font-bold text-primary font-mono">78% Índice Óptimo</span>
+</div>
+<div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden flex p-0.5">
+<div class="h-full bg-secondary-fixed-dim rounded-l-full w-1/4"></div>
+<div class="h-full bg-tertiary-fixed-dim w-1/4"></div>
+<div class="h-full bg-primary rounded-r-full w-1/3 relative">
+<span class="absolute right-0 top-0 bottom-0 w-2 bg-on-primary rounded-full shadow-sm"></span>
+</div>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant/80 pt-0.5">
+<span>Mantenimiento</span>
+<span class="text-tertiary font-medium">Moderado</span>
+<span class="text-primary font-bold">Flujo Mayor (Activo)</span>
+</div>
+</div>
+</div>
+<!-- Live Search Field -->
+<div class="relative w-full">
+<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full bg-surface-container-lowest text-on-surface font-body-sm text-body-sm rounded-lg pl-10 pr-10 py-3 shadow-sm focus:outline-none focus:ring-0 placeholder:text-on-surface-variant/60" id="speciesSearchInput" placeholder="Buscar eucalipto, aguacate, pechiche..." type="search"/>
+<button aria-label="Limpiar búsqueda" class="hidden absolute inset-y-0 right-2 px-2 flex items-center text-on-surface-variant hover:text-on-surface" id="clearSearchBtn">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Region Filters (Chips) -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold">
+          Región Bioclimática
+        </span>
+<span class="font-label-sm text-label-sm text-primary font-medium" id="speciesCounter">5 especies clave</span>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar -mx-gutter px-gutter">
+<button class="region-chip active px-3.5 py-2 rounded-lg font-label-sm text-label-sm font-semibold tracking-wide bg-primary text-on-primary whitespace-nowrap shadow-sm transition-all flex items-center gap-1.5" data-region="all">
+<span class="material-symbols-outlined text-[16px]">public</span>
+          Todas las Regiones
+        </button>
+<button class="region-chip px-3.5 py-2 rounded-lg font-label-sm text-label-sm font-semibold tracking-wide bg-surface-container-high text-on-surface whitespace-nowrap transition-all flex items-center gap-1.5 hover:bg-surface-container-highest" data-region="sierra">
+<span class="material-symbols-outlined text-[16px] text-primary">landscape</span>
+          Sierra Andina
+        </button>
+<button class="region-chip px-3.5 py-2 rounded-lg font-label-sm text-label-sm font-semibold tracking-wide bg-surface-container-high text-on-surface whitespace-nowrap transition-all flex items-center gap-1.5 hover:bg-surface-container-highest" data-region="costa">
+<span class="material-symbols-outlined text-[16px] text-secondary">waves</span>
+          Costa & Litoral
+        </button>
+<button class="region-chip px-3.5 py-2 rounded-lg font-label-sm text-label-sm font-semibold tracking-wide bg-surface-container-high text-on-surface whitespace-nowrap transition-all flex items-center gap-1.5 hover:bg-surface-container-highest" data-region="amazonia">
+<span class="material-symbols-outlined text-[16px] text-tertiary">forest</span>
+          Amazonía
+        </button>
+<button class="region-chip px-3.5 py-2 rounded-lg font-label-sm text-label-sm font-semibold tracking-wide bg-surface-container-high text-on-surface whitespace-nowrap transition-all flex items-center gap-1.5 hover:bg-surface-container-highest" data-region="valles">
+<span class="material-symbols-outlined text-[16px] text-primary-container">terrain</span>
+          Valles Interandinos
+        </button>
+</div>
+</div>
+<!-- Secondary Filter: Nectar vs Pollen priority -->
+<div class="flex items-center gap-2 bg-surface-container-low p-1 rounded-lg">
+<button class="yield-pill flex-1 py-1.5 text-center font-label-sm text-label-sm font-semibold rounded bg-surface-container-lowest text-on-surface shadow-xs transition-all" data-yield="all">
+        Flujo Global
+      </button>
+<button class="yield-pill flex-1 py-1.5 text-center font-label-sm text-label-sm font-semibold rounded text-on-surface-variant hover:text-on-surface transition-all flex items-center justify-center gap-1" data-yield="nectar">
+<span class="material-symbols-outlined text-[14px] text-primary">water_drop</span>
+        Néctar Principal
+      </button>
+<button class="yield-pill flex-1 py-1.5 text-center font-label-sm text-label-sm font-semibold rounded text-on-surface-variant hover:text-on-surface transition-all flex items-center justify-center gap-1" data-yield="pollen">
+<span class="material-symbols-outlined text-[14px] text-tertiary">grain</span>
+        Polen & Cría
+      </button>
+</div>
+</section>
+<!-- Species Cards Roster -->
+<section class="px-gutter mt-space-lg flex flex-col gap-space-lg" id="speciesList">
+<!-- Card 1: Eucalipto -->
+<article class="species-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md transition-all duration-200" data-region="sierra" data-species="eucalipto eucalyptus globulus sierra andina miel ambar" data-yield="nectar">
+<!-- Species Header -->
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold px-2 py-0.5 rounded">
+              Sierra Andina
+            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">
+              2.400 - 3.200 m
+            </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold tracking-tight mt-1 truncate">
+            Eucalipto
+          </h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant italic -mt-0.5">
+            Eucalyptus globulus
+          </span>
+</div>
+<div class="bg-error-container text-on-error-container font-label-sm text-label-sm font-bold px-2 py-1 rounded text-right whitespace-nowrap flex items-center gap-1 animate-pulse">
+<span class="material-symbols-outlined text-[14px]">timer</span>
+          Fin en 18 días
+        </div>
+</div>
+<!-- Timeline & Floral Curve Visualization -->
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col gap-2">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-tertiary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+            Pico de floración activo
+          </span>
+<span class="text-on-surface-variant font-mono">Curva Fenológica 88%</span>
+</div>
+<!-- Inline Visual Curve Sparkline (SVG) -->
+<div class="w-full h-12 relative flex items-end">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 300 48">
+<defs>
+<lineargradient id="eucGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#b15f00" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#b15f00" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M 0,44 Q 60,42 100,28 T 160,8 T 220,12 T 260,34 L 300,44 L 300,48 L 0,48 Z" fill="url(#eucGrad)"></path>
+<path d="M 0,44 Q 60,42 100,28 T 160,8 T 220,12 T 260,34 L 300,44" fill="none" stroke="#b15f00" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Current date marker pin -->
+<circle cx="175" cy="9" fill="#8d4b00" r="4.5" stroke="#ffffff" stroke-width="2"></circle>
+</svg>
+</div>
+<!-- Month ticks -->
+<div class="grid grid-cols-6 text-center font-label-sm text-label-sm text-on-surface-variant/70 border-t-0 pt-1">
+<span>Set</span>
+<span>Oct</span>
+<span class="font-bold text-primary">Nov</span>
+<span class="font-bold text-primary">Dic</span>
+<span>Ene</span>
+<span>Feb</span>
+</div>
+</div>
+<!-- Photo & Sensory Strip -->
+<div class="grid grid-cols-3 gap-2 items-center">
+<div class="col-span-1 h-20 rounded-lg overflow-hidden relative shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Close up of blooming Eucalyptus globulus flowers with golden stamens and worker honeybees gathering raw nectar in high altitude Ecuadorian Andes sunlight, documentary macro photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzwYfh1ByX_eR84zsbu4bAVS06NnJh2-KH7NLYYzbac5coiP-iC4YjqXKwQwyt9OdD-oCL9aBZnazeEdr6hzptalud63W0XHszqAuVrq9JWKF99Xzk76ZfntJW2S8oDQUVnJ69yd6JlPNgfm3VxEyzI79pSv9RHWQB2cQDO747EGoOEoZt79d2t_EPxmNf8ypmRAXT8V0Z6A32xngBSfI1OdRP5djdwdt-q3P2L7DZFjjXhtW--VRm"/>
+<span class="absolute bottom-1 left-1 bg-surface/90 text-on-surface font-label-sm text-[9px] px-1 rounded font-mono">Intro</span>
+</div>
+<div class="col-span-2 flex flex-col gap-1.5 pl-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Néctar:</span>
+<div class="flex text-primary gap-0.5">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Polen:</span>
+<div class="flex text-tertiary gap-0.5">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">star</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">star</span>
+</div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Color Pfund:</span>
+<span class="font-mono font-medium text-on-surface">55-70mm (Ámbar)</span>
+</div>
+</div>
+</div>
+<!-- Honey Characteristics Grid -->
+<div class="grid grid-cols-2 gap-2 bg-surface-container-low p-space-sm rounded-lg font-body-sm text-body-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Humedad Cosecha</span>
+<span class="text-on-surface font-bold font-mono">17.2% — 18.0%</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Cristalización</span>
+<span class="text-on-surface font-bold">Rápida, grano fino</span>
+</div>
+</div>
+<!-- Warning Pill -->
+<div class="bg-surface-container-high text-on-surface-variant rounded-lg p-2.5 flex items-start gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary flex-shrink-0">shield</span>
+<span class="font-body-sm text-body-sm leading-snug">
+          Zona protegida de fumigaciones agrícolas intensivas en laderas de Pichincha y Cotopaxi.
+        </span>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-primary text-on-primary py-3 rounded-lg font-label-lg text-label-lg font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:bg-primary-container shadow-sm transition-colors" onclick="this.innerText='Ruta Guardada en Trashumancia'; this.classList.add('bg-tertiary-container');">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+        Vincular a Trashumancia
+      </button>
+</article>
+<!-- Card 2: Aguacate / Palto -->
+<article class="species-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md transition-all duration-200" data-region="valles" data-species="aguacate palto persea americana valles interandinos chota guayllabamba" data-yield="nectar">
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm font-bold px-2 py-0.5 rounded">
+              Valles Interandinos
+            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">
+              1.800 - 2.200 m
+            </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold tracking-tight mt-1 truncate">
+            Aguacate / Palto
+          </h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant italic -mt-0.5">
+            Persea americana
+          </span>
+</div>
+<div class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold px-2 py-1 rounded text-right whitespace-nowrap flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">upcoming</span>
+          Inicia en 7 días
+        </div>
+</div>
+<!-- Curve -->
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col gap-2">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-primary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+            Apertura floral inminente
+          </span>
+<span class="text-on-surface-variant font-mono">Curva Fenológica 25%</span>
+</div>
+<div class="w-full h-12 relative flex items-end">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 300 48">
+<defs>
+<lineargradient id="avocGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#1e8642" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#1e8642" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M 0,46 Q 50,45 100,42 T 160,32 T 220,10 T 270,14 L 300,38 L 300,48 L 0,48 Z" fill="url(#avocGrad)"></path>
+<path d="M 0,46 Q 50,45 100,42 T 160,32 T 220,10 T 270,14 L 300,38" fill="none" stroke="#1e8642" stroke-linecap="round" stroke-width="2.5"></path>
+<circle cx="162" cy="32" fill="#006b2f" r="4.5" stroke="#ffffff" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="grid grid-cols-6 text-center font-label-sm text-label-sm text-on-surface-variant/70 pt-1">
+<span>Oct</span>
+<span class="font-bold text-primary">Nov</span>
+<span class="font-bold text-primary">Dic</span>
+<span>Ene</span>
+<span>Feb</span>
+<span>Mar</span>
+</div>
+</div>
+<!-- Image & Specs -->
+<div class="grid grid-cols-3 gap-2 items-center">
+<div class="col-span-1 h-20 rounded-lg overflow-hidden relative shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Small yellow-green avocado tree blossoms with bees foraging in Guayllabamba valley Ecuador, sun-drenched dry Andean valley orchard, cinematic agricultural photo." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRScWjUUqkB3G3KtfSeUlKi5rCEOSemP5KkiN0zCU2zD7QjXC2MLUysFMNyYma_p9nd0O9wk_Ue9vHFi6ZR_Szv2vViq2mDMS_CAMHdzl60XDUCdb1R7hefF5uSowpA_yUdSSDVE9yIwjfnHGAlWcrLXiDUgwcqOF0pjwvSxlSwPf_A6DnTBh_cvlcCmNF-uF2BCytgwraZITPLkW-nwMhcqTe7qTYCwD_CAjBvVevsmtTl3FGTSgS"/>
+<span class="absolute bottom-1 left-1 bg-surface/90 text-on-surface font-label-sm text-[9px] px-1 rounded font-mono">Nativa</span>
+</div>
+<div class="col-span-2 flex flex-col gap-1.5 pl-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Néctar:</span>
+<div class="flex text-primary gap-0.5">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">water_drop</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Polen:</span>
+<div class="flex text-tertiary gap-0.5">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">star</span>
+</div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Color Pfund:</span>
+<span class="font-mono font-medium text-on-surface">85-110mm (Ámbar Oscuro)</span>
+</div>
+</div>
+</div>
+<!-- Honey Characteristics Grid -->
+<div class="grid grid-cols-2 gap-2 bg-surface-container-low p-space-sm rounded-lg font-body-sm text-body-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Humedad Cosecha</span>
+<span class="text-on-surface font-bold font-mono">18.5% — 19.4%</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Cristalización</span>
+<span class="text-on-surface font-bold">Lenta, consistencia espesa</span>
+</div>
+</div>
+<!-- Agrícola Warning Pill -->
+<div class="bg-error-container/40 text-on-surface rounded-lg p-2.5 flex items-start gap-2">
+<span class="material-symbols-outlined text-[18px] text-error flex-shrink-0">warning</span>
+<span class="font-body-sm text-body-sm leading-snug">
+<strong class="text-error font-semibold">Alerta Fitosanitaria:</strong> Cuadrantes de Tumbaco y Chota inician fumigación con fungicidas poslluvia. Usar trampas piquera.
+        </span>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-secondary text-on-secondary py-3 rounded-lg font-label-lg text-label-lg font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:bg-inverse-surface shadow-sm transition-colors">
+<span class="material-symbols-outlined text-[18px]">explore</span>
+        Ver Zonas de Asentamiento
+      </button>
+</article>
+<!-- Card 3: Pechiche & Laurel -->
+<article class="species-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md transition-all duration-200" data-region="costa" data-species="pechiche laurel cordia alliodora costa litoral manabi guayas miel clara" data-yield="nectar">
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold px-2 py-0.5 rounded">
+              Costa & Litoral
+            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">
+              0 - 600 m
+            </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold tracking-tight mt-1 truncate">
+            Pechiche & Laurel
+          </h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant italic -mt-0.5">
+            Cordia alliodora / Vitex gigantea
+          </span>
+</div>
+<div class="bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold px-2 py-1 rounded text-right whitespace-nowrap flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">event_repeat</span>
+          Prep. para Enero
+        </div>
+</div>
+<!-- Curve -->
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col gap-2">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-secondary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+            Brotación vegetativa previa
+          </span>
+<span class="text-on-surface-variant font-mono">Curva Fenológica 10%</span>
+</div>
+<div class="w-full h-12 relative flex items-end">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 300 48">
+<defs>
+<lineargradient id="costaGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#545f73" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#545f73" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M 0,46 Q 80,45 140,43 T 200,38 T 260,8 L 300,15 L 300,48 L 0,48 Z" fill="url(#costaGrad)"></path>
+<path d="M 0,46 Q 80,45 140,43 T 200,38 T 260,8 L 300,15" fill="none" stroke="#545f73" stroke-linecap="round" stroke-width="2.5"></path>
+<circle cx="140" cy="43" fill="#545f73" r="4.5" stroke="#ffffff" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="grid grid-cols-6 text-center font-label-sm text-label-sm text-on-surface-variant/70 pt-1">
+<span>Nov</span>
+<span class="font-bold text-primary">Dic</span>
+<span>Ene</span>
+<span>Feb</span>
+<span>Mar</span>
+<span>Abr</span>
+</div>
+</div>
+<!-- Photo & Specs -->
+<div class="grid grid-cols-3 gap-2 items-center">
+<div class="col-span-1 h-20 rounded-lg overflow-hidden relative shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Clusters of delicate creamy white flowers of Cordia alliodora laurel tree in Manabi coastal dry forest Ecuador, bright tropical daylight, botanical field photograph." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM_JEuiPfPDDjcbgSt-tQ0tDNU-OP1QTNoYdn2vL8UU5_epBae65NnInNHQ97uk8RFOyjOwVQ5WDHksaXkzG95fKT7yi_8ZNqcimiKzkZ5yoiAqbWzDkYPp58oSj_O99LoE9gzLdD3dv-YuiUPDCMIgvp1YJttlS3_xBxLanvJR207caj99DFehxuoLj89BNlEmlpjc8xgTQ8XBLp136Nn6txsYKyotKXvHeyQXga-_5GKpDzjgW3t"/>
+<span class="absolute bottom-1 left-1 bg-surface/90 text-on-surface font-label-sm text-[9px] px-1 rounded font-mono">Nativa</span>
+</div>
+<div class="col-span-2 flex flex-col gap-1.5 pl-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Néctar:</span>
+<div class="flex text-primary gap-0.5">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Polen:</span>
+<div class="flex text-tertiary gap-0.5">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">star</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">star</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">star</span>
+</div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Color Pfund:</span>
+<span class="font-mono font-medium text-on-surface">15-30mm (Extra Blanco)</span>
+</div>
+</div>
+</div>
+<!-- Honey Characteristics Grid -->
+<div class="grid grid-cols-2 gap-2 bg-surface-container-low p-space-sm rounded-lg font-body-sm text-body-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Humedad Cosecha</span>
+<span class="text-on-surface font-bold font-mono">19.0% — 20.0%</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Cristalización</span>
+<span class="text-on-surface font-bold">Media, textura mantequilla</span>
+</div>
+</div>
+<div class="bg-surface-container-high text-on-surface-variant rounded-lg p-2.5 flex items-start gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary flex-shrink-0">check_circle</span>
+<span class="font-body-sm text-body-sm leading-snug">
+          Sin agroquímicos reportados en cuencas de Santa Elena y Chone. Alta pureza orgánica.
+        </span>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-secondary text-on-secondary py-3 rounded-lg font-label-lg text-label-lg font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:bg-inverse-surface shadow-sm transition-colors">
+<span class="material-symbols-outlined text-[18px]">explore</span>
+        Ver Zonas de Asentamiento
+      </button>
+</article>
+<!-- Card 4: Mortiño y Romero de Páramo -->
+<article class="species-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md transition-all duration-200" data-region="sierra" data-species="mortino romero paramo vaccinium floribundum sierra paramo cria reinas polen" data-yield="pollen">
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold px-2 py-0.5 rounded">
+              Sierra Alta / Páramo
+            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">
+              3.200 - 3.800 m
+            </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold tracking-tight mt-1 truncate">
+            Mortiño & Romero
+          </h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant italic -mt-0.5">
+            Vaccinium floribundum / Diplostephium
+          </span>
+</div>
+<div class="bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm font-bold px-2 py-1 rounded text-right whitespace-nowrap flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">nest_cam_wired_stand</span>
+          Cría de Reinas
+        </div>
+</div>
+<!-- Curve -->
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col gap-2">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-tertiary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+            Puntal de Polen Proteico
+          </span>
+<span class="text-on-surface-variant font-mono">Curva Fenológica 65%</span>
+</div>
+<div class="w-full h-12 relative flex items-end">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 300 48">
+<defs>
+<lineargradient id="paramoGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#006b2f" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#006b2f" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M 0,40 Q 60,35 120,18 T 190,12 T 250,30 L 300,44 L 300,48 L 0,48 Z" fill="url(#paramoGrad)"></path>
+<path d="M 0,40 Q 60,35 120,18 T 190,12 T 250,30 L 300,44" fill="none" stroke="#006b2f" stroke-linecap="round" stroke-width="2.5"></path>
+<circle cx="165" cy="14" fill="#006b2f" r="4.5" stroke="#ffffff" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="grid grid-cols-6 text-center font-label-sm text-label-sm text-on-surface-variant/70 pt-1">
+<span>Set</span>
+<span>Oct</span>
+<span class="font-bold text-primary">Nov</span>
+<span class="font-bold text-primary">Dic</span>
+<span>Ene</span>
+<span>Feb</span>
+</div>
+</div>
+<!-- Photo & Specs -->
+<div class="grid grid-cols-3 gap-2 items-center">
+<div class="col-span-1 h-20 rounded-lg overflow-hidden relative shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Wild Andean paramo bushes with pink Mortiño flowers and wild rosemary shrubs against moody Chimborazo volcanic landscape, misty morning alpine light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0CWlAl2WKIYdWCdiMCrDx-a1gVQGbNU4S5bu4QSrXnHyS_y7wttVf-Ud5ZyVVwWFsPAWCSv6k4DmhD1JEA9orvgJ-mXKr7U46M1LRl5F___dyfC_RqUoBZVUYgY0GATOfteib4-alxJo145bhYa6dzi9693_qRlFNYbUHgUKfk0ly8UIAdYz3MiofyPtUAFaWyjBuFlkBV5SbnHR_lLJwEshUgzkssVT-F5_FcUn30ul2MrXxC4t6"/>
+<span class="absolute bottom-1 left-1 bg-surface/90 text-on-surface font-label-sm text-[9px] px-1 rounded font-mono">Páramo</span>
+</div>
+<div class="col-span-2 flex flex-col gap-1.5 pl-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Néctar:</span>
+<div class="flex text-primary gap-0.5">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">water_drop</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">water_drop</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">water_drop</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Polen:</span>
+<div class="flex text-tertiary gap-0.5">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Color Pfund:</span>
+<span class="font-mono font-medium text-on-surface">35-50mm (Ámbar Claro)</span>
+</div>
+</div>
+</div>
+<!-- Honey Characteristics Grid -->
+<div class="grid grid-cols-2 gap-2 bg-surface-container-low p-space-sm rounded-lg font-body-sm text-body-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Valor Nutricional</span>
+<span class="text-on-surface font-bold">29% proteína cruda</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Uso Estratégico</span>
+<span class="text-on-surface font-bold">Fortalecimiento invernal</span>
+</div>
+</div>
+<div class="bg-surface-container-high text-on-surface-variant rounded-lg p-2.5 flex items-start gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary flex-shrink-0">thermostat</span>
+<span class="font-body-sm text-body-sm leading-snug">
+          Vientos de altura y heladas nocturnas (<2°C). Asegurar piqueras reducidas y ponchos térmicos.
+        </span>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-primary text-on-primary py-3 rounded-lg font-label-lg text-label-lg font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:bg-primary-container shadow-sm transition-colors" onclick="this.innerText='Ruta Guardada en Trashumancia'; this.classList.add('bg-tertiary-container');">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+        Vincular a Trashumancia
+      </button>
+</article>
+<!-- Card 5: Cacao y Balsa -->
+<article class="species-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md transition-all duration-200" data-region="amazonia" data-species="cacao balsa theobroma ochroma costa amazonia napo orellana los rios multifloral" data-yield="pollen">
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm font-bold px-2 py-0.5 rounded">
+              Costa & Amazonía
+            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">
+              50 - 900 m
+            </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold tracking-tight mt-1 truncate">
+            Cacao & Balsa
+          </h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant italic -mt-0.5">
+            Theobroma cacao / Ochroma pyramidale
+          </span>
+</div>
+<div class="bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold px-2 py-1 rounded text-right whitespace-nowrap flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">all_inclusive</span>
+          Continuo Anual
+        </div>
+</div>
+<!-- Curve -->
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col gap-2">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-tertiary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+            Floración silvestre escalonada
+          </span>
+<span class="text-on-surface-variant font-mono">Curva Fenológica 70%</span>
+</div>
+<div class="w-full h-12 relative flex items-end">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 300 48">
+<defs>
+<lineargradient id="amzGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#006b2f" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#006b2f" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M 0,30 Q 60,20 120,24 T 180,22 T 240,26 L 300,20 L 300,48 L 0,48 Z" fill="url(#amzGrad)"></path>
+<path d="M 0,30 Q 60,20 120,24 T 180,22 T 240,26 L 300,20" fill="none" stroke="#006b2f" stroke-linecap="round" stroke-width="2.5"></path>
+<circle cx="180" cy="22" fill="#006b2f" r="4.5" stroke="#ffffff" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="grid grid-cols-6 text-center font-label-sm text-label-sm text-on-surface-variant/70 pt-1">
+<span>Oct</span>
+<span class="font-bold text-primary">Nov</span>
+<span class="font-bold text-primary">Dic</span>
+<span>Ene</span>
+<span>Feb</span>
+<span>Mar</span>
+</div>
+</div>
+<!-- Photo & Specs -->
+<div class="grid grid-cols-3 gap-2 items-center">
+<div class="col-span-1 h-20 rounded-lg overflow-hidden relative shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Cauliflory tiny white cacao flowers blooming directly on tree trunk alongside immense nocturnal balsa flowers in Ecuadorian Amazon rain forest, lush emerald background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWUtIotfS6k3MQ3fm6H6Ef874MqiX4q3GHCEH8apWmpqO8PsKxEG09lUprI3p9yKAc5672VVf2FoO5s2MtyGTP1IcdVVtGR2lB7TC0c6VQgLSGptKzSGN6KVywa71Ujjfq_2F9__BfMQQR6e4KSplqBX1cOhIvQVZzJe9wgh6P0kOd4i16M31SonlBvcjBdWaeU8uUb6-u5n_o_k4lbO7LzuTtNSDqJ7PTauOJR-4Tgq76TXb3tBva"/>
+<span class="absolute bottom-1 left-1 bg-surface/90 text-on-surface font-label-sm text-[9px] px-1 rounded font-mono">Nativa</span>
+</div>
+<div class="col-span-2 flex flex-col gap-1.5 pl-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Néctar:</span>
+<div class="flex text-primary gap-0.5">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">water_drop</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">water_drop</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Polen:</span>
+<div class="flex text-tertiary gap-0.5">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest">star</span>
+</div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Color Pfund:</span>
+<span class="font-mono font-medium text-on-surface">60-80mm (Multifloral)</span>
+</div>
+</div>
+</div>
+<!-- Honey Characteristics Grid -->
+<div class="grid grid-cols-2 gap-2 bg-surface-container-low p-space-sm rounded-lg font-body-sm text-body-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Humedad Cosecha</span>
+<span class="text-on-surface font-bold font-mono">19.5% — 21.0% (Deshum.)</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Cristalización</span>
+<span class="text-on-surface font-bold">Muy lenta, notas florales</span>
+</div>
+</div>
+<!-- Warning Pill -->
+<div class="bg-surface-container-high text-on-surface-variant rounded-lg p-2.5 flex items-start gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary flex-shrink-0">humidity_high</span>
+<span class="font-body-sm text-body-sm leading-snug">
+          Humedad relativa ambiental sobre 85%. Emplear techos con cámara de aire y deshumidificadores de mielería.
+        </span>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-secondary text-on-secondary py-3 rounded-lg font-label-lg text-label-lg font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:bg-inverse-surface shadow-sm transition-colors">
+<span class="material-symbols-outlined text-[18px]">explore</span>
+        Ver Zonas de Asentamiento
+      </button>
+</article>
+</section>
+<!-- Empty State (Hidden by default) -->
+<div class="hidden px-gutter py-12 flex flex-col items-center justify-center text-center gap-3" id="noResultsState">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[32px]">filter_vintage</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-on-surface font-bold">
+      Sin especies para este filtro
+    </div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">
+      No se encontraron floraciones melíferas activas con los criterios seleccionados en el catastro ecuatoriano.
+    </p>
+<button class="mt-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-label-sm text-label-sm font-bold uppercase tracking-wider shadow-sm" id="resetFiltersBtn">
+      Restablecer Filtros
+    </button>
+</div>
+<!-- Bottom Advisory Banner -->
+<footer class="mx-gutter mt-space-lg p-space-md rounded-xl bg-surface-container flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">cloud_sync</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold text-on-surface">Red Agrocalidad & INAMHI</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Sincronizado hoy a las 05:30 COT</span>
+</div>
+</div>
+<button aria-label="Actualizar datos" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-highest text-on-surface active:bg-surface-variant">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+</button>
+</footer>
+</div>
+<!-- Inline Filter & Search Logic -->
+<script>
+  (function() {
+    const searchInput = document.getElementById('speciesSearchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const regionChips = document.querySelectorAll('.region-chip');
+    const yieldPills = document.querySelectorAll('.yield-pill');
+    const speciesCards = document.querySelectorAll('.species-card');
+    const noResultsState = document.getElementById('noResultsState');
+    const speciesCounter = document.getElementById('speciesCounter');
+    const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+
+    let currentRegion = 'all';
+    let currentYield = 'all';
+    let currentSearch = '';
+
+    function applyFilters() {
+      let visibleCount = 0;
+
+      speciesCards.forEach(card => {
+        const cardRegion = card.getAttribute('data-region');
+        const cardYield = card.getAttribute('data-yield');
+        const cardKeywords = card.getAttribute('data-species') || '';
+
+        const matchesRegion = (currentRegion === 'all' || cardRegion === currentRegion || (currentRegion === 'costa' && cardRegion.includes('costa')));
+        const matchesYield = (currentYield === 'all' || cardYield === currentYield);
+        const matchesSearch = currentSearch === '' || cardKeywords.toLowerCase().includes(currentSearch.toLowerCase());
+
+        if (matchesRegion && matchesYield && matchesSearch) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      // Update counter & empty state
+      if (speciesCounter) {
+        speciesCounter.textContent = `${visibleCount} especie${visibleCount === 1 ? '' : 's'} clave`;
+      }
+
+      if (noResultsState) {
+        if (visibleCount === 0) {
+          noResultsState.classList.remove('hidden');
+        } else {
+          noResultsState.classList.add('hidden');
+        }
+      }
+    }
+
+    // Region chip listeners
+    regionChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        regionChips.forEach(c => {
+          c.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+          c.classList.add('bg-surface-container-high', 'text-on-surface');
+        });
+        chip.classList.remove('bg-surface-container-high', 'text-on-surface');
+        chip.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+
+        currentRegion = chip.getAttribute('data-region');
+        applyFilters();
+      });
+    });
+
+    // Yield pill listeners
+    yieldPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        yieldPills.forEach(p => {
+          p.classList.remove('bg-surface-container-lowest', 'text-on-surface', 'shadow-xs');
+          p.classList.add('text-on-surface-variant');
+        });
+        pill.classList.add('bg-surface-container-lowest', 'text-on-surface', 'shadow-xs');
+        pill.classList.remove('text-on-surface-variant');
+
+        currentYield = pill.getAttribute('data-yield');
+        applyFilters();
+      });
+    });
+
+    // Search input listener
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        currentSearch = e.target.value.trim();
+        if (currentSearch.length > 0) {
+          clearSearchBtn.classList.remove('hidden');
+        } else {
+          clearSearchBtn.classList.add('hidden');
+        }
+        applyFilters();
+      });
+    }
+
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        currentSearch = '';
+        clearSearchBtn.classList.add('hidden');
+        applyFilters();
+        searchInput.focus();
+      });
+    }
+
+    if (resetFiltersBtn) {
+      resetFiltersBtn.addEventListener('click', () => {
+        currentRegion = 'all';
+        currentYield = 'all';
+        currentSearch = '';
+        if (searchInput) searchInput.value = '';
+        if (clearSearchBtn) clearSearchBtn.classList.add('hidden');
+
+        // Reset region chips styling
+        regionChips.forEach((c, idx) => {
+          if (idx === 0) {
+            c.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+            c.classList.remove('bg-surface-container-high', 'text-on-surface');
+          } else {
+            c.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+            c.classList.add('bg-surface-container-high', 'text-on-surface');
+          }
+        });
+
+        // Reset yield pills styling
+        yieldPills.forEach((p, idx) => {
+          if (idx === 0) {
+            p.classList.add('bg-surface-container-lowest', 'text-on-surface', 'shadow-xs');
+            p.classList.remove('text-on-surface-variant');
+          } else {
+            p.classList.remove('bg-surface-container-lowest', 'text-on-surface', 'shadow-xs');
+            p.classList.add('text-on-surface-variant');
+          }
+        });
+
+        applyFilters();
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.05)]" data-active-classes="text-primary font-bold"><div class="grid grid-cols-4 items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-on-surface-variant transition-colors" data-path="trashumancia" href="#"><span class="material-symbols-outlined text-[24px]">local_shipping</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Trashumancia</span></a><a aria-current="page" class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 transition-colors text-primary font-bold" data-path="flora-ec" href="#"><span class="material-symbols-outlined text-[24px]">yard</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Flora EC</span></a><a class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-on-surface-variant transition-colors" data-path="colmenares" href="#"><span class="material-symbols-outlined text-[24px]">hive</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Colmenares</span></a><a class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-on-surface-variant transition-colors" data-path="sanidad-&-cria" href="#"><span class="material-symbols-outlined text-[24px]">shield_with_heart</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Sanidad & Cría</span></a></div></nav></body></html>

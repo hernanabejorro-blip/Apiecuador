@@ -1,0 +1,21 @@
+APIECUADOR — ARCHIVOS PARA PUBLICAR EN GITHUB PAGES
+
+Todos los archivos de este paquete deben quedar en la raíz del repositorio (no dentro de otra carpeta):
+- index.html
+- modulo-01.html hasta modulo-20.html
+- manifest.webmanifest
+- sw.js
+- icon-192.png y icon-512.png
+
+PASOS:
+1. En GitHub crea un repositorio llamado apiecuador y elige Public.
+2. Descomprime este ZIP en tu teléfono.
+3. En el repositorio toca Add file > Upload files y selecciona los archivos anteriores. Puedes dejar fuera LEEME_PRIMERO.txt si quieres. Si Android no te permite seleccionar todos a la vez, súbelos en varios grupos; todos deben quedar en la raíz del repositorio.
+4. Pulsa Commit changes.
+5. En el repositorio entra en Settings > Pages.
+6. En Build and deployment elige Deploy from a branch.
+7. En Branch elige main y carpeta /(root), luego Save.
+8. Espera a que GitHub Pages publique el sitio. La dirección suele ser https://TU-USUARIO.github.io/apiecuador/
+9. Abre esa dirección en Chrome Android; toca ⋮ > Instalar aplicación o Añadir a pantalla principal.
+
+Nota: este paquete es un panel web instalable, no un APK. Los módulos son pantallas exportadas desde Stitch; las funciones de guardar datos, mapas y botones deben probarse y algunas pueden necesitar desarrollo. Conserva el ZIP original de Stitch.

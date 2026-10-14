@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;family=Space+Grotesk:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-tint": "#904d00", "on-primary-container": "#fffbff", "surface-dim": "#dcdad3", "outline": "#887364", "primary": "#8d4b00", "secondary-fixed": "#d8e3fb", "tertiary-fixed": "#95f8a7", "secondary-fixed-dim": "#bcc7de", "on-tertiary-container": "#f7fff3", "on-secondary-container": "#586377", "on-tertiary-fixed-variant": "#005323", "surface-container-highest": "#e5e2db", "secondary-container": "#d5e0f8", "surface": "#fcf9f2", "on-primary-fixed-variant": "#6e3900", "outline-variant": "#dbc2b0", "on-error-container": "#93000a", "surface-variant": "#e5e2db", "error-container": "#ffdad6", "inverse-primary": "#ffb77d", "on-tertiary": "#ffffff", "tertiary": "#006b2f", "error": "#ba1a1a", "on-secondary": "#ffffff", "surface-container": "#f0eee7", "on-primary": "#ffffff", "surface-container-low": "#f6f3ec", "on-surface": "#1c1c18", "surface-container-lowest": "#ffffff", "secondary": "#545f73", "primary-fixed-dim": "#ffb77d", "on-tertiary-fixed": "#00210a", "on-surface-variant": "#554336", "tertiary-fixed-dim": "#79db8d", "surface-container-high": "#ebe8e1", "inverse-surface": "#31312c", "on-secondary-fixed-variant": "#3c475a", "tertiary-container": "#1e8642", "on-background": "#1c1c18", "inverse-on-surface": "#f3f0e9", "primary-fixed": "ffdcc3", "background": "#fcf9f2", "surface-bright": "#fcf9f2", "primary-container": "#b15f00", "on-error": "#ffffff", "on-secondary-fixed": "#111c2d", "on-primary-fixed": "#2f1500" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-lg": "1.25rem", "margin": "1rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-md": "0.875rem", "gutter": "1rem", "space-xl": "1.75rem" }, "fontFamily": { "label-sm": ["JetBrains Mono"], "label-md": ["JetBrains Mono"], "display-mobile": ["Space Grotesk"], "headline-lg": ["Space Grotesk"], "body-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "headline-md": ["Space Grotesk"], "label-lg": ["JetBrains Mono"], "display": ["Space Grotesk"], "headline-sm": ["Space Grotesk"] }, "fontSize": { "label-sm": ["10px", { "lineHeight": "12px", "fontWeight": "500" }], "label-md": ["11px", { "lineHeight": "14px", "fontWeight": "500" }], "display-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "30px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }], "headline-md": ["20px", { "lineHeight": "26px", "fontWeight": "600" }], "label-lg": ["13px", { "lineHeight": "16px", "fontWeight": "600" }], "display": ["34px", { "lineHeight": "40px", "fontWeight": "700" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="ApiEcuador Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UlQJxWXBlQShHpvGcG09sZTVFRQSsHUu9I47mQvYa2NlaIqdGXgY2IHURbzw4wirZS5n2SjzpSrjk3-ZlJG53vrz5TJrfBVNlXOHAhdEwfwDUgttgTCtGWD4JvGCGzlmb8mFO5Wsa_Ke1g0G_sf-vjkZRFuInbHvSfqw0PVdW0cYyVmvXAAdAEGaDCT2TRvKUuUCKIyFhu718oyf4m_H5YM8O7ZkQ1L8gQa-QaljiyR59nQCAEBN8E0xs"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-primary leading-none">ApiEcuador</span><span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-medium mt-0.5">Ecuador Apícola</span></div></div><div class="flex items-center gap-space-xs"><button aria-label="Alertas de Trashumancia" class="w-11 h-11 flex items-center justify-center relative rounded-full text-on-surface-variant active:bg-surface-container-high"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-error rounded-full ring-2 ring-surface"></span></button><div class="w-11 h-11 flex items-center justify-center"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOXli5YGSoYIEEpTZfYHz98HUYdcWph2gkapWu-M2kEcgC32RiBf9chnAwnKq6jT6fGwhujQQKP64scoFYK36aRsmloRa6H1Lu2KV_YDqX3kqbfSCMKLAGjP19FXwQgHvOSBFZcSWivBSLxKsN1MxsmQ-qham78KdNFk815ZjxMbHjwxHj6d96rwc2hmU0bu9kjDIM4KYEhvRcM2COY1G-JKHycBMdmEzscUhouDwenp0N115kLdn8"/></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full pb-8">
+<!-- Module Sub-Header & Batch Context Badge -->
+<div class="px-gutter pt-2 pb-4 bg-surface-container-low shadow-sm">
+<div class="flex items-center justify-between gap-space-sm mb-2">
+<div class="flex items-center gap-space-xs">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">award_star</span>
+</span>
+<span class="font-label-md text-label-md uppercase tracking-wider text-primary font-bold">Cría Selectiva y Genética Melífera</span>
+</div>
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded-full font-bold">2.380 msnm</span>
+</div>
+<div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+<h1 class="font-headline-md text-headline-md text-on-surface font-bold tracking-tight">Lote Q-25-04</h1>
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">Línea F1 Cárnica × Ligústica Andina</span>
+</div>
+<!-- Micro KPIs Card Row -->
+<div class="grid grid-cols-4 gap-2 mt-3">
+<div class="bg-surface-container-lowest p-2 rounded-xl shadow-sm flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Injertadas</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">45</span>
+<span class="material-symbols-outlined text-[13px] text-outline">tune</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-xl shadow-sm flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-tertiary">Aceptación</span>
+<div class="flex items-baseline gap-0.5 mt-1">
+<span class="font-headline-sm text-headline-sm font-bold text-tertiary">88.8%</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-xl shadow-sm flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Incubadora</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">28</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">celd</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-xl shadow-sm flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Fecundac.</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="font-headline-sm text-headline-sm font-bold text-secondary">12</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">núcl</span>
+</div>
+</div>
+</div>
+</div>
+<div class="px-gutter flex flex-col gap-5 mt-4">
+<!-- Biological Timeline Component (Doolittle Method) -->
+<section class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-center justify-between pb-3">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">hourglass_top</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Cronograma Biológico Doolittle</h2>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-bold animate-pulse">DÍA 10 ACTIVO</span>
+</div>
+<!-- Emergency Critical Alert for Day 10 -->
+<div class="bg-primary/10 rounded-xl p-3 mb-4 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg font-bold text-primary leading-tight">Ventana Crítica de Enjaulado / Traslado</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 leading-snug">
+            Células en día 10. Proteger o transferir a núcleos baby antes de 24h para evitar pugna territorial y eliminación de reinas vírgenes hermanas.
+          </p>
+</div>
+</div>
+<!-- Horizontal Step Scroll -->
+<div class="relative overflow-x-auto pb-2 -mx-space-md px-space-md flex gap-3 snap-x no-scrollbar">
+<!-- Step 1: D0 Done -->
+<div class="shrink-0 w-44 snap-start p-3 rounded-lg bg-surface-container-low flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary font-bold">DÍA 0 • TRASLARVE</span>
+<span class="material-symbols-outlined text-tertiary text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mt-1 line-clamp-2">Larvas &lt;24h en jalea real fresca diluida.</p>
+<span class="font-label-sm text-label-sm text-outline mt-2">12 Feb • 09:15</span>
+</div>
+<!-- Step 2: D3-4 Done -->
+<div class="shrink-0 w-44 snap-start p-3 rounded-lg bg-surface-container-low flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary font-bold">DÍA 3-4 • OPERCULADO</span>
+<span class="material-symbols-outlined text-tertiary text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mt-1 line-clamp-2">Celdas aceptadas y selladas con cera pura.</p>
+<span class="font-label-sm text-label-sm text-outline mt-2">15 Feb • Verificado</span>
+</div>
+<!-- Step 3: D10 Current / Active Target -->
+<div class="shrink-0 w-48 snap-start p-3 rounded-lg bg-primary-container text-on-primary-container flex flex-col justify-between shadow-md relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-bold tracking-wider">DÍA 10 • HOY</span>
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-surface-bright shadow-[0_0_8px_rgba(255,255,255,0.9)] animate-ping"></span>
+</div>
+<p class="font-body-sm text-body-sm font-medium mt-1">Enjaulado protector de rulos o paso a Baby Nucleus.</p>
+<div class="flex items-center justify-between mt-2 pt-1">
+<span class="font-label-sm text-label-sm font-bold">Hoy • 16:00 Límite</span>
+<span class="material-symbols-outlined text-[18px]">emergency_home</span>
+</div>
+</div>
+<!-- Step 4: D11-12 Upcoming -->
+<div class="shrink-0 w-44 snap-start p-3 rounded-lg bg-surface-container-lowest shadow-sm flex flex-col justify-between opacity-80">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-bold">DÍA 11-12 • NACIMIENTO</span>
+<span class="material-symbols-outlined text-outline text-[18px]">radio_button_unchecked</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">Eclosión de vírgenes. Roído circular apical.</p>
+<span class="font-label-sm text-label-sm text-outline mt-2">Mañana 08:30 (Est.)</span>
+</div>
+<!-- Step 5: D16-21 Upcoming -->
+<div class="shrink-0 w-44 snap-start p-3 rounded-lg bg-surface-container-lowest shadow-sm flex flex-col justify-between opacity-80">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-bold">DÍA 16-21 • VUELO</span>
+<span class="material-symbols-outlined text-outline text-[18px]">flutter_dash</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">Zona de congregación de zánganos selectos.</p>
+<span class="font-label-sm text-label-sm text-outline mt-2">28 Feb - 05 Mar</span>
+</div>
+<!-- Step 6: D22+ Postura -->
+<div class="shrink-0 w-44 snap-start p-3 rounded-lg bg-surface-container-lowest shadow-sm flex flex-col justify-between opacity-80">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary font-bold">DÍA 22+ • POSTURA</span>
+<span class="material-symbols-outlined text-outline text-[18px]">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">Comprobación de cría compacta y marcado 2025.</p>
+<span class="font-label-sm text-label-sm text-secondary font-bold mt-2">Marcado Azul</span>
+</div>
+</div>
+</section>
+<!-- Visual Hive/Cell Rack In-Field Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="relative w-full h-36 bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Close-up macro shot of healthy royal queen cells hanging vertically from a wooden apicultural rearing frame inside an active beehive, covered with gentle nurse worker honeybees, golden beeswax textures and warm natural sunlight in the Andean mountains of Ecuador." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhrqLABuEhxrTD7J7puqVdsG6raKllKivH9rfHv8yU5HOg4r3SuwN7tksv_uXnnzoJsjrLpRz9bY7TFiQI83ftSsAGoIl-ULG2wFDfiwB6Az-3kb1nNSaA8cKK27klRs7dunZSs-_UpSxnxp0v0YL7DLnL4AfIl_2JmQ505ABA5eIR5G7CNB9a_Iv94XVSm65GezqACmm8sNE8MOP6nKoWxxqQTbnULH5ewxjzRuWAdPfQSikm_Pdg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-inverse-surface/20 to-transparent"></div>
+<div class="absolute bottom-3 left-3 right-3 flex items-end justify-between text-on-primary">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider bg-primary px-2 py-0.5 rounded text-on-primary font-bold">Lote R-Pichincha-08</span>
+<h3 class="font-headline-sm text-headline-sm font-bold text-surface drop-shadow-sm mt-0.5">Colmena Iniciadora C-14</h3>
+</div>
+<span class="font-label-sm text-label-sm bg-tertiary-container text-on-tertiary-container px-2 py-1 rounded font-bold shadow">
+            32 Celdas Óptimas
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-3">
+<!-- Hive telemetry & Specs -->
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-surface-container-low p-2.5 rounded-lg flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px]">thermostat</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Temperatura Nido</span>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">34.5°C <span class="font-label-sm text-label-sm text-tertiary font-normal">Estable</span></span>
+</div>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[20px]">humidity_mid</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Humedad Relativa</span>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">65% <span class="font-label-sm text-label-sm text-tertiary font-normal">Ideal</span></span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm bg-surface-container-low/60 px-3 py-2 rounded-lg">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">hive</span>
+            Configuración: Huérfana Doble Alza con Rejilla Excluidora
+          </span>
+<span class="font-label-sm text-label-sm text-primary font-bold">Celdas &gt;25mm</span>
+</div>
+<!-- In-Field Direct Actions -->
+<div class="grid grid-cols-2 gap-2 pt-1">
+<button class="min-h-[48px] px-3 py-2.5 bg-primary text-on-primary-container font-label-lg text-label-lg font-bold rounded-lg shadow-sm flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform" id="btn-enjaulado">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+            Registrar Enjaulado
+          </button>
+<button class="min-h-[48px] px-3 py-2.5 bg-surface-container-high text-on-surface font-label-lg text-label-lg font-bold rounded-lg flex items-center justify-center gap-1.5 active:bg-surface-container-highest">
+<span class="material-symbols-outlined text-[18px] text-outline">genetics</span>
+            Madre Genética
+          </button>
+</div>
+</div>
+</div>
+<!-- International Queen Color Marking Callout (Ecuador Standard 2025: Azul) -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">palette</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Código Internacional de Marcado</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Ciclo Quinquenal</span>
+</div>
+<div class="bg-surface-container-low p-3 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-3">
+<!-- Visual Paint Dot Marker -->
+<div class="w-10 h-10 rounded-full bg-blue-600 shadow-md flex items-center justify-center relative">
+<span class="font-label-sm text-label-sm text-white font-bold tracking-tighter">2025</span>
+<span class="absolute -top-1 -right-1 w-3 h-3 bg-tertiary rounded-full ring-2 ring-white"></span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">AZUL • AÑO 2025</span>
+<span class="bg-blue-100 text-blue-900 font-label-sm text-label-sm px-1.5 py-0.2 rounded font-bold">Oficial</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Esmalte indeleble o disco alfanumérico (ej: <span class="font-label-sm text-label-sm font-bold text-on-surface">EC-25-A14</span>)</span>
+</div>
+</div>
+<div class="hidden sm:flex flex-col text-right font-label-sm text-label-sm text-outline">
+<span>2024: Verde</span>
+<span>2026: Blanco</span>
+</div>
+</div>
+</div>
+<!-- Mating Yard Monitor (Fecundadero de Tumbaco) -->
+<section class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-center justify-between pb-3">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-tertiary text-[20px]">nature_people</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Fecundadero Tumbaco</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Microclima Valle Interandino • Zánganos L-Pichincha</span>
+</div>
+<!-- Weather fly corridor status -->
+<div class="flex items-center gap-1 bg-tertiary-container/15 px-2 py-1 rounded text-tertiary font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[15px]">air</span>
+<span>22°C • 8 km/h</span>
+</div>
+</div>
+<!-- Nuclei Status List -->
+<div class="flex flex-col gap-2.5">
+<!-- Nucleus 1 -->
+<div class="bg-surface-container-low p-3 rounded-lg flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-bold text-on-surface bg-surface-container-lowest px-2 py-0.5 rounded shadow-xs">F-01</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Baby Quad Tumbaco</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-bold">
+              Virgen en Núcleo (Día 3)
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Aceptación confirmada. Inicio de orientación pre-nupcial. Vuelo fecundación proyectado en 48 horas bajo ventana térmica favorable.
+          </p>
+<div class="flex items-center justify-between pt-1">
+<span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span> Intro: 19 Feb
+            </span>
+<button class="font-label-sm text-label-sm text-primary font-bold flex items-center gap-0.5 active:opacity-75">
+              Inspeccionar <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Nucleus 2 - Success -->
+<div class="bg-surface-container-low p-3 rounded-lg flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-bold text-on-surface bg-surface-container-lowest px-2 py-0.5 rounded shadow-xs">F-02</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Baby Quad Tumbaco</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">check</span> Fecundada &amp; Postura
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Postura regular concéntrica observada en ambos cuadros de cera estampada. Huevos erguidos de obrera al fondo de celdillas.
+          </p>
+<div class="flex items-center justify-between pt-1 bg-surface-container-lowest/60 p-1.5 rounded">
+<span class="font-label-sm text-label-sm text-tertiary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-blue-600"></span> Listo para Jaula Benton
+            </span>
+<button class="font-label-sm text-label-sm bg-primary text-on-primary-container px-2 py-1 rounded font-bold active:opacity-90">
+              Marcar Reina
+            </button>
+</div>
+</div>
+<!-- Nucleus 3 - Pending flight return -->
+<div class="bg-surface-container-low p-3 rounded-lg flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-bold text-on-surface bg-surface-container-lowest px-2 py-0.5 rounded shadow-xs">F-03</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Baby Quad Tumbaco</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-bold">
+              En Espera de Vuelo
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Pecoreo nupcial activo registrado a las 13:40. Vigilar piquera antirreina y evitar revisiones durante 4 días para evitar abandono.
+          </p>
+<div class="flex items-center justify-between pt-1">
+<span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">nest_cam_stand</span> Sensor de Piquera ON
+            </span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Monitoreo activo</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Queen Breeder Gallery / Mothers Showcase -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Madres Reproductoras Certificadas</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Selección higiénica por prueba de congelación de cría</p>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-tertiary bg-tertiary/10 px-2 py-0.5 rounded">&gt;95% VSH</span>
+</div>
+<div class="grid grid-cols-2 gap-2.5">
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col">
+<div class="w-full h-24 rounded overflow-hidden mb-2 bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="High quality macro photograph of a majestic Carniolan honey bee queen with dark metallic amber bands surrounded by attending worker bees offering food on comb in an Ecuadorian apiary." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_eU6f979GD5NznMjsyu4Q014NXPmO9Dw9t1xTScq9pZybj8LeKdAd-w8nWjUQoqf8LckdHTLxmBkQseVvjNCfqFbfs8QGAqyWQxmog0-JQd4VcoyQXMUloL6CGeUqnZ4zlquAN8_0R3NqWyuejKFXyO2199DNOTwiyZlGvztG0hfCUbPiuDmtOg8HFrF3V-E6tzEKC-d6h4sDC0tcBb-rxzcx33_XrzjR7iWobAE3wOtugnneyQDv"/>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-bold text-on-surface">Madre C-Andina 04</span>
+<span class="w-2.5 h-2.5 rounded-full bg-green-500" title="Marcado 2024 Verde"></span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Mansedumbre: 9.8/10</span>
+<span class="font-label-sm text-label-sm text-primary font-bold mt-1">45 Hijas injertadas</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col">
+<div class="w-full h-24 rounded overflow-hidden mb-2 bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Close up macro photograph of a golden bright Italian Ligustica queen honey bee walking over brood comb cells filled with honey and pollen in an apiary farm in Ecuador." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTBUhi9_FA4FjJoqyvSPdmbeSpqHdgH_r4czhfEGZGwCTEPtrGIkm4OaP7IwiKATmp8xDhql_VUpnzhsm0C-JoiPo7TjPrbns1HOw3vdbzgRHQkIRkxE6D7nzgCufSgjSKnC1I5dWc3WWeMjO06uFCAqxocDpQY1G7MdEXUPFpk3kd_GpPtDEmTvdlO4r1U5Y4VCeNKYzSQFpC52B1qAnjfiqnRMXXloza_mOjjmtlqF_4vOgofR3g"/>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-bold text-on-surface">Madre L-Costa 11</span>
+<span class="w-2.5 h-2.5 rounded-full bg-blue-600" title="Marcado 2025 Azul"></span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Explosión Floral: Alta</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold mt-1">En reserva genética</span>
+</div>
+</div>
+</div>
+<!-- Main Field Action Buttons -->
+<div class="flex flex-col gap-2.5 pt-2">
+<button class="w-full min-h-[50px] bg-primary text-on-primary-container font-label-lg text-label-lg font-bold uppercase rounded-lg shadow-md flex items-center justify-center gap-2 active:scale-[0.99] transition-transform">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+        + Iniciar Nuevo Lote de Traslarve
+      </button>
+<button class="w-full min-h-[48px] bg-secondary text-on-secondary font-label-lg text-label-lg font-medium rounded-lg flex items-center justify-center gap-2 active:opacity-90">
+<span class="material-symbols-outlined text-[20px]">biotech</span>
+        Evaluación de Madres &amp; Control Zanganeras
+      </button>
+</div>
+</div>
+<!-- Interactive Modal Drawer for Enjaulado Confirmation (Hidden by default, triggered by JS) -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4" id="modal-cage-backdrop">
+<div class="bg-surface w-full max-w-md rounded-t-2xl sm:rounded-2xl p-space-lg shadow-xl flex flex-col gap-4 max-h-[751px] overflow-y-auto">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[24px]">verified</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Confirmar Enjaulado</h3>
+</div>
+<button class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant" id="modal-close">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Va a registrar la colocación de jaulas rulo sobre las 32 celdas reales operculadas del <strong>Lote Q-25-04</strong> en la Colmena C-14.
+      </p>
+<div class="bg-surface-container-low p-3 rounded-lg flex flex-col gap-2">
+<div class="flex justify-between items-center text-body-sm font-body-sm">
+<span class="text-on-surface-variant">Celdas viables detectadas:</span>
+<span class="font-bold text-on-surface">32</span>
+</div>
+<div class="flex justify-between items-center text-body-sm font-body-sm">
+<span class="text-on-surface-variant">Alimento en jaula:</span>
+<span class="font-bold text-tertiary">Candy de azúcar impalpable + miel</span>
+</div>
+<div class="flex justify-between items-center text-body-sm font-body-sm">
+<span class="text-on-surface-variant">Acompañantes nodrizas:</span>
+<span class="font-bold text-on-surface">3 por protector</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-2">
+<button class="min-h-[46px] rounded-lg bg-surface-container-high text-on-surface font-label-lg text-label-lg font-bold" id="modal-cancel">
+          Cancelar
+        </button>
+<button class="min-h-[46px] rounded-lg bg-primary text-on-primary-container font-label-lg text-label-lg font-bold shadow" id="modal-confirm">
+          Registrar Lote
+        </button>
+</div>
+</div>
+</div>
+<script>
+    // Micro-interactions for Day 10 cage registration modal
+    const btnEnjaulado = document.getElementById('btn-enjaulado');
+    const modal = document.getElementById('modal-cage-backdrop');
+    const closeBtn = document.getElementById('modal-close');
+    const cancelBtn = document.getElementById('modal-cancel');
+    const confirmBtn = document.getElementById('modal-confirm');
+
+    function openModal() {
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeModal() {
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    if (btnEnjaulado) btnEnjaulado.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', () => {
+        confirmBtn.innerText = '¡Registrado!';
+        confirmBtn.classList.remove('bg-primary');
+        confirmBtn.classList.add('bg-tertiary');
+        setTimeout(() => {
+          closeModal();
+          confirmBtn.innerText = 'Registrar Lote';
+          confirmBtn.classList.add('bg-primary');
+          confirmBtn.classList.remove('bg-tertiary');
+        }, 800);
+      });
+    }
+
+    // Highlight the active Sanidad & Cría tab in the shell
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('nav a');
+      tabs.forEach(tab => {
+        if (tab.getAttribute('data-path') === 'sanidad-&-cria') {
+          tab.classList.add('text-primary');
+          tab.classList.remove('text-on-surface-variant');
+          const label = tab.querySelector('span:last-child');
+          if (label) label.classList.add('font-bold');
+        }
+      });
+    });
+  </script>
+</div></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.05)]" data-active-classes="text-primary font-bold"><div class="grid grid-cols-4 items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-on-surface-variant transition-colors" data-path="trashumancia" href="#"><span class="material-symbols-outlined text-[24px]">local_shipping</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Trashumancia</span></a><a class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-on-surface-variant transition-colors" data-path="flora-ec" href="#"><span class="material-symbols-outlined text-[24px]">yard</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Flora EC</span></a><a class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-on-surface-variant transition-colors" data-path="colmenares" href="#"><span class="material-symbols-outlined text-[24px]">hive</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Colmenares</span></a><a class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-on-surface-variant transition-colors" data-path="sanidad-&amp;-cria" href="#"><span class="material-symbols-outlined text-[24px]">shield_with_heart</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Sanidad &amp; Cría</span></a></div></nav></body></html>

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;family=Space+Grotesk:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-tint": "#904d00", "on-primary-container": "#fffbff", "surface-dim": "#dcdad3", "outline": "#887364", "primary": "#8d4b00", "secondary-fixed": "#d8e3fb", "tertiary-fixed": "#95f8a7", "secondary-fixed-dim": "#bcc7de", "on-tertiary-container": "#f7fff3", "on-secondary-container": "#586377", "on-tertiary-fixed-variant": "#005323", "surface-container-highest": "#e5e2db", "secondary-container": "#d5e0f8", "surface": "#fcf9f2", "on-primary-fixed-variant": "#6e3900", "outline-variant": "#dbc2b0", "on-error-container": "#93000a", "surface-variant": "#e5e2db", "error-container": "#ffdad6", "inverse-primary": "#ffb77d", "on-tertiary": "#ffffff", "tertiary": "#006b2f", "error": "#ba1a1a", "on-secondary": "#ffffff", "surface-container": "#f0eee7", "on-primary": "#ffffff", "surface-container-low": "#f6f3ec", "on-surface": "#1c1c18", "surface-container-lowest": "#ffffff", "secondary": "#545f73", "primary-fixed-dim": "#ffb77d", "on-tertiary-fixed": "#00210a", "on-surface-variant": "#554336", "tertiary-fixed-dim": "#79db8d", "surface-container-high": "#ebe8e1", "inverse-surface": "#31312c", "on-secondary-fixed-variant": "#3c475a", "tertiary-container": "#1e8642", "on-background": "#1c1c18", "inverse-on-surface": "#f3f0e9", "primary-fixed": "ffdcc3", "background": "#fcf9f2", "surface-bright": "#fcf9f2", "primary-container": "#b15f00", "on-error": "#ffffff", "on-secondary-fixed": "#111c2d", "on-primary-fixed": "#2f1500" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-lg": "1.25rem", "margin": "1rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-md": "0.875rem", "gutter": "1rem", "space-xl": "1.75rem" }, "fontFamily": { "label-sm": ["JetBrains Mono"], "label-md": ["JetBrains Mono"], "display-mobile": ["Space Grotesk"], "headline-lg": ["Space Grotesk"], "body-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "headline-md": ["Space Grotesk"], "label-lg": ["JetBrains Mono"], "display": ["Space Grotesk"], "headline-sm": ["Space Grotesk"] }, "fontSize": { "label-sm": ["10px", { "lineHeight": "12px", "fontWeight": "500" }], "label-md": ["11px", { "lineHeight": "14px", "fontWeight": "500" }], "display-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "30px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }], "headline-md": ["20px", { "lineHeight": "26px", "fontWeight": "600" }], "label-lg": ["13px", { "lineHeight": "16px", "fontWeight": "600" }], "display": ["34px", { "lineHeight": "40px", "fontWeight": "700" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="ApiEcuador Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UlQJxWXBlQShHpvGcG09sZTVFRQSsHUu9I47mQvYa2NlaIqdGXgY2IHURbzw4wirZS5n2SjzpSrjk3-ZlJG53vrz5TJrfBVNlXOHAhdEwfwDUgttgTCtGWD4JvGCGzlmb8mFO5Wsa_Ke1g0G_sf-vjkZRFuInbHvSfqw0PVdW0cYyVmvXAAdAEGaDCT2TRvKUuUCKIyFhu718oyf4m_H5YM8O7ZkQ1L8gQa-QaljiyR59nQCAEBN8E0xs"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-primary leading-none">ApiEcuador</span><span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-medium mt-0.5">Ecuador Apícola</span></div></div><div class="flex items-center gap-space-xs"><button aria-label="Alertas de Trashumancia" class="w-11 h-11 flex items-center justify-center relative rounded-full text-on-surface-variant active:bg-surface-container-high"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-error rounded-full ring-2 ring-surface"></span></button><div class="w-11 h-11 flex items-center justify-center"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOXli5YGSoYIEEpTZfYHz98HUYdcWph2gkapWu-M2kEcgC32RiBf9chnAwnKq6jT6fGwhujQQKP64scoFYK36aRsmloRa6H1Lu2KV_YDqX3kqbfSCMKLAGjP19FXwQgHvOSBFZcSWivBSLxKsN1MxsmQ-qham78KdNFk815ZjxMbHjwxHj6d96rwc2hmU0bu9kjDIM4KYEhvRcM2COY1G-JKHycBMdmEzscUhouDwenp0N115kLdn8"/></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full pb-8">
+<!-- Header Contextual -->
+<div class="px-gutter pt-2 pb-4 flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary/10 text-primary font-label-sm text-label-sm uppercase tracking-wider font-semibold">
+<span class="material-symbols-outlined text-[14px]">air</span>
+        Simulador Aerodinámico Apícola • SIG 3 KM
+      </span>
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+        v2.4 Sierra
+      </span>
+</div>
+<div class="flex flex-col">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+        Simulación de Deriva y Esfuerzo de Vuelo
+      </h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-snug">
+        Modelado dinámico de deriva de pecoreadoras por velocidad y vector de viento en el <strong class="text-on-surface font-semibold">Apiario Los Volcanes</strong> (3.050 msnm, Cotopaxi).
+      </p>
+</div>
+</div>
+<!-- Escenarios Rápidos Predefinidos (Chips con Micro-interacción) -->
+<div class="px-gutter mb-4">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-medium">Escenarios Microclimáticos</span>
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+        Modelo Aerodinámico Activo
+      </span>
+</div>
+<div class="grid grid-cols-1 gap-2 sm:grid-cols-3" id="scenarios-container">
+<button class="scenario-pill flex items-start gap-2.5 p-3 rounded-xl bg-surface-container-low text-left transition-all active:scale-[0.98]" id="btn-scen-calm" onclick="setScenario('calm')">
+<div class="w-7 h-7 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">wb_sunny</span>
+</div>
+<div class="min-w-0 flex-1">
+<div class="font-headline-sm text-headline-sm text-on-surface text-xs leading-tight">Viento Calmo Matutino</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">8 km/h E • 100% Forrajeo Circular</div>
+</div>
+</button>
+<button class="scenario-pill flex items-start gap-2.5 p-3 rounded-xl bg-primary text-on-primary shadow-md text-left transition-all active:scale-[0.98]" id="btn-scen-afternoon" onclick="setScenario('afternoon')">
+<div class="w-7 h-7 rounded-lg bg-on-primary/20 flex items-center justify-center shrink-0 text-on-primary">
+<span class="material-symbols-outlined text-[18px]">air</span>
+</div>
+<div class="min-w-0 flex-1">
+<div class="font-headline-sm text-headline-sm text-on-primary text-xs leading-tight">Ráfaga Tarde Andina [Activo]</div>
+<div class="font-label-sm text-label-sm text-on-primary/90 mt-0.5">28 km/h NNO • Deriva Extrema SSE</div>
+</div>
+</button>
+<button class="scenario-pill flex items-start gap-2.5 p-3 rounded-xl bg-surface-container-low text-left transition-all active:scale-[0.98]" id="btn-scen-canyon" onclick="setScenario('canyon')">
+<div class="w-7 h-7 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-error">
+<span class="material-symbols-outlined text-[18px]">cyclone</span>
+</div>
+<div class="min-w-0 flex-1">
+<div class="font-headline-sm text-headline-sm text-on-surface text-xs leading-tight">Viento de Cañón Quebrada</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">34 km/h S • Bloqueo Crítico de Vuelo</div>
+</div>
+</button>
+</div>
+</div>
+<!-- Visor Cartográfico Satelital SIG Interactivo -->
+<div class="px-gutter mb-5">
+<div class="relative w-full rounded-2xl bg-surface-container-lowest overflow-hidden shadow-sm">
+<!-- Barra Superior del Visor -->
+<div class="px-3 py-2.5 bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">satellite_alt</span>
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface font-semibold">SIG Vectorial 3.050 msnm</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">Escala 1:25.000</span>
+<button class="w-6 h-6 rounded flex items-center justify-center bg-surface-container-lowest text-on-surface-variant active:bg-surface-container-high" title="Centrar Apiario">
+<span class="material-symbols-outlined text-[16px]">my_location</span>
+</button>
+</div>
+</div>
+<!-- Lienzo Gráfico Vectorial Satelital (Simulación de Deriva) -->
+<div class="relative w-full aspect-[4/3] bg-surface-container-high overflow-hidden select-none">
+<!-- Mapa Satelital de Base Estilizado -->
+<div class="absolute inset-0 bg-cover bg-center opacity-70" data-alt="High resolution satellite orthophoto view of mountainous Andean highlands topography in Ecuador with patchwork agricultural fields, paramo ravines, and eucalyptus windbreaks under dramatic equatorial light." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCbAbUB0m7xy2fpJVH1ZrAK5eYXXMg37ovnkQHnQXGFEEZ9BMvqzRuuxzt-oe3JRFP9FPDPhkpbhV3APQ3E2UHfFJSnh8TWdlMJE7W3tHQVlSnOYVcNGxr0cVxU6H7ubWSOtIa52_RMURE-ZuzEjEILtrycAE1nD-hQHsOXRmiOkjyxbpZziOelnkJud_rk8OOV0aZqQrJXn748qdPyCd1eTtvTpbwjyFWzd92IQwOVW2erbP-5qJbE')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim/80 via-transparent to-surface-dim/40 pointer-events-none"></div>
+<!-- Capa SVG Dinámica: Deformación de Cono & Vectores -->
+<svg class="absolute inset-0 w-full h-full" id="vector-map-svg" preserveaspectratio="xMidYMid meet" viewbox="0 0 400 300">
+<defs>
+<!-- Gradiente de la envolvente de forrajeo deformada -->
+<radialgradient cx="45%" cy="35%" id="foragingGradient" r="70%">
+<stop offset="0%" stop-color="#d97706" stop-opacity="0.45"></stop>
+<stop offset="65%" stop-color="#d97706" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#b15f00" stop-opacity="0.05"></stop>
+</radialgradient>
+<!-- Gradiente del área de pérdida / agotamiento -->
+<radialgradient cx="68%" cy="75%" id="exhaustionGradient" r="40%">
+<stop offset="0%" stop-color="#ba1a1a" stop-opacity="0.4"></stop>
+<stop offset="100%" stop-color="#ba1a1a" stop-opacity="0.0"></stop>
+</radialgradient>
+<!-- Marcador de flecha de viento -->
+<marker id="windArrow" markerheight="4" markerwidth="4" orient="auto-start-reverse" refx="5" refy="5" viewbox="0 0 10 10">
+<path d="M 0 1 L 8 5 L 0 9 z" fill="#d97706"></path>
+</marker>
+</defs>
+<!-- Cuadrícula Topográfica de Referencia (1 km) -->
+<line stroke="#ffffff" stroke-dasharray="2 3" stroke-opacity="0.2" stroke-width="1" x1="0" x2="400" y1="75" y2="75"></line>
+<line stroke="#ffffff" stroke-dasharray="2 3" stroke-opacity="0.2" stroke-width="1" x1="0" x2="400" y1="150" y2="150"></line>
+<line stroke="#ffffff" stroke-dasharray="2 3" stroke-opacity="0.2" stroke-width="1" x1="0" x2="400" y1="225" y2="225"></line>
+<line stroke="#ffffff" stroke-dasharray="2 3" stroke-opacity="0.2" stroke-width="1" x1="100" x2="100" y1="0" y2="300"></line>
+<line stroke="#ffffff" stroke-dasharray="2 3" stroke-opacity="0.2" stroke-width="1" x1="200" x2="200" y1="0" y2="300"></line>
+<line stroke="#ffffff" stroke-dasharray="2 3" stroke-opacity="0.2" stroke-width="1" x1="300" x2="300" y1="0" y2="300"></line>
+<!-- Círculo Neutro Teórico (3.0 km sin viento) -->
+<circle cx="200" cy="140" fill="none" opacity="0.8" r="95" stroke="#64748b" stroke-dasharray="4 4" stroke-width="1.5"></circle>
+<text class="font-label-sm text-[9px] font-bold" fill="#334155" opacity="0.9" x="202" y="52">LÍMITE TEÓRICO CALMO (3.0 km)</text>
+<!-- Zona de Riesgo de Agotamiento en Quebrada / Cañón -->
+<path d="M 230,175 Q 310,210 330,270 Q 280,290 220,240 Z" fill="url(#exhaustionGradient)" stroke="#ba1a1a" stroke-dasharray="3 3" stroke-width="1"></path>
+<text class="font-label-sm text-[8px] font-bold tracking-tight" fill="#ba1a1a" x="255" y="245">CAÑÓN TURBULENCIA (2.4 km)</text>
+<!-- Envolvente Real de Forrajeo Deformada por Viento NNO (Elipse Asimétrica Dinámica) -->
+<!-- Se estira hacia SSE (4.2 km) y se contrae a NNO (1.1 km) -->
+<path d="M 180,105 C 120,115 110,165 145,210 C 190,265 270,285 305,250 C 330,215 285,150 240,110 C 215,90 195,95 180,105 Z" fill="url(#foragingGradient)" id="driftEnvelope" stroke="#d97706" stroke-width="2.5"></path>
+<!-- Vectores de Flujo Eólico (Animados conceptualmente con flechas) -->
+<g marker-end="url(#windArrow)" opacity="0.75" stroke="#d97706" stroke-width="1.8">
+<line x1="70" x2="110" y1="50" y2="95"></line>
+<line x1="160" x2="200" y1="35" y2="80"></line>
+<line x1="280" x2="320" y1="45" y2="90"></line>
+<line x1="110" x2="155" y1="140" y2="190"></line>
+<line x1="240" x2="285" y1="130" y2="185"></line>
+</g>
+<!-- Línea y Cota de Contracción Barlovento (1.1 km NNO) -->
+<line stroke="#ba1a1a" stroke-width="2" x1="200" x2="185" y1="140" y2="103"></line>
+<circle cx="185" cy="103" fill="#ba1a1a" r="3.5"></circle>
+<text class="font-label-sm text-[8.5px] font-bold" fill="#7f1d1d" x="135" y="98">1.1 km BARLOVENTO</text>
+<!-- Línea y Cota de Elongación Sotavento (4.2 km SSE) -->
+<line stroke="#006b2f" stroke-width="2" x1="200" x2="295" y1="140" y2="265"></line>
+<circle cx="295" cy="265" fill="#006b2f" r="3.5"></circle>
+<text class="font-label-sm text-[8.5px] font-bold" fill="#006b2f" x="290" y="280">4.2 km SOTAVENTO</text>
+<!-- Manchas Botánicas de Forrajeo (Puntos de Interés) -->
+<!-- Punto A: Eucalipto Serrano (Alcanzable) -->
+<g class="cursor-pointer">
+<circle cx="245" cy="195" fill="#1e8642" fill-opacity="0.3" r="10" stroke="#006b2f" stroke-width="1.5"></circle>
+<circle cx="245" cy="195" fill="#006b2f" r="4"></circle>
+<text class="font-label-sm text-[8px] font-bold" fill="#14532d" x="260" y="198">Eucalipto (1.8 km SE)</text>
+</g>
+<!-- Punto B: Chilca Andina (Bloqueada / Inaccesible) -->
+<g class="cursor-pointer">
+<circle cx="170" cy="70" fill="#ba1a1a" fill-opacity="0.2" r="8" stroke="#ba1a1a" stroke-dasharray="2 2" stroke-width="1.5"></circle>
+<path d="M 167 67 L 173 73 M 173 67 L 167 73" stroke="#ba1a1a" stroke-width="1.5"></path>
+<text class="font-label-sm text-[8px] font-bold" fill="#991b1b" x="90" y="68">Chilca (Inaccesible 1.2 km)</text>
+</g>
+<!-- Punto C: Colmenar Ajeno / Riesgo Deriva Sanitaria -->
+<g class="cursor-pointer">
+<rect fill="#ffffff" height="14" rx="2" stroke="#ba1a1a" stroke-width="2" width="14" x="298" y="222"></rect>
+<text class="font-headline-sm text-[9px] font-bold" fill="#ba1a1a" x="302" y="233">!</text>
+<text class="font-label-sm text-[8px] font-semibold" fill="#7f1d1d" x="240" y="222">Colmenar Ajeno (2.4 km)</text>
+</g>
+<!-- NÚCLEO CENTRAL: Apiario Los Volcanes -->
+<circle class="animate-ping" cx="200" cy="140" fill="#8d4b00" fill-opacity="0.25" r="16" style="animation-duration: 3s;"></circle>
+<circle cx="200" cy="140" fill="#ffdcc3" r="9" stroke="#8d4b00" stroke-width="2.5"></circle>
+<circle cx="200" cy="140" fill="#8d4b00" r="3.5"></circle>
+<text class="font-headline-sm text-[10px] font-extrabold bg-surface px-1" fill="#1c1c18" text-anchor="middle" x="200" y="163">LOS VOLCANES</text>
+<text class="font-label-sm text-[7.5px] font-medium" fill="#554336" text-anchor="middle" x="200" y="173">42 colmenas</text>
+<!-- Rosa de los Vientos / Indicador de Cuadrante -->
+<g transform="translate(42, 255)">
+<circle cx="0" cy="0" fill="#ffffff" fill-opacity="0.9" r="22"></circle>
+<path d="M 0 -18 L 4 -4 L 18 0 L 4 4 L 0 18 L -4 4 L -18 0 L -4 -4 Z" fill="#545f73"></path>
+<path d="M 0 -18 L 4 -4 L 0 0 Z" fill="#ba1a1a"></path>
+<text class="font-label-sm text-[8px] font-bold" fill="#ba1a1a" text-anchor="middle" x="0" y="-19">N</text>
+<!-- Vector de Viento Activo -->
+<line marker-end="url(#windArrow)" stroke="#d97706" stroke-width="2.5" x1="-12" x2="12" y1="-12" y2="12"></line>
+<text class="font-label-sm text-[7px] font-bold" fill="#8d4b00" text-anchor="middle" x="0" y="29">310° NNO</text>
+</g>
+</svg>
+<!-- Píldora Flotante de Alerta de Deriva Crítica -->
+<div class="absolute top-3 right-3 bg-surface-container-lowest/95 backdrop-blur-md px-2.5 py-1.5 rounded-lg shadow-sm flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-error animate-pulse"></span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase font-bold text-error tracking-tight">Deriva Severa: SSE</span>
+<span class="font-label-sm text-[9px] text-on-surface-variant font-mono">Retorno rasante requerido</span>
+</div>
+</div>
+</div>
+<!-- Leyenda Técnica del Visor -->
+<div class="p-3 bg-surface-container-lowest grid grid-cols-3 gap-2 text-center">
+<div class="flex items-center justify-center gap-1.5 p-1 rounded bg-surface-container-low">
+<span class="w-2.5 h-2.5 rounded-full bg-primary shrink-0"></span>
+<span class="font-label-sm text-label-sm text-on-surface truncate">Envolvente Real</span>
+</div>
+<div class="flex items-center justify-center gap-1.5 p-1 rounded bg-surface-container-low">
+<span class="w-3 h-0.5 border-b-2 border-dashed border-secondary shrink-0"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">Calma 3 km</span>
+</div>
+<div class="flex items-center justify-center gap-1.5 p-1 rounded bg-error-container text-on-error-container">
+<span class="w-2 h-2 rounded bg-error shrink-0"></span>
+<span class="font-label-sm text-label-sm truncate font-semibold">Extravío 2.4 km</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Controles Interactivos de Parámetros Eólicos -->
+<div class="px-gutter mb-5">
+<div class="bg-surface-container-lowest p-4 rounded-2xl shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">tune</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Calibración de Vector Eólico</h2>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-md text-label-md font-bold" id="speed-badge">
+          28 km/h • Ráfaga Fuerte
+        </span>
+</div>
+<!-- Slider Velocidad de Viento -->
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between items-center text-on-surface-variant font-label-md text-label-md">
+<span class="uppercase tracking-wider">Velocidad Anemométrica</span>
+<span class="font-bold text-primary font-mono text-xs" id="speed-val">28 km/h</span>
+</div>
+<input class="w-full h-2.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" id="windSpeedSlider" max="42" min="4" oninput="updateWindSpeed(this.value)" step="1" type="range" value="28"/>
+<div class="flex justify-between font-label-sm text-[10px] text-on-surface-variant pt-1 font-mono">
+<span>5 (Calma)</span>
+<span>14 (Brisa)</span>
+<span class="text-primary font-bold">28 (Crítico)</span>
+<span class="text-error font-bold">35+ (Cese Vuelo)</span>
+</div>
+</div>
+<!-- Selector de Cuadrante / Dirección Vectorial -->
+<div class="flex flex-col gap-2 pt-1">
+<div class="flex justify-between items-center text-on-surface-variant font-label-md text-label-md">
+<span class="uppercase tracking-wider">Dirección de Origen del Viento</span>
+<span class="font-bold text-on-surface font-mono text-xs" id="bearing-label">NNO (310° Quebrada)</span>
+</div>
+<div class="grid grid-cols-4 gap-1.5" id="wind-dir-selector">
+<button class="dir-btn py-2 px-1 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm font-semibold active:bg-surface-container-high" onclick="setDirection('N', 'Norte (0° Pár')', this)">N 0°</button>
+<button class="dir-btn py-2 px-1 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm font-semibold active:bg-surface-container-high" onclick="setDirection('NE', 'Nororiente (45°)', this)">NE 45°</button>
+<button class="dir-btn py-2 px-1 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-semibold shadow-sm" onclick="setDirection('NNO', 'NNO (310° Quebrada)', this)">NNO 310°</button>
+<button class="dir-btn py-2 px-1 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm font-semibold active:bg-surface-container-high" onclick="setDirection('E', 'Oriente (90°)', this)">E 90°</button>
+<button class="dir-btn py-2 px-1 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm font-semibold active:bg-surface-container-high" onclick="setDirection('SE', 'Suroriente (135°)', this)">SE 135°</button>
+<button class="dir-btn py-2 px-1 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm font-semibold active:bg-surface-container-high" onclick="setDirection('S', 'Sur Cañón (180°)', this)">S 180°</button>
+<button class="dir-btn py-2 px-1 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm font-semibold active:bg-surface-container-high" onclick="setDirection('SO', 'Suroccidente (225°)', this)">SO 225°</button>
+<button class="dir-btn py-2 px-1 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm font-semibold active:bg-surface-container-high" onclick="setDirection('O', 'Occidente (270°)', this)">O 270°</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Tarjetas KPI: Impacto Biomecánico & Energético en Tiempo Real -->
+<div class="px-gutter mb-5">
+<div class="flex items-center justify-between mb-2.5">
+<h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px] text-primary">speed</span>
+        Métricas Biomecánicas de Vuelo
+      </h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">Apis mellifera carnica</span>
+</div>
+<div class="grid grid-cols-2 gap-2.5">
+<!-- KPI 1: Gasto Metabólico -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between text-on-surface-variant mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Gasto Metabólico</span>
+<span class="material-symbols-outlined text-[18px] text-error">local_fire_department</span>
+</div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-display-mobile text-display-mobile font-bold text-error leading-none" id="kpi-metabolic">+64%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">cal/hora</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant mt-1.5 leading-tight" id="kpi-metabolic-sub">
+          Consumo pico: <strong class="text-on-surface font-semibold">18 mg azúcar/h</strong> contra barlovento.
+        </p>
+</div>
+<!-- KPI 2: Tasa de Retorno Seguro -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between text-on-surface-variant mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Retorno Seguro</span>
+<span class="material-symbols-outlined text-[18px] text-primary">flight_land</span>
+</div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-display-mobile text-display-mobile font-bold text-primary leading-none" id="kpi-return">71%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">éxito</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant mt-1.5 leading-tight" id="kpi-return-sub">
+<strong class="text-error font-semibold">29% riesgo</strong> de caída por hipotermia o agotamiento alar.
+        </p>
+</div>
+<!-- KPI 3: Superficie Efectiva Accesible -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between text-on-surface-variant mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Área Accesible</span>
+<span class="material-symbols-outlined text-[18px] text-tertiary">crop_free</span>
+</div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-display-mobile text-display-mobile font-bold text-on-surface leading-none" id="kpi-area">1.940</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Ha</span>
+</div>
+<div class="flex items-center gap-1 mt-1.5">
+<span class="px-1.5 py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-[10px] font-bold" id="kpi-area-tag">-31% vs. calma</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant truncate">de 2.827 Ha base</span>
+</div>
+</div>
+<!-- KPI 4: Deriva Angular Lateral -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between text-on-surface-variant mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Deriva Angular</span>
+<span class="material-symbols-outlined text-[18px] text-secondary">explore</span>
+</div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-display-mobile text-display-mobile font-bold text-on-surface leading-none" id="kpi-drift">22°</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">desvío lateral</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant mt-1.5 leading-tight">
+          Arrastre mecánico hacia el <strong class="text-on-surface font-semibold">cuadrante SSE</strong>.
+        </p>
+</div>
+</div>
+</div>
+<!-- Matriz de Cobertura Botánica Afectada -->
+<div class="px-gutter mb-5">
+<div class="flex items-center justify-between mb-2.5">
+<h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px] text-tertiary">local_florist</span>
+        Matriz Botánica y Cobertura Nectarífera
+      </h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Impacto Real</span>
+</div>
+<div class="flex flex-col gap-2.5">
+<!-- Flor 1: Eucalipto Serrano (Favorable) -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl flex items-start gap-3 shadow-sm">
+<div class="w-10 h-10 rounded-xl bg-tertiary/15 text-tertiary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">park</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface text-sm font-semibold truncate">Eucalipto Serrano (E. globulus)</h3>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm font-bold">100% Accesible</span>
+</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Sotavento • 1.8 km SSE • Floración Pico</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-snug">
+            Vuelo de ida asistido por corriente de cola. <strong class="text-on-surface font-medium">Requisito:</strong> Retorno forzado con néctar en vuelo rasante (&lt;1.2 m del suelo) para eludir la turbulencia laminar.
+          </p>
+</div>
+</div>
+<!-- Flor 2: Chilca Andina (Bloqueada) -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl flex items-start gap-3 shadow-sm">
+<div class="w-10 h-10 rounded-xl bg-error/15 text-error flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">block</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface text-sm font-semibold truncate">Chilca Andina (Baccharis latifolia)</h3>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">Bloqueo Crítico</span>
+</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Barlovento • 1.2 km NNO • Polen Abundante</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-snug">
+            Acceso energéticamente inviable. El costo metabólico alar supera en un <strong class="text-error font-medium">142% el aporte calórico</strong> del néctar recolectado.
+          </p>
+</div>
+</div>
+<!-- Alerta Sanitaria: Colmenar No Asociado (Varroa Drift) -->
+<div class="bg-error-container/40 p-3.5 rounded-xl flex items-start gap-3 shadow-sm">
+<div class="w-10 h-10 rounded-xl bg-error text-on-error flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">pest_control</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<h3 class="font-headline-sm text-headline-sm text-on-error-container text-sm font-bold truncate">Alerta Sanitaria: Deriva a Colmenar Extraño</h3>
+<span class="px-2 py-0.5 rounded-full bg-error text-on-error font-label-sm text-label-sm font-bold">18% Desvío</span>
+</div>
+<div class="font-label-sm text-label-sm text-on-error-container/80 mt-0.5">Sotavento Quebrada • 2.4 km SSE • 30 colmenas rústicas</div>
+<p class="font-body-sm text-body-sm text-on-error-container mt-1 leading-snug">
+            Abejas cargadas incapaces de remontar el cañón entran en colmenares colindantes sin control sanitario, disparando el índice de re-infestación por <strong class="font-semibold underline">Varroa destructor</strong> y pillaje inducido.
+          </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Recomendaciones Técnicas de Manejo Dinámico -->
+<div class="px-gutter mb-6">
+<div class="bg-surface-container-high p-4 rounded-2xl flex flex-col gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">engineering</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Protocolo Inmediato de Manejo en Viento</h2>
+</div>
+<div class="space-y-2.5">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check_circle</span>
+<p class="font-body-sm text-body-sm text-on-surface leading-tight">
+<strong>Instalación de Cortina Rompevientos:</strong> Levantar malla de sombreo agrícola o seto vivo de retama/sauce a 20 metros a barlovento (rumbo 310° NNO) para disipar turbulencia sobre la piquera.
+          </p>
+</div>
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check_circle</span>
+<p class="font-body-sm text-body-sm text-on-surface leading-tight">
+<strong>Reducción de Piqueras a 3 cm:</strong> Activar reductores de entrada a partir de las 13:30 para impedir la despresurización térmica del nido y repeler pillaje por deriva externa.
+          </p>
+</div>
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check_circle</span>
+<p class="font-body-sm text-body-sm text-on-surface leading-tight">
+<strong>Restricción de Jarabe Líquido:</strong> Prohibido alimentar con estimulante líquido a cielo abierto o alimentador de techo durante ráfagas superiores a 22 km/h por dispersión olfativa caótica.
+          </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Botones de Acción Operativa de Campo -->
+<div class="px-gutter flex flex-col gap-2.5">
+<!-- Botón Primario -->
+<button class="w-full min-h-[50px] px-4 py-3 bg-primary text-on-primary rounded-xl font-label-lg text-label-lg uppercase tracking-wider font-bold shadow-md active:scale-[0.99] transition-all flex items-center justify-center gap-2" onclick="handleExportGIS()">
+<span class="material-symbols-outlined text-[20px]">download</span>
+      Exportar Capa GIS de Deriva (KML / GeoJSON)
+    </button>
+<!-- Botón Secundario -->
+<button class="w-full min-h-[46px] px-4 py-2.5 bg-secondary text-on-secondary rounded-xl font-label-lg text-label-lg uppercase tracking-wider font-semibold shadow-sm active:scale-[0.99] transition-all flex items-center justify-center gap-2" onclick="simulateEntranceOrientation()">
+<span class="material-symbols-outlined text-[20px]">rotate_right</span>
+      Simular Reorientación de Piqueras (130° SE)
+    </button>
+<!-- Botón Terciario Utilitario -->
+<button class="w-full min-h-[42px] px-4 py-2 bg-surface-container-low text-on-surface-variant hover:text-on-surface rounded-xl font-label-md text-label-md uppercase tracking-wider font-medium active:bg-surface-container-high transition-all flex items-center justify-center gap-2" onclick="downloadAgrocalidadProtocol()">
+<span class="material-symbols-outlined text-[18px]">description</span>
+      Descargar Protocolo Agrocalidad de Viento Andino (PDF)
+    </button>
+</div>
+<!-- Notificación Toast Dinámica (Micro-interacción) -->
+<div class="fixed bottom-20 left-4 right-4 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl flex items-center justify-between opacity-0 pointer-events-none transition-all duration-300 z-50" id="sim-toast">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[20px]" id="toast-icon">check_circle</span>
+<span class="font-body-sm text-body-sm truncate" id="toast-message">Parámetros aerodinámicos recalculados</span>
+</div>
+<button class="text-inverse-on-surface/80 hover:text-inverse-on-surface" onclick="hideToast()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<script>
+  // Estado Dinámico de Simulación
+  let currentSpeed = 28;
+  let currentBearing = "NNO";
+  let currentDirectionLabel = "NNO (310° Quebrada)";
+
+  function showToast(msg, icon = 'check_circle') {
+    const toast = document.getElementById('sim-toast');
+    const msgEl = document.getElementById('toast-message');
+    const iconEl = document.getElementById('toast-icon');
+    if (!toast || !msgEl || !iconEl) return;
+
+    msgEl.textContent = msg;
+    iconEl.textContent = icon;
+    toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+    toast.classList.add('opacity-100', 'translate-y-0');
+
+    clearTimeout(window.toastTimer);
+    window.toastTimer = setTimeout(hideToast, 3500);
+  }
+
+  function hideToast() {
+    const toast = document.getElementById('sim-toast');
+    if (!toast) return;
+    toast.classList.add('opacity-0', 'pointer-events-none');
+    toast.classList.remove('opacity-100');
+  }
+
+  function updateWindSpeed(val) {
+    currentSpeed = parseInt(val, 10);
+    document.getElementById('speed-val').textContent = currentSpeed + " km/h";
+
+    const badge = document.getElementById('speed-badge');
+    const metabolic = document.getElementById('kpi-metabolic');
+    const returnKpi = document.getElementById('kpi-return');
+    const returnSub = document.getElementById('kpi-return-sub');
+    const areaKpi = document.getElementById('kpi-area');
+    const areaTag = document.getElementById('kpi-area-tag');
+    const driftKpi = document.getElementById('kpi-drift');
+    const envelope = document.getElementById('driftEnvelope');
+
+    if (currentSpeed <= 10) {
+      badge.textContent = currentSpeed + " km/h • Viento Calmo";
+      badge.className = "px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-md text-label-md font-bold";
+      metabolic.textContent = "+8%";
+      metabolic.className = "font-display-mobile text-display-mobile font-bold text-tertiary leading-none";
+      returnKpi.textContent = "96%";
+      returnSub.innerHTML = '<strong class="text-tertiary font-semibold">4% riesgo</strong> habitual de retorno.';
+      areaKpi.textContent = "2.790";
+      areaTag.textContent = "-1% vs. calma";
+      areaTag.className = "px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-[10px] font-bold";
+      driftKpi.textContent = "3°";
+      // Deformación casi circular
+      if (envelope) {
+        envelope.setAttribute('d', 'M 195,65 C 130,65 110,135 125,185 C 145,235 255,245 275,195 C 295,145 270,65 205,65 Z');
+      }
+    } else if (currentSpeed <= 22) {
+      badge.textContent = currentSpeed + " km/h • Brisa Moderada";
+      badge.className = "px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md font-bold";
+      metabolic.textContent = "+32%";
+      metabolic.className = "font-display-mobile text-display-mobile font-bold text-primary leading-none";
+      returnKpi.textContent = "84%";
+      returnSub.innerHTML = '<strong class="text-secondary font-semibold">16% riesgo</strong> por deriva moderada.';
+      areaKpi.textContent = "2.310";
+      areaTag.textContent = "-18% vs. calma";
+      areaTag.className = "px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-[10px] font-bold";
+      driftKpi.textContent = "12°";
+      if (envelope) {
+        envelope.setAttribute('d', 'M 190,85 C 125,95 105,150 135,195 C 170,250 260,265 290,225 C 310,185 275,120 220,95 Z');
+      }
+    } else if (currentSpeed <= 32) {
+      badge.textContent = currentSpeed + " km/h • Ráfaga Fuerte";
+      badge.className = "px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-md text-label-md font-bold";
+      metabolic.textContent = "+64%";
+      metabolic.className = "font-display-mobile text-display-mobile font-bold text-error leading-none";
+      returnKpi.textContent = "71%";
+      returnSub.innerHTML = '<strong class="text-error font-semibold">29% riesgo</strong> de caída por agotamiento alar.';
+      areaKpi.textContent = "1.940";
+      areaTag.textContent = "-31% vs. calma";
+      areaTag.className = "px-1.5 py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-[10px] font-bold";
+      driftKpi.textContent = "22°";
+      if (envelope) {
+        envelope.setAttribute('d', 'M 180,105 C 120,115 110,165 145,210 C 190,265 270,285 305,250 C 330,215 285,150 240,110 C 215,90 195,95 180,105 Z');
+      }
+    } else {
+      badge.textContent = currentSpeed + " km/h • Cese Crítico";
+      badge.className = "px-2 py-0.5 rounded bg-error text-on-error font-label-md text-label-md font-bold";
+      metabolic.textContent = "+120%";
+      metabolic.className = "font-display-mobile text-display-mobile font-bold text-error leading-none";
+      returnKpi.textContent = "38%";
+      returnSub.innerHTML = '<strong class="text-error font-bold">62% pérdidas</strong>. Cese inmediato recomendado.';
+      areaKpi.textContent = "980";
+      areaTag.textContent = "-65% colapso";
+      areaTag.className = "px-1.5 py-0.5 rounded bg-error text-on-error font-label-sm text-[10px] font-bold";
+      driftKpi.textContent = "34°";
+      if (envelope) {
+        envelope.setAttribute('d', 'M 175,120 C 135,130 120,170 150,220 C 200,280 290,295 320,265 C 335,230 280,165 230,125 Z');
+      }
+    }
+  }
+
+  function setDirection(code, label, btnEl) {
+    currentBearing = code;
+    currentDirectionLabel = label;
+    document.getElementById('bearing-label').textContent = label;
+
+    document.querySelectorAll('.dir-btn').forEach(btn => {
+      btn.className = "dir-btn py-2 px-1 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm font-semibold active:bg-surface-container-high";
+    });
+
+    if (btnEl) {
+      btnEl.className = "dir-btn py-2 px-1 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-semibold shadow-sm";
+    }
+
+    showToast(`Vector reconfigurado a cuadrante ${code} (${label})`);
+  }
+
+  function setScenario(type) {
+    const slider = document.getElementById('windSpeedSlider');
+    const pills = document.querySelectorAll('.scenario-pill');
+
+    pills.forEach(p => {
+      p.className = "scenario-pill flex items-start gap-2.5 p-3 rounded-xl bg-surface-container-low text-left transition-all active:scale-[0.98]";
+      const iconWrap = p.querySelector('div');
+      if (iconWrap) {
+        iconWrap.className = "w-7 h-7 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-on-surface-variant";
+      }
+      const title = p.querySelector('.font-headline-sm');
+      if (title) title.className = "font-headline-sm text-headline-sm text-on-surface text-xs leading-tight";
+      const sub = p.querySelector('.font-label-sm');
+      if (sub) sub.className = "font-label-sm text-label-sm text-on-surface-variant mt-0.5";
+    });
+
+    if (type === 'calm') {
+      const active = document.getElementById('btn-scen-calm');
+      active.className = "scenario-pill flex items-start gap-2.5 p-3 rounded-xl bg-primary text-on-primary shadow-md text-left transition-all active:scale-[0.98]";
+      active.querySelector('div').className = "w-7 h-7 rounded-lg bg-on-primary/20 flex items-center justify-center shrink-0 text-on-primary";
+      active.querySelector('.font-headline-sm').className = "font-headline-sm text-headline-sm text-on-primary text-xs leading-tight font-bold";
+      active.querySelector('.font-label-sm').className = "font-label-sm text-label-sm text-on-primary/90 mt-0.5";
+
+      slider.value = 8;
+      updateWindSpeed(8);
+      document.getElementById('bearing-label').textContent = "Oriente (90°)";
+      showToast("Cargado: Viento Calmo Matutino (8 km/h E)");
+    } else if (type === 'afternoon') {
+      const active = document.getElementById('btn-scen-afternoon');
+      active.className = "scenario-pill flex items-start gap-2.5 p-3 rounded-xl bg-primary text-on-primary shadow-md text-left transition-all active:scale-[0.98]";
+      active.querySelector('div').className = "w-7 h-7 rounded-lg bg-on-primary/20 flex items-center justify-center shrink-0 text-on-primary";
+      active.querySelector('.font-headline-sm').className = "font-headline-sm text-headline-sm text-on-primary text-xs leading-tight font-bold";
+      active.querySelector('.font-label-sm').className = "font-label-sm text-label-sm text-on-primary/90 mt-0.5";
+
+      slider.value = 28;
+      updateWindSpeed(28);
+      document.getElementById('bearing-label').textContent = "NNO (310° Quebrada)";
+      showToast("Cargado: Ráfaga de Tarde Andina (28 km/h NNO)");
+    } else if (type === 'canyon') {
+      const active = document.getElementById('btn-scen-canyon');
+      active.className = "scenario-pill flex items-start gap-2.5 p-3 rounded-xl bg-error text-on-error shadow-md text-left transition-all active:scale-[0.98]";
+      active.querySelector('div').className = "w-7 h-7 rounded-lg bg-on-error/20 flex items-center justify-center shrink-0 text-on-error";
+      active.querySelector('.font-headline-sm').className = "font-headline-sm text-headline-sm text-on-error text-xs leading-tight font-bold";
+      active.querySelector('.font-label-sm').className = "font-label-sm text-label-sm text-on-error/90 mt-0.5";
+
+      slider.value = 34;
+      updateWindSpeed(34);
+      document.getElementById('bearing-label').textContent = "Sur Cañón (180°)";
+      showToast("Alerta: Viento de Cañón (34 km/h S) - Cese de vuelo inminente", "warning");
+    }
+  }
+
+  function handleExportGIS() {
+    showToast(`Generando KML/GeoJSON (Polígono deformado ${currentSpeed} km/h)...`, "cloud_download");
+    setTimeout(() => {
+      showToast("Descarga lista: LosVolcanes_DerivaViento_SIG.geojson", "file_download_done");
+    }, 1200);
+  }
+
+  function simulateEntranceOrientation() {
+    showToast("Reorientando 42 piqueras a 130° SE (Barlovento a la espalda)...");
+    setTimeout(() => {
+      showToast("Resultado: +18% Retorno seguro estimado en piquera", "check_circle");
+    }, 1100);
+  }
+
+  function downloadAgrocalidadProtocol() {
+    showToast("Descargando Protocolo Técnico Agrocalidad N° API-2024...", "picture_as_pdf");
+  }
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.05)]" data-active-classes="text-primary font-bold"><div class="grid grid-cols-4 items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-on-surface-variant transition-colors" data-path="trashumancia" href="#"><span class="material-symbols-outlined text-[24px]">local_shipping</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Trashumancia</span></a><a class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-on-surface-variant transition-colors" data-path="flora-ec" href="#"><span class="material-symbols-outlined text-[24px]">yard</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Flora EC</span></a><a class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-on-surface-variant transition-colors" data-path="colmenares" href="#"><span class="material-symbols-outlined text-[24px]">hive</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Colmenares</span></a><a class="flex flex-col items-center justify-center h-full min-h-[44px] gap-0.5 text-on-surface-variant transition-colors" data-path="sanidad-&amp;-cria" href="#"><span class="material-symbols-outlined text-[24px]">shield_with_heart</span><span class="font-label-sm text-label-sm tracking-tight text-center truncate w-full">Sanidad &amp; Cría</span></a></div></nav></body></html>
