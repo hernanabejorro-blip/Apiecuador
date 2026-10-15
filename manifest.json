@@ -1,0 +1,10 @@
+{
+  "name": "ApiEcuador",
+  "short_name": "ApiEcuador",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff8e7",
+  "theme_color": "#f2b632",
+  "description": "Aplicación de apicultura ApiEcuador"
+}
