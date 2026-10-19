@@ -26,6 +26,32 @@ main{padding:20px}.note{padding:13px 15px;border-radius:12px;background:#fff2df;
 .card{min-height:115px;text-decoration:none;color:inherit;background:white;border:1px solid #e4d9c9;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 7px #00000008}
 .card:focus,.card:hover{outline:2px solid #b76b13;outline-offset:1px}.dot{color:var(--green);font-size:14px}.name{font-weight:700;line-height:1.3}.go{margin-top:auto;color:var(--amber);font-size:13px;font-weight:650}
 footer{padding:20px;color:#65584b;font-size:12px;line-height:1.5}
+  
+/* ApiEcuador: mejora visual */
+.card {
+  border-radius: 18px;
+  padding: 20px;
+  min-height: 140px;
+  box-shadow: 0 5px 16px rgba(40, 60, 35, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 9px 24px rgba(40, 60, 35, 0.14);
+}
+header {
+  background: linear-gradient(135deg, #173f32, #36734c);
+}
+.go {
+  font-weight: 750;
+}
+#search {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d8dfd2;
+  border-radius: 12px;
+}
+
 </style></head><body>
 <header><div class="wrap"><div class="brand"><span class="bee">🐝</span><div><h1>ApiEcuador</h1><div>Gestión apícola · Panel de módulos</div></div></div>
 <p>Herramientas de campo para cosecha, floración, sanidad y trashumancia.</p></div></header>
