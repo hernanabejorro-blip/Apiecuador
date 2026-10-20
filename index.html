@@ -156,38 +156,37 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 }
 </script>
   <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const buscador = document.getElementById("buscador");
-  const tarjetas = document.querySelectorAll(".card");
-  const aviso = document.getElementById("sin-resultados");
 
-  if (!buscador) return;
+<script>
+const buscador = document.getElementById("buscador");
+const tarjetas = document.querySelectorAll(".card");
+const aviso = document.getElementById("sin-resultados");
 
-  buscador.addEventListener("input", function () {
-    const texto = buscador.value
-      .toLowerCase()
+buscador.addEventListener("input", function () {
+  const texto = buscador.value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+
+  let visibles = 0;
+
+  tarjetas.forEach(function (tarjeta) {
+    const contenido = tarjeta.textContent
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
-      .trim();
+      .toLowerCase();
 
-    let visibles = 0;
+    const coincide = contenido.includes(texto);
 
-    tarjetas.forEach(function (tarjeta) {
-      const coincide = tarjeta.textContent
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .includes(texto);
+    tarjeta.style.display = coincide ? "" : "none";
 
-      tarjeta.style.display = coincide ? "" : "none";
-      if (coincide) visibles++;
-    });
-
-    if (aviso) {
-      aviso.hidden = visibles > 0;
-    }
+    if (coincide) visibles++;
   });
+
+  aviso.hidden = visibles > 0;
 });
 </script>
+
 </body>
 </html>
