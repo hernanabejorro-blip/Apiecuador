@@ -79,6 +79,15 @@ footer{padding-top:24px;padding-bottom:28px}
 @media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
 
 
+/* Accesos rápidos de trabajo: solo enlazan módulos existentes */
+.accesos-rapidos{max-width:960px;margin:20px auto 18px;padding:0 20px}
+.accesos-rapidos h2{font-size:18px;letter-spacing:-.2px;margin:0 0 10px;color:#173f32}
+.accesos-rapidos-lista{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.acceso-rapido{display:flex;align-items:center;gap:10px;min-height:58px;padding:12px;border:1px solid #dce5d8;border-radius:14px;background:#fff;color:#245c43;text-decoration:none;font-weight:650;box-shadow:0 3px 12px #173f3208}
+.acceso-rapido span:first-child{font-size:22px}
+.acceso-rapido:focus-visible,.acceso-rapido:hover{outline:2px solid #36734c;outline-offset:2px;border-color:#9cbea0}
+@media(max-width:520px){.accesos-rapidos{padding:0 16px;margin:17px auto}.accesos-rapidos-lista{gap:8px}.acceso-rapido{font-size:13px;padding:10px;min-height:60px}}
+
 /* Personalización sencilla desde el celular */
 .customize-toggle{display:block;width:calc(100% - 40px);max-width:960px;margin:0 auto 18px;padding:12px 15px;border:1px solid #cbdacb;border-radius:13px;background:#fff;color:#245c43;font:600 15px system-ui;cursor:pointer}
 #panel-personalizar{max-width:960px;margin:0 auto 20px;padding:18px;background:#fff;border:1px solid #dfe7dc;border-radius:16px;box-shadow:0 5px 18px #173f320c}
@@ -96,6 +105,15 @@ footer{padding-top:24px;padding-bottom:28px}
 </style></head><body>
 <header><div class="wrap"><div class="brand"><span class="bee">🐝</span><div><h1>ApiEcuador</h1><div>Gestión apícola · Panel de módulos</div></div></div>
 <p>Herramientas de campo para cosecha, floración, sanidad y trashumancia.</p></div></header>
+<section class="accesos-rapidos" aria-label="Accesos rápidos">
+  <h2>Accesos rápidos</h2>
+  <div class="accesos-rapidos-lista">
+    <a class="acceso-rapido" href="modulo-21.html"><span aria-hidden="true">🔍</span><span>Inspección de colmenas</span></a>
+    <a class="acceso-rapido" href="modulo-22.html"><span aria-hidden="true">👑</span><span>Cría de reinas</span></a>
+    <a class="acceso-rapido" href="modulo-03.html"><span aria-hidden="true">🛡️</span><span>Sanidad y Varroa</span></a>
+    <a class="acceso-rapido" href="modulo-23.html"><span aria-hidden="true">📅</span><span>Calendario apícola</span></a>
+  </div>
+</section>
 <div style="margin:20px 0;">
   <label for="buscador" style="display:block;font-weight:700;margin-bottom:8px;">
     🔎 Buscar herramientas apícolas
