@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#245c43"><link rel="manifest" href="./manifest.json">
+<title>Copias de seguridad · ApiEcuador</title>
+<style>
+:root{color-scheme:light;--green:#245c43;--cream:#fcf9f2;--ink:#1c1c18}*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5}header{background:linear-gradient(125deg,#173f32,#36734c);color:white;padding:23px 18px}header .wrap,main{max-width:850px;margin:auto}.back{display:inline-block;color:white;text-decoration:none;margin-bottom:13px;font-size:14px}h1{font-size:clamp(24px,5vw,34px);line-height:1.15;margin:0 0 8px}header p{margin:0;color:#eaf3e8}main{padding:20px 16px 35px}.panel{background:white;border:1px solid #e1e6db;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 4px 14px #173f3208}h2{font-size:19px;margin:0 0 10px}.notice{background:#fff3dc;border:1px solid #e9d2a8;padding:13px;border-radius:12px;margin-bottom:16px;font-size:14px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:10px;padding:12px 15px;font:650 15px system-ui;cursor:pointer}.primary{background:var(--green);color:white}.secondary{background:#f3eee3;color:#594b3b}input[type=file]{display:block;width:100%;padding:12px;background:#fff;border:1px solid #d2dccc;border-radius:10px;margin-top:10px}.status{min-height:1.5em;font-size:14px;color:#245c43;overflow-wrap:anywhere}.muted{color:#5f665b;font-size:14px}li{margin:6px 0}@media(max-width:520px){header{padding:20px 16px}main{padding:16px 12px 28px}.panel{padding:15px}}
+</style>
+</head><body>
+<header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🛟 Copias de seguridad</h1><p>Protege tus registros de campo, cosechas y cría de reinas.</p></div></header>
+<main>
+<div class="notice"><strong>Importante:</strong> los datos de los módulos se guardan en este navegador y teléfono; no se suben automáticamente a internet. Descarga una copia periódicamente y guárdala en un lugar seguro.</div>
+<section class="panel"><h2>1. Guardar una copia</h2><p>Descarga un archivo JSON con los registros locales de los módulos de inspección, reinas, calendario, tratamientos y cosecha, además de los nombres personalizados de la pantalla principal.</p><div class="actions"><button class="primary" id="exportar" type="button">⬇️ Descargar copia de seguridad</button></div><p class="muted">El archivo incluye únicamente los datos disponibles en este navegador para esos módulos. No borra ni modifica tus registros.</p></section>
+<section class="panel"><h2>2. Recuperar o combinar una copia</h2><p>Selecciona un archivo JSON exportado anteriormente por ApiEcuador. Para proteger los datos actuales, la importación combina los registros y evita duplicados; no reemplaza silenciosamente los registros que ya tienes.</p><input id="archivo" type="file" accept=".json,application/json"><div class="actions"><button class="secondary" id="importar" type="button">Importar y combinar copia</button></div><p id="estado" class="status" role="status" aria-live="polite"></p></section>
+<section class="panel"><h2>Consejos para no perder información</h2><ul><li>Haz una copia después de registrar inspecciones, tratamientos o una tanda de reinas.</li><li>Guarda el archivo en Descargas y, si puedes, en Google Drive o envíatelo por correo.</li><li>Al cambiar de teléfono, instala/abre ApiEcuador y usa aquí la opción de importar.</li><li>Conserva también el ZIP original del proyecto; ese ZIP es una copia del código, no de tus registros.</li></ul></section>
+</main>
+<script>
+(function(){
+ const keys=["apiecuador-modulo-21-v1","apiecuador-modulo-22-v1","apiecuador-modulo-23-v1","apiecuador-modulo-24-v1","apiecuador-modulo-25-v1","apiecuador-personalizacion-v1"];
+ const status=document.getElementById("estado");
+ function read(key){try{return JSON.parse(localStorage.getItem(key)||"null")}catch(e){return null}}
+ document.getElementById("exportar").addEventListener("click",function(){
+  try{
+   const data={app:"ApiEcuador",formatVersion:1,exportedAt:new Date().toISOString(),data:{}};
+   keys.forEach(k=>{const v=read(k);if(v!==null)data.data[k]=v;});
+   const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+   const url=URL.createObjectURL(blob);const a=document.createElement("a");
+   a.href=url;a.download="apiecuador-copia-"+new Date().toISOString().slice(0,10)+".json";
+   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+   status.textContent="Copia preparada para descargar. Comprueba que el archivo aparezca en Descargas.";
+  }catch(e){status.textContent="No se pudo crear la copia. Revisa el espacio disponible en el teléfono.";}
+ });
+ document.getElementById("importar").addEventListener("click",async function(){
+  const file=document.getElementById("archivo").files[0];
+  if(!file){status.textContent="Primero selecciona un archivo de copia JSON.";return;}
+  try{
+   const backup=JSON.parse(await file.text());
+   if(!backup||backup.app!=="ApiEcuador"||backup.formatVersion!==1||!backup.data||typeof backup.data!=="object")throw new Error("formato");
+   const planned={};let found=0;
+   keys.forEach(k=>{
+    if(!Object.prototype.hasOwnProperty.call(backup.data,k))return;
+    const incoming=backup.data[k];
+    if(k==="apiecuador-personalizacion-v1"){
+     if(incoming&&typeof incoming==="object"&&!Array.isArray(incoming)){planned[k]=incoming;found++;}
+     return;
+    }
+    if(!Array.isArray(incoming))return;
+    const current=read(k);const merged=Array.isArray(current)?current.slice():[];
+    const seen=new Set(merged.map((r)=>r&&r.id!=null?"id:"+r.id:JSON.stringify(r)));
+    incoming.forEach(r=>{const sig=r&&r.id!=null?"id:"+r.id:JSON.stringify(r);if(!seen.has(sig)){merged.push(r);seen.add(sig);}});
+    planned[k]=merged;found++;
+   });
+   if(!found)throw new Error("vacio");
+   const before={};keys.forEach(k=>{before[k]=localStorage.getItem(k);});
+   try{Object.keys(planned).forEach(k=>localStorage.setItem(k,JSON.stringify(planned[k])));}
+   catch(writeError){keys.forEach(k=>{try{if(before[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,before[k]);}catch(ignore){}});throw writeError;}
+   status.textContent="Importación terminada. Los registros se combinaron sin reemplazar los existentes. Abre cada módulo para comprobarlos.";
+  }catch(e){status.textContent="No se pudo importar: el archivo no parece una copia válida de ApiEcuador o no hay espacio suficiente. Tus datos anteriores se conservaron.";}
+ });
+})();
+</script></body></html>
