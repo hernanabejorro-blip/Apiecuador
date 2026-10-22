@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#245c43"><link rel="manifest" href="./manifest.json">
+<title>Seguimiento de Reinas · ApiEcuador</title>
+<style>
+:root{color-scheme:light;--green:#245c43;--cream:#fcf9f2;--ink:#1c1c18}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.45}
+header{background:linear-gradient(125deg,#173f32,#36734c);color:#fff;padding:23px 18px}.wrap,main{max-width:850px;margin:auto}
+.back{display:inline-block;color:#fff;text-decoration:none;margin-bottom:13px;font-size:14px}h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 8px}header p{margin:0;color:#eaf3e8}
+main{padding:20px 16px 36px}.notice{background:#fff3dc;border:1px solid #e9d2a8;padding:12px 14px;border-radius:12px;font-size:13px;margin-bottom:16px}
+.panel,.record{background:#fff;border:1px solid #e1e6db;border-radius:16px;padding:17px;margin-bottom:14px;box-shadow:0 4px 14px #173f3208}h2{font-size:19px;margin:0 0 12px}
+label{display:block;font-weight:650;font-size:14px;margin:13px 0 5px}input,select,textarea{display:block;width:100%;font:16px system-ui;padding:11px 12px;border:1px solid #d2dccc;border-radius:10px;background:#fff;color:#1c1c18}
+input:focus,select:focus,textarea:focus{outline:2px solid #36734c;outline-offset:1px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cursor:pointer}.primary{background:var(--green);color:#fff}.secondary{background:#f3eee3;color:#594b3b}.delete{background:#fae8e5;color:#8b2f22}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.status{font-size:13px;color:#28613f;min-height:1.4em}.record h3{font-size:17px;margin:0 0 8px}.record p{margin:5px 0;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}.empty{color:#65584b;font-size:14px;padding:8px 2px}
+@media(max-width:520px){header{padding:20px 16px}main{padding:16px 12px 28px}.panel,.record{padding:14px}}
+</style></head><body>
+<header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>👑 Seguimiento de Reinas</h1><p>Registra cada lote de traslarve y sigue su evolución hasta comprobar la postura.</p></div></header>
+<main>
+<div class="notice"><strong>Uso práctico:</strong> anota fechas reales y observa cada etapa. Los plazos de desarrollo varían con temperatura, clima y manejo; confirma la postura y la calidad de la reina antes de darla por establecida. Los datos se guardan solo en este navegador y teléfono.</div>
+<section class="panel"><h2 id="form-title">Registrar lote o reina</h2>
+<form id="form">
+<div class="grid">
+<div><label for="lote">Código de lote / reina *</label><input id="lote" required maxlength="60" placeholder="Ej.: TR-2026-01"></div>
+<div><label for="apiario">Apiario</label><input id="apiario" maxlength="80" placeholder="Nombre del apiario"></div>
+<div><label for="fechaTraslarve">Fecha de traslarve *</label><input id="fechaTraslarve" type="date" required></div>
+<div><label for="cantidad">Copas o larvas injertadas</label><input id="cantidad" type="number" min="0" max="1000" step="1" inputmode="numeric" placeholder="Ej.: 15"></div>
+<div><label for="aceptadas">Celdas aceptadas</label><input id="aceptadas" type="number" min="0" max="1000" step="1" inputmode="numeric"></div>
+<div><label for="nacimiento">Nacimiento observado</label><input id="nacimiento" type="date"></div>
+<div><label for="introduccion">Fecha de introducción en núcleo</label><input id="introduccion" type="date"></div>
+<div><label for="postura">Postura comprobada</label><input id="postura" type="date"></div>
+<div><label for="estado-reina">Estado actual</label><select id="estado-reina"><option value="En desarrollo">En desarrollo</option><option value="Celda aceptada">Celda aceptada</option><option value="Reina nacida">Reina nacida</option><option value="En núcleo de fecundación">En núcleo de fecundación</option><option value="Fecundación por comprobar">Fecundación por comprobar</option><option value="Postura comprobada">Postura comprobada</option><option value="No prosperó">No prosperó</option></select></div>
+<div><label for="marca">Marca / color / identificación</label><input id="marca" maxlength="80" placeholder="Código, color o sin marcar"></div>
+</div>
+<label for="notas">Observaciones</label><textarea id="notas" rows="3" maxlength="1200" placeholder="Aceptación, calidad de la celda, clima, comportamiento, patrón de cría..."></textarea>
+<div class="actions"><button class="primary" id="guardar" type="submit">Guardar registro</button><button class="secondary" id="limpiar" type="button">Limpiar</button></div><p class="status" id="estado" role="status" aria-live="polite"></p>
+</form></section>
+<section class="panel"><h2>Historial de lotes y reinas</h2><p id="contador" class="status"></p><div id="lista"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar CSV</button></div></section>
+</main>
+<script>
+(function(){
+ const key="apiecuador-reinas-v1";
+ const fields=[["lote","Código de lote / reina"],["apiario","Apiario"],["fechaTraslarve","Fecha de traslarve"],["cantidad","Copas o larvas injertadas"],["aceptadas","Celdas aceptadas"],["nacimiento","Nacimiento observado"],["introduccion","Fecha de introducción en núcleo"],["postura","Postura comprobada"],["estado-reina","Estado actual"],["marca","Marca / identificación"],["notas","Observaciones"]];
+ const form=document.getElementById("form"),list=document.getElementById("lista"),status=document.getElementById("estado");
+ let rows=[],editing=null;try{const v=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(v))rows=v;}catch(e){}
+ function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+ function render(){list.innerHTML="";document.getElementById("contador").textContent=rows.length+" registro(s).";
+ if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay registros de reinas. Puedes comenzar con un lote de traslarve.</p>';return;}
+ rows.slice().reverse().forEach(r=>{const card=document.createElement("article");card.className="record";card.innerHTML="<h3>👑 "+esc(r.lote||"Lote sin código")+"</h3>"+fields.filter(f=>String(r[f[0]]||"").trim()).map(f=>"<p><strong>"+esc(f[1])+":</strong> "+esc(r[f[0]])+"</p>").join("")+'<div class="actions"><button class="secondary" type="button" data-edit="'+esc(r.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(r.id)+'">Eliminar</button></div>';list.appendChild(card);});
+ }
+ function reset(){form.reset();editing=null;document.getElementById("form-title").textContent="Registrar lote o reina";document.getElementById("guardar").textContent="Guardar registro";}
+ form.addEventListener("submit",e=>{e.preventDefault();const row={id:editing||("r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6))};fields.forEach(f=>row[f[0]]=String(document.getElementById(f[0]).value||"").trim());const idx=editing?rows.findIndex(x=>x.id===editing):-1;const previous=idx>=0?rows[idx]:null;try{if(idx>=0)rows[idx]=row;else rows.push(row);localStorage.setItem(key,JSON.stringify(rows));reset();render();status.textContent="Registro de reina guardado en este teléfono.";}catch(err){if(idx>=0)rows[idx]=previous;else rows.pop();status.textContent="No se pudo guardar. Comprueba el espacio disponible del navegador."; }});
+ list.addEventListener("click",e=>{const b=e.target.closest("[data-edit]");if(b){const r=rows.find(x=>x.id===b.dataset.edit);if(!r)return;fields.forEach(f=>document.getElementById(f[0]).value=r[f[0]]||"");editing=r.id;document.getElementById("form-title").textContent="Editar lote o reina";document.getElementById("guardar").textContent="Guardar cambios";status.textContent="Edita los datos y guarda los cambios.";form.scrollIntoView({behavior:"smooth",block:"start"});return;}const d=e.target.closest("[data-delete]");if(!d)return;if(!confirm("¿Eliminar este registro de reina? Esta acción no se puede deshacer."))return;const old=rows;rows=rows.filter(x=>x.id!==d.dataset.delete);try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){rows=old;status.textContent="No se pudo actualizar el almacenamiento."; }});
+ document.getElementById("limpiar").addEventListener("click",()=>{reset();status.textContent="Formulario limpio.";});
+ document.getElementById("exportar").addEventListener("click",()=>{const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';const csv=[fields.map(f=>cell(f[1])).join(","),...rows.map(r=>fields.map(f=>cell(r[f[0]])).join(","))].join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="apiecuador-seguimiento-reinas.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);status.textContent="Se preparó la descarga del archivo CSV.";});
+ render();
+})();
+</script></body></html>
