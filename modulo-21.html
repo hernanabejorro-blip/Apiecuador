@@ -34,7 +34,7 @@
   });
  }
  form.addEventListener("submit",e=>{
-  e.preventDefault();const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+  e.preventDefault();if(form.dataset.editing)return;const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   rows.push(row);
   try{localStorage.setItem(key,JSON.stringify(rows));form.reset();render();status.textContent="Registro guardado en este teléfono.";}
