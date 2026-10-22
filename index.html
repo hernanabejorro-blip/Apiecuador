@@ -52,6 +52,32 @@ header {
   border-radius: 12px;
 }
 
+
+/* Pulido visual seguro: conserva los 20 enlaces y el buscador */
+body{background:linear-gradient(180deg,#f7f5ec 0%,#fcf9f2 260px)}
+header{padding:30px 20px 28px;background:linear-gradient(125deg,#173f32 0%,#245c43 58%,#36734c 100%);position:relative;overflow:hidden}
+header .wrap{position:relative;z-index:1}
+.brand{gap:14px}
+.bee{display:grid;place-items:center;width:58px;height:58px;flex:0 0 58px;border-radius:18px;background:#ffffff1c;border:1px solid #ffffff35;font-size:34px}
+header h1{letter-spacing:-.6px}
+header p{max-width:620px}
+body > div[style*="margin:20px 0"]{max-width:1000px;margin:22px auto!important;padding:0 20px}
+#buscador{display:block;background:#fff;box-shadow:0 4px 16px #173f3210;outline:none}
+#buscador:focus{border-color:#36734c!important;box-shadow:0 0 0 3px #36734c20,0 4px 16px #173f3210}
+#sin-resultados{padding:14px;border-radius:12px;background:#fff2df;color:#70410d}
+main{padding-top:8px}
+.note{border-radius:14px;background:#fff8e9;border-color:#ead5ad}
+.grid{gap:14px}
+.card{position:relative;min-height:142px;border:1px solid #e4e5d9;border-radius:18px;padding:19px;background:linear-gradient(155deg,#fff 0%,#fffefa 100%);box-shadow:0 4px 14px #173f320a;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.card:hover{border-color:#a8c4a9;box-shadow:0 10px 24px #173f3217;transform:translateY(-2px)}
+.card:focus-visible{outline:3px solid #b76b13;outline-offset:3px}
+.dot{font-size:12px;color:#36734c}
+.name{font-size:16px}
+.go{color:#28613f;display:flex;align-items:center;gap:5px}
+footer{padding-top:24px;padding-bottom:28px}
+@media(max-width:520px){header{padding:24px 18px 22px}.bee{width:50px;height:50px;flex-basis:50px;border-radius:15px;font-size:30px}main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:1fr;gap:11px}.card{min-height:116px;padding:17px}body > div[style*="margin:20px 0"]{padding:0 16px;margin:18px auto!important}}
+@media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+
 </style></head><body>
 <header><div class="wrap"><div class="brand"><span class="bee">🐝</span><div><h1>ApiEcuador</h1><div>Gestión apícola · Panel de módulos</div></div></div>
 <p>Herramientas de campo para cosecha, floración, sanidad y trashumancia.</p></div></header>
@@ -78,11 +104,11 @@ header {
       <span class="go">Abrir módulo →</span>
     </a>
 <a class="card" href="modulo-03.html">
-      <span class="dot">●</span><span class="name">Control de Varroa &amp;amp; Sanidad</span>
+      <span class="dot">●</span><span class="name">Control de Varroa &amp; Sanidad</span>
       <span class="go">Abrir módulo →</span>
     </a>
 <a class="card" href="modulo-04.html">
-      <span class="dot">●</span><span class="name">Cosecha &amp;amp; Lotes de Miel</span>
+      <span class="dot">●</span><span class="name">Cosecha &amp; Lotes de Miel</span>
       <span class="go">Abrir módulo →</span>
     </a>
 <a class="card" href="modulo-05.html">
@@ -102,7 +128,7 @@ header {
       <span class="go">Abrir módulo →</span>
     </a>
 <a class="card" href="modulo-09.html">
-      <span class="dot">●</span><span class="name">Inventario &amp;amp; Ciclo de Cera</span>
+      <span class="dot">●</span><span class="name">Inventario &amp; Ciclo de Cera</span>
       <span class="go">Abrir módulo →</span>
     </a>
 <a class="card" href="modulo-10.html">
