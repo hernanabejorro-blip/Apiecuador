@@ -78,6 +78,21 @@ footer{padding-top:24px;padding-bottom:28px}
 @media(max-width:520px){header{padding:24px 18px 22px}.bee{width:50px;height:50px;flex-basis:50px;border-radius:15px;font-size:30px}main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:1fr;gap:11px}.card{min-height:116px;padding:17px}body > div[style*="margin:20px 0"]{padding:0 16px;margin:18px auto!important}}
 @media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
 
+
+/* Personalización sencilla desde el celular */
+.customize-toggle{display:block;width:calc(100% - 40px);max-width:960px;margin:0 auto 18px;padding:12px 15px;border:1px solid #cbdacb;border-radius:13px;background:#fff;color:#245c43;font:600 15px system-ui;cursor:pointer}
+#panel-personalizar{max-width:960px;margin:0 auto 20px;padding:18px;background:#fff;border:1px solid #dfe7dc;border-radius:16px;box-shadow:0 5px 18px #173f320c}
+#panel-personalizar[hidden]{display:none}
+#panel-personalizar label{display:block;font-size:13px;font-weight:700;margin:12px 0 5px}
+#panel-personalizar input{width:100%;min-height:42px;padding:10px 12px;border:1px solid #d8dfd2;border-radius:10px;font:16px system-ui;background:#fff}
+#panel-personalizar input:focus{outline:2px solid #36734c;outline-offset:1px}
+.personalizar-acciones{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+.personalizar-acciones button{border:0;border-radius:10px;padding:11px 14px;font:600 14px system-ui;cursor:pointer}
+#guardar-nombres{background:#245c43;color:#fff}
+#restaurar-nombres{background:#f3eee3;color:#594b3b}
+#estado-personalizar{font-size:13px;color:#28613f;min-height:1.3em;margin:10px 0 0}
+@media(max-width:520px){.customize-toggle{width:calc(100% - 32px)}#panel-personalizar{margin-left:16px;margin-right:16px;padding:14px}}
+
 </style></head><body>
 <header><div class="wrap"><div class="brand"><span class="bee">🐝</span><div><h1>ApiEcuador</h1><div>Gestión apícola · Panel de módulos</div></div></div>
 <p>Herramientas de campo para cosecha, floración, sanidad y trashumancia.</p></div></header>
@@ -93,6 +108,22 @@ footer{padding-top:24px;padding-bottom:28px}
   >
   <p id="sin-resultados" hidden>No se encontraron módulos.</p>
 </div>
+
+<button class="customize-toggle" id="abrir-personalizar" type="button" aria-expanded="false" aria-controls="panel-personalizar">⚙️ Personalizar nombres y encabezados</button>
+<section id="panel-personalizar" hidden aria-label="Personalizar ApiEcuador">
+  <strong>Adapta la portada a tus apiarios</strong>
+  <p style="margin:6px 0;color:#65584b;font-size:14px;line-height:1.5">Cambia el nombre de la aplicación, el texto principal y los nombres de los módulos. Los cambios se guardan en este teléfono.</p>
+  <label for="nombre-app-edit">Nombre de la aplicación</label>
+  <input id="nombre-app-edit" maxlength="60" value="ApiEcuador">
+  <label for="subtitulo-edit">Texto bajo el nombre</label>
+  <input id="subtitulo-edit" maxlength="120" value="Gestión apícola · Panel de módulos">
+  <label for="descripcion-edit">Descripción de la portada</label>
+  <input id="descripcion-edit" maxlength="180" value="Herramientas de campo para cosecha, floración, sanidad y trashumancia.">
+  <div id="lista-nombres-edit"></div>
+  <div class="personalizar-acciones"><button id="guardar-nombres" type="button">Guardar cambios</button><button id="restaurar-nombres" type="button">Restaurar nombres originales</button></div>
+  <p id="estado-personalizar" role="status" aria-live="polite"></p>
+</section>
+
   <main class="wrap">
 <div class="note"><strong>Importante:</strong> este panel reúne las pantallas exportadas desde Stitch. Algunas son prototipos visuales y pueden tener botones o funciones que todavía no guardan datos ni están conectados entre sí. Para abrir los módulos se necesita conexión a internet en la versión inicial.</div>
 <div class="grid"><a class="card" href="modulo-01.html">
@@ -212,6 +243,92 @@ buscador.addEventListener("input", function () {
 
   aviso.hidden = visibles > 0;
 });
+
+<script>
+(function(){
+  const storageKey = "apiecuador-personalizacion-v1";
+  const titulo = document.querySelector("header h1");
+  const subtitulo = document.querySelector("header .brand div div");
+  const descripcion = document.querySelector("header .wrap > p");
+  const tarjetas = Array.from(document.querySelectorAll(".card"));
+  const abrir = document.getElementById("abrir-personalizar");
+  const panel = document.getElementById("panel-personalizar");
+  const lista = document.getElementById("lista-nombres-edit");
+  const estado = document.getElementById("estado-personalizar");
+  const nombreApp = document.getElementById("nombre-app-edit");
+  const textoSubtitulo = document.getElementById("subtitulo-edit");
+  const textoDescripcion = document.getElementById("descripcion-edit");
+  const nombresOriginales = tarjetas.map(t => t.querySelector(".name").textContent.trim());
+  function leer(){
+    try { return JSON.parse(localStorage.getItem(storageKey) || "null"); }
+    catch(e) { return null; }
+  }
+  function aplicar(datos){
+    if(!datos) return;
+    if(datos.nombreApp) titulo.textContent = datos.nombreApp;
+    if(typeof datos.subtitulo === "string") subtitulo.textContent = datos.subtitulo;
+    if(typeof datos.descripcion === "string") descripcion.textContent = datos.descripcion;
+    tarjetas.forEach((t,i)=>{ if(datos.nombres && typeof datos.nombres[i] === "string" && datos.nombres[i].trim()) t.querySelector(".name").textContent = datos.nombres[i].trim(); });
+  }
+  function construirLista(){
+    lista.innerHTML = "<p style='font-weight:700;margin:18px 0 4px'>Nombres de los módulos</p>";
+    tarjetas.forEach((t,i)=>{
+      const label = document.createElement("label");
+      label.htmlFor = "nombre-modulo-" + i;
+      label.textContent = "Módulo " + String(i+1).padStart(2,"0");
+      const input = document.createElement("input");
+      input.id = "nombre-modulo-" + i;
+      input.maxLength = 100;
+      input.value = t.querySelector(".name").textContent.trim();
+      input.setAttribute("aria-label", "Nombre del módulo " + (i+1));
+      lista.append(label,input);
+    });
+  }
+  aplicar(leer());
+  construirLista();
+  abrir.addEventListener("click",()=>{
+    const mostrar = panel.hidden;
+    panel.hidden = !mostrar;
+    abrir.setAttribute("aria-expanded", String(mostrar));
+    abrir.textContent = mostrar ? "✖ Cerrar personalización" : "⚙️ Personalizar nombres y encabezados";
+    if(mostrar){
+      nombreApp.value = titulo.textContent;
+      textoSubtitulo.value = subtitulo.textContent;
+      textoDescripcion.value = descripcion.textContent;
+      construirLista();
+      panel.scrollIntoView({behavior:"smooth",block:"start"});
+    }
+  });
+  document.getElementById("guardar-nombres").addEventListener("click",()=>{
+    const datos = {
+      nombreApp: nombreApp.value.trim() || "ApiEcuador",
+      subtitulo: textoSubtitulo.value.trim(),
+      descripcion: textoDescripcion.value.trim(),
+      nombres: tarjetas.map((t,i)=>document.getElementById("nombre-modulo-"+i).value.trim() || nombresOriginales[i])
+    };
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(datos));
+      aplicar(datos);
+      estado.textContent = "Cambios guardados en este teléfono.";
+    } catch(e) {
+      estado.textContent = "No se pudieron guardar los cambios en este navegador.";
+    }
+  });
+  document.getElementById("restaurar-nombres").addEventListener("click",()=>{
+    try { localStorage.removeItem(storageKey); } catch(e) {}
+    titulo.textContent = "ApiEcuador";
+    subtitulo.textContent = "Gestión apícola · Panel de módulos";
+    descripcion.textContent = "Herramientas de campo para cosecha, floración, sanidad y trashumancia.";
+    tarjetas.forEach((t,i)=>t.querySelector(".name").textContent=nombresOriginales[i]);
+    nombreApp.value = "ApiEcuador";
+    textoSubtitulo.value = "Gestión apícola · Panel de módulos";
+    textoDescripcion.value = "Herramientas de campo para cosecha, floración, sanidad y trashumancia.";
+    construirLista();
+    estado.textContent = "Se restauraron los nombres originales.";
+  });
+})();
+</script>
+
 </script>
 
 </body>
