@@ -5,6 +5,14 @@
   "scope": "./",
   "display": "standalone",
   "background_color": "#fff8e7",
-  "theme_color": "#f2b632",
-  "description": "Aplicación de apicultura ApiEcuador"
+  "theme_color": "#245c43",
+  "description": "Aplicación de apicultura ApiEcuador",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }

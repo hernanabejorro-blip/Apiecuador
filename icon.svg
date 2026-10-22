@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd95a"/><stop offset="1" stop-color="#e88b00"/></linearGradient>
+ <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#74d4ff"/><stop offset="1" stop-color="#f4fbff"/></linearGradient>
+ <linearGradient id="green" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#4fa86b"/><stop offset="1" stop-color="#174d35"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#5b3900" flood-opacity=".2"/></filter>
+</defs>
+<rect width="512" height="512" rx="112" fill="#fff8e7"/>
+<rect x="13" y="13" width="486" height="486" rx="100" fill="none" stroke="url(#gold)" stroke-width="14"/>
+<path d="M47 218 160 95 223 157 291 72 458 222V318H47Z" fill="url(#sky)"/>
+<path d="m119 140 41-45 47 48-28-9-18 19-17-18-15 13z" fill="#fff"/>
+<path d="m220 157 71-85 88 94-42-16-28 24-24-23-26 20z" fill="#fff"/>
+<path d="m47 235 92-66 65 43 78-61 79 66 97-38v139H47z" fill="#4c8da0"/>
+<path d="m47 269 99-55 73 47 86-43 77 43 79-40v104H47z" fill="url(#green)"/>
+<path d="M47 304q73-36 140 0t132 0 139-2v52H47z" fill="#7bbd58"/>
+<g opacity=".9" fill="#e7a31b">
+ <path d="M390 119h27l14 23-14 23h-27l-14-23z"/><path d="M421 166h27l14 23-14 23h-27l-14-23z"/><path d="M373 171h27l14 23-14 23h-27l-14-23z"/>
+</g>
+<g filter="url(#shadow)">
+ <path d="M104 294c-26-31-25-66 2-78 27-12 47 12 50 42-2 22-20 39-52 36z" fill="#f8ffff" stroke="#e5d7a8" stroke-width="3"/>
+ <path d="M162 312c-22-36-9-68 20-68 28 0 39 34 20 66-10 15-28 16-40 2z" fill="#fff"/>
+ <path d="M202 313c-4-37 22-58 43-40 19 16 11 47-15 59-14 6-26-1-28-19z" fill="#fff"/>
+ <path d="M145 311c-9-33 12-61 36-49 23 11 23 40 1 58-15 12-31 8-37-9z" fill="#fff"/>
+ <circle cx="180" cy="299" r="12" fill="#f4b92e"/>
+ <g stroke="#e8a523" stroke-width="4" stroke-linecap="round"><path d="M180 299 165 270"/><path d="M180 299 186 265"/><path d="M180 299 205 276"/><path d="M180 299 207 304"/><path d="M180 299 170 322"/></g>
+</g>
+<g transform="translate(238 200) rotate(-15)" filter="url(#shadow)">
+ <ellipse cx="-5" cy="-27" rx="17" ry="32" fill="#f8ffff" fill-opacity=".88" stroke="#d4e9eb" stroke-width="3" transform="rotate(-32 -5 -27)"/>
+ <ellipse cx="22" cy="-24" rx="15" ry="29" fill="#f8ffff" fill-opacity=".9" stroke="#d4e9eb" stroke-width="3" transform="rotate(28 22 -24)"/>
+ <ellipse cx="0" cy="6" rx="38" ry="28" fill="#f7b82b" stroke="#b96713" stroke-width="4"/>
+ <path d="M-22-16Q-11 5-20 27M0-21Q13 4 4 31M20-13Q29 6 24 21" fill="none" stroke="#3c3020" stroke-width="11"/>
+ <circle cx="39" cy="-5" r="20" fill="#f6b62d" stroke="#b96713" stroke-width="4"/>
+ <circle cx="45" cy="-10" r="5" fill="#1c2925"/><circle cx="46" cy="-12" r="2" fill="#fff"/>
+ <path d="M47-24q10-17 18-13M33-25q-1-15-8-18" fill="none" stroke="#5d421b" stroke-width="3" stroke-linecap="round"/>
+ <path d="M-24 18l-12 20m25-15-4 24m25-24 8 22m13-29 17 16" stroke="#3c3020" stroke-width="5" stroke-linecap="round" fill="none"/>
+</g>
+<text x="256" y="403" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="48" font-weight="800" letter-spacing="-1.5"><tspan fill="#e88b00">Api</tspan><tspan fill="#174d35">Ecuador</tspan></text>
+<path d="M133 425q123 31 246 0" fill="none" stroke="#f3c52c" stroke-width="9" stroke-linecap="round"/>
+<path d="M155 433q101 23 202 0" fill="none" stroke="#1265a8" stroke-width="6" stroke-linecap="round"/>
+<path d="M182 440q74 15 148 0" fill="none" stroke="#d83c35" stroke-width="5" stroke-linecap="round"/>
+<g fill="#e9a21b"><path d="M68 75h17l9 15-9 15H68l-9-15z"/><path d="M87 105h17l9 15-9 15H87l-9-15z"/></g>
+</svg>

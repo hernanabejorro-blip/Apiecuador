@@ -1,5 +1,5 @@
-const CACHE_NAME = "apiecuador-v1";
-const ASSETS = ["./", "./index.html", "./manifest.json"];
+const CACHE_NAME = "apiecuador-v2";
+const ASSETS = ["./", "./index.html", "./manifest.json", "./icon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
