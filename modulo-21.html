@@ -60,4 +60,31 @@
  document.querySelector("#registros").parentElement.appendChild(exportBtn);
  render();
 })();
+</script><script>
+/* Sugerencias desde "Mis apiarios". No modifica ni borra registros existentes. */
+(function(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("apiecuador-apiarios-v1") || "[]");
+    if (!Array.isArray(saved) || !saved.length) return;
+    let list = document.getElementById("apiarios-registrados");
+    if (!list) {
+      list = document.createElement("datalist");
+      list.id = "apiarios-registrados";
+      document.body.appendChild(list);
+    }
+    saved.forEach(function(apiario){
+      if (!apiario || !apiario.nombre) return;
+      const option = document.createElement("option");
+      option.value = String(apiario.nombre);
+      if (apiario.ubicacion) option.label = String(apiario.ubicacion);
+      list.appendChild(option);
+    });
+    ["apiario","origin","destination"].forEach(function(id){
+      const field = document.getElementById(id);
+      if (field && field.tagName === "INPUT") field.setAttribute("list", "apiarios-registrados");
+    });
+  } catch (e) {
+    /* Si no hay registros o el navegador no permite leerlos, los campos siguen funcionando normalmente. */
+  }
+})();
 </script></body></html>
