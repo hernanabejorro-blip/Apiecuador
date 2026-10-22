@@ -33,4 +33,31 @@ $('records').addEventListener('click',e=>{const edit=e.target.closest('[data-edi
 $('export').addEventListener('click',()=>{if(!rows.length){$('status').textContent='No hay rutas para exportar.';return}const cols=[...fields,...checks],csv=[cols.join(','),...rows.map(r=>cols.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));a.download='apiecuador-rutas-trashumancia.csv';a.click();URL.revokeObjectURL(a.href);$('status').textContent='Archivo CSV preparado.'});
 render();
 })();
+</script><script>
+/* Sugerencias desde "Mis apiarios". No modifica ni borra registros existentes. */
+(function(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("apiecuador-apiarios-v1") || "[]");
+    if (!Array.isArray(saved) || !saved.length) return;
+    let list = document.getElementById("apiarios-registrados");
+    if (!list) {
+      list = document.createElement("datalist");
+      list.id = "apiarios-registrados";
+      document.body.appendChild(list);
+    }
+    saved.forEach(function(apiario){
+      if (!apiario || !apiario.nombre) return;
+      const option = document.createElement("option");
+      option.value = String(apiario.nombre);
+      if (apiario.ubicacion) option.label = String(apiario.ubicacion);
+      list.appendChild(option);
+    });
+    ["apiario","origin","destination"].forEach(function(id){
+      const field = document.getElementById(id);
+      if (field && field.tagName === "INPUT") field.setAttribute("list", "apiarios-registrados");
+    });
+  } catch (e) {
+    /* Si no hay registros o el navegador no permite leerlos, los campos siguen funcionando normalmente. */
+  }
+})();
 </script></body></html>
