@@ -29,23 +29,35 @@
   rows.slice().reverse().forEach(row=>{
    const card=document.createElement("article");card.className="record";
    const heading=fields.map(f=>row[f.id]).find(v=>v)||"Registro";
-   card.innerHTML='<h3>'+esc(heading)+'</h3>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<div class="actions"><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
+   card.innerHTML='<h3>'+esc(heading)+'</h3>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<div class="actions"><button class="secondary" type="button" data-edit="'+esc(row.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
    list.appendChild(card);
   });
  }
  form.addEventListener("submit",e=>{
-  e.preventDefault();const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+  e.preventDefault();if(form.dataset.editing)return;const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   rows.push(row);
   try{localStorage.setItem(key,JSON.stringify(rows));form.reset();render();status.textContent="Registro guardado en este teléfono.";}
   catch(e){rows.pop();status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
  });
  list.addEventListener("click",e=>{
+  const edit=e.target.closest("[data-edit]");
+  if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{const el=document.getElementById(f.id);if(el)el.value=row[f.id]||"";});form.dataset.editing=row.id;form.querySelector('button[type="submit"]').textContent="Guardar cambios";status.textContent="Editando registro. Guarda los cambios cuando termines.";form.scrollIntoView({behavior:"smooth",block:"start"});return;}
   const b=e.target.closest("[data-delete]");if(!b)return;
   rows=rows.filter(r=>r.id!==b.dataset.delete);
   try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
  });
- document.getElementById("limpiar").addEventListener("click",()=>{form.reset();status.textContent="Formulario limpio.";});
+ form.addEventListener("submit",e=>{
+  // Si se está editando, actualizar ese registro en lugar de crear otro.
+  if(!form.dataset.editing)return;
+  e.preventDefault();const id=form.dataset.editing;const i=rows.findIndex(r=>r.id===id);if(i<0){delete form.dataset.editing;return;}
+  const updated={id};fields.forEach(f=>{updated[f.id]=String(new FormData(form).get(f.id)||"").trim();});
+  const previous=rows[i];rows[i]=updated;
+  try{localStorage.setItem(key,JSON.stringify(rows));delete form.dataset.editing;form.reset();form.querySelector('button[type="submit"]').textContent="Guardar registro";render();status.textContent="Cambios guardados correctamente.";}catch(err){rows[i]=previous;status.textContent="No se pudieron guardar los cambios.";} 
+ });
+ document.getElementById("limpiar").addEventListener("click",()=>{form.reset();delete form.dataset.editing;form.querySelector('button[type="submit"]').textContent="Guardar registro";status.textContent="Formulario limpio.";});
+ const exportBtn=document.createElement("button");exportBtn.type="button";exportBtn.className="secondary";exportBtn.textContent="Exportar CSV";exportBtn.addEventListener("click",()=>{const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';const csv=[fields.map(f=>cell(f.label)).join(","),...rows.map(r=>fields.map(f=>cell(r[f.id])).join(","))].join("\r\n");const blob=new Blob(["\\ufeff"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="apiecuador-inspecciones.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);status.textContent="Archivo CSV preparado para descargar.";});
+ document.querySelector("#registros").parentElement.appendChild(exportBtn);
  render();
 })();
 </script></body></html>
