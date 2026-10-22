@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#245c43">
+<link rel="manifest" href="./manifest.json">
+<title>Mis apiarios · ApiEcuador</title>
+<style>
+:root{color-scheme:light;--green:#245c43;--cream:#fcf9f2;--ink:#1c1c18}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.45}
+header{background:linear-gradient(125deg,#173f32,#36734c);color:#fff;padding:23px 18px}
+.wrap,main{max-width:850px;margin:auto}.back{display:inline-block;color:#fff;text-decoration:none;margin-bottom:13px;font-size:14px}
+h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 8px}header p{margin:0;color:#eaf3e8}
+main{padding:20px 16px 36px}.notice{background:#fff3dc;border:1px solid #e9d2a8;padding:12px 14px;border-radius:12px;font-size:13px;margin-bottom:16px}
+.panel,.record{background:#fff;border:1px solid #e1e6db;border-radius:16px;padding:17px;margin-bottom:14px;box-shadow:0 4px 14px #173f3208}
+h2{font-size:19px;margin:0 0 12px}label{display:block;font-weight:650;font-size:14px;margin:13px 0 5px}
+input,textarea{display:block;width:100%;font:16px system-ui;padding:11px 12px;border:1px solid #d2dccc;border-radius:10px;background:#fff;color:#1c1c18}
+input:focus,textarea:focus{outline:2px solid #36734c;outline-offset:1px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cursor:pointer}
+.primary{background:var(--green);color:#fff}.secondary{background:#f3eee3;color:#594b3b}.delete{background:#fae8e5;color:#8b2f22}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.status{font-size:13px;color:#28613f;min-height:1.4em}
+.record h3{font-size:17px;margin:0 0 8px}.record p{margin:5px 0;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}.empty{color:#65584b;font-size:14px;padding:8px 2px}
+@media(max-width:520px){header{padding:20px 16px}main{padding:16px 12px 28px}.panel,.record{padding:14px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>📍 Mis apiarios</h1><p>Organiza la ubicación, el tamaño y las características de cada apiario.</p></div></header>
+<main>
+<div class="notice"><strong>Importante:</strong> los datos se guardan en el navegador de este teléfono y no se sincronizan automáticamente con otros dispositivos. Exporta una copia CSV como respaldo.</div>
+<section class="panel">
+<h2 id="form-title">Registrar apiario</h2>
+<form id="form">
+<div class="grid">
+<div><label for="nombre">Nombre del apiario *</label><input id="nombre" maxlength="80" required placeholder="Ej.: Tanda norte"></div>
+<div><label for="ubicacion">Ubicación o referencia *</label><input id="ubicacion" maxlength="120" required placeholder="Sector, parroquia o coordenadas"></div>
+<div><label for="colmenas">Número de colmenas</label><input id="colmenas" type="number" min="0" max="100000" step="1" inputmode="numeric" placeholder="Ej.: 24"></div>
+<div><label for="flora">Flora principal</label><input id="flora" maxlength="120" placeholder="Ej.: eucalipto, aguacate"></div>
+<div><label for="agua">Agua y acceso</label><input id="agua" maxlength="120" placeholder="Fuente de agua, camino, acceso"></div>
+<div><label for="responsable">Responsable</label><input id="responsable" maxlength="100" placeholder="Nombre o identificación interna"></div>
+</div>
+<label for="notas">Notas del apiario</label><textarea id="notas" rows="3" maxlength="1000" placeholder="Floración, viento, seguridad, observaciones..."></textarea>
+<div class="actions"><button class="primary" type="submit" id="guardar">Guardar apiario</button><button class="secondary" type="button" id="limpiar">Limpiar</button></div>
+<p class="status" id="estado" role="status" aria-live="polite"></p>
+</form>
+</section>
+<section class="panel"><h2>Apiarios registrados</h2><p id="contador" class="status"></p><div id="lista"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar CSV</button></div></section>
+</main>
+<script>
+(function(){
+ const key="apiecuador-apiarios-v1";
+ const fields=[["nombre","Nombre del apiario"],["ubicacion","Ubicación o referencia"],["colmenas","Número de colmenas"],["flora","Flora principal"],["agua","Agua y acceso"],["responsable","Responsable"],["notas","Notas"]];
+ const form=document.getElementById("form"), list=document.getElementById("lista"), status=document.getElementById("estado");
+ let rows=[], editing=null;
+ try{const saved=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(saved))rows=saved;}catch(e){}
+ function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+ function persist(){localStorage.setItem(key,JSON.stringify(rows));}
+ function render(){
+  list.innerHTML="";
+  document.getElementById("contador").textContent=rows.length+" apiario(s) registrado(s).";
+  if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay apiarios. Registra el primero en el formulario.</p>';return;}
+  rows.slice().reverse().forEach(r=>{
+   const card=document.createElement("article");card.className="record";
+   card.innerHTML="<h3>📍 "+esc(r.nombre||"Apiario sin nombre")+"</h3>"+
+    fields.filter(f=>String(r[f[0]]||"").trim()).map(f=>"<p><strong>"+esc(f[1])+":</strong> "+esc(r[f[0]])+"</p>").join("")+
+    '<div class="actions"><button class="secondary" type="button" data-edit="'+esc(r.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(r.id)+'">Eliminar</button></div>';
+   list.appendChild(card);
+  });
+ }
+ function reset(){form.reset();editing=null;document.getElementById("form-title").textContent="Registrar apiario";document.getElementById("guardar").textContent="Guardar apiario";}
+ form.addEventListener("submit",e=>{
+  e.preventDefault();
+  const row={id:editing||("a"+Date.now().toString(36)+Math.random().toString(36).slice(2,6))};
+  fields.forEach(f=>row[f[0]]=String(document.getElementById(f[0]).value||"").trim());
+  const old=editing?rows.findIndex(r=>r.id===editing):-1;
+  try{if(old>=0)rows[old]=row;else rows.push(row);persist();reset();render();status.textContent="Apiario guardado en este teléfono.";}
+  catch(err){status.textContent="No se pudo guardar. Revisa el espacio disponible del navegador.";}
+ });
+ list.addEventListener("click",e=>{
+  const edit=e.target.closest("[data-edit]");
+  if(edit){const r=rows.find(x=>x.id===edit.dataset.edit);if(!r)return;fields.forEach(f=>document.getElementById(f[0]).value=r[f[0]]||"");editing=r.id;document.getElementById("form-title").textContent="Editar apiario";document.getElementById("guardar").textContent="Guardar cambios";status.textContent="Modifica los datos y pulsa Guardar cambios.";form.scrollIntoView({behavior:"smooth",block:"start"});return;}
+  const del=e.target.closest("[data-delete]");if(!del)return;
+  if(!confirm("¿Eliminar este apiario? Esta acción no se puede deshacer."))return;
+  const before=rows;rows=rows.filter(r=>r.id!==del.dataset.delete);
+  try{persist();render();status.textContent="Apiario eliminado.";}catch(err){rows=before;status.textContent="No se pudo actualizar el almacenamiento.";}
+ });
+ document.getElementById("limpiar").addEventListener("click",()=>{reset();status.textContent="Formulario limpio.";});
+ document.getElementById("exportar").addEventListener("click",()=>{
+  const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
+  const csv=[fields.map(f=>cell(f[1])).join(","),...rows.map(r=>fields.map(f=>cell(r[f[0]])).join(","))].join("\r\n");
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="apiecuador-mis-apiarios.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  status.textContent="Se preparó la descarga del archivo CSV.";
+ });
+ render();
+})();
+</script>
+</body>
+</html>
