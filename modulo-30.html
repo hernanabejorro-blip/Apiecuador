@@ -57,4 +57,31 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
  document.getElementById("exportar").addEventListener("click",()=>{const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';const csv=[fields.map(f=>cell(f[1])).join(","),...rows.map(r=>fields.map(f=>cell(r[f[0]])).join(","))].join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="apiecuador-seguimiento-reinas.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);status.textContent="Se preparó la descarga del archivo CSV.";});
  render();
 })();
+</script><script>
+/* Sugerencias desde "Mis apiarios". No modifica ni borra registros existentes. */
+(function(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("apiecuador-apiarios-v1") || "[]");
+    if (!Array.isArray(saved) || !saved.length) return;
+    let list = document.getElementById("apiarios-registrados");
+    if (!list) {
+      list = document.createElement("datalist");
+      list.id = "apiarios-registrados";
+      document.body.appendChild(list);
+    }
+    saved.forEach(function(apiario){
+      if (!apiario || !apiario.nombre) return;
+      const option = document.createElement("option");
+      option.value = String(apiario.nombre);
+      if (apiario.ubicacion) option.label = String(apiario.ubicacion);
+      list.appendChild(option);
+    });
+    ["apiario","origin","destination"].forEach(function(id){
+      const field = document.getElementById(id);
+      if (field && field.tagName === "INPUT") field.setAttribute("list", "apiarios-registrados");
+    });
+  } catch (e) {
+    /* Si no hay registros o el navegador no permite leerlos, los campos siguen funcionando normalmente. */
+  }
+})();
 </script></body></html>
