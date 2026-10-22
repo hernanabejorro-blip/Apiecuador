@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#245c43"><title>Calendario inteligente · ApiEcuador</title><style>
+:root{--green:#245c43;--cream:#fcf9f2;--ink:#1c1c18}*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5}header{background:linear-gradient(125deg,#173f32,#36734c);color:white;padding:22px 17px}header .wrap,main{max-width:850px;margin:auto}.back{color:white;text-decoration:none;font-size:14px;display:inline-block;margin-bottom:12px}h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 8px}header p{margin:0;color:#eaf3e8}main{padding:18px 13px 35px}.notice,.panel{border-radius:15px;padding:16px;margin-bottom:13px}.notice{background:#fff3dc;border:1px solid #e9d2a8;font-size:14px}.panel{background:white;border:1px solid #e1e6db;box-shadow:0 4px 14px #173f3208}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}button,.linkbtn{border:0;border-radius:10px;padding:10px 13px;font:650 14px system-ui;cursor:pointer;text-decoration:none;display:inline-block}.primary{background:var(--green);color:white}.secondary{background:#eee9dd;color:#514638}.event{padding:13px 0;border-bottom:1px solid #e8e9e2}.event:last-child{border-bottom:0}.event h3{font-size:16px;margin:0 0 4px}.meta{font-size:13px;color:#5f665b}.pill{font-size:12px;border-radius:999px;padding:3px 8px;background:#e6f2e7;color:#245c43;font-weight:700;display:inline-block;margin-left:5px}.late{background:#ffe8e4;color:#9b2d21}.today{background:#fff0ce;color:#805500}.empty{padding:12px;color:#5f665b}.status{font-size:14px;color:#245c43;min-height:1.5em}h2{font-size:19px;margin:0 0 7px}@media(max-width:520px){header{padding:20px 15px}}
+</style></head><body><header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>📅 Calendario apícola inteligente</h1><p>Próximas tareas, revisiones sanitarias y fechas de reinas.</p></div></header><main>
+<div class="notice"><strong>Cómo funciona:</strong> reúne las fechas que ya guardaste en los módulos de tareas, cría de reinas y tratamientos. No modifica ni borra tus registros. Las fechas son orientativas: confirma siempre el estado real de las colonias y las indicaciones de los productos.</div>
+<section class="panel"><h2>Agenda de trabajo</h2><p class="meta">Ordenada por fecha, desde la más próxima. Se actualiza al abrir o recargar esta página.</p><div class="toolbar"><button class="primary" id="todos" type="button">Todas las fechas</button><button class="secondary" id="proximos" type="button">Próximos 7 días</button><button class="secondary" id="actualizar" type="button">Actualizar agenda</button></div><div id="agenda" aria-live="polite"><p class="empty">Cargando tus fechas guardadas…</p></div><p class="status" id="estado"></p></section>
+<section class="panel"><h2>¿Quieres añadir una tarea?</h2><p>Para guardar una nueva tarea, abre el módulo de calendario y tareas. La agenda la mostrará cuando vuelvas aquí.</p><a class="linkbtn primary" href="./modulo-23.html">Abrir Calendario y Tareas →</a></section>
+<section class="panel"><h2>Consejo de Abejorro 🐝</h2><p>Revisa esta agenda al comenzar la jornada y después de cambios de clima. En cría de reinas, la fecha estimada de nacimiento es una guía: comprueba el desarrollo de las celdas y evita manipulaciones innecesarias.</p><p class="meta">Esta página no envía notificaciones automáticas; para ver cambios, abre o actualiza ApiEcuador.</p></section>
+</main><script>
+(function(){
+const keys={tareas:"apiecuador-modulo-23-v1",reinas:"apiecuador-modulo-22-v1",sanidad:"apiecuador-modulo-24-v1"};
+const agenda=document.getElementById("agenda"),estado=document.getElementById("estado");let onlyNext=false;
+function localDate(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
+function parseDate(v){if(!v||typeof v!=="string")return null;const m=v.match(/^(\d{4})-(\d{2})-(\d{2})/);if(!m)return null;const d=new Date(+m[1],+m[2]-1,+m[3]);return Number.isNaN(d.getTime())?null:d;}
+function fmt(d){return d.toLocaleDateString("es-EC",{day:"numeric",month:"short",year:"numeric"});}
+function read(key){try{const v=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(v)?v:[]}catch(e){return []}}
+function render(){
+ const now=localDate(new Date()),limit=new Date(now);limit.setDate(limit.getDate()+7);const events=[];
+ read(keys.tareas).forEach(r=>{const d=parseDate(r.fecha);if(d)events.push({date:d,title:r.tarea||r.tipo||"Tarea apícola",apiario:r.apiario||"Apiario sin indicar",detail:[r.tipo,r.prioridad,r.notas].filter(Boolean).join(" · "),source:"Calendario y tareas"});});
+ read(keys.reinas).forEach(r=>{
+  const d1=parseDate(r.revision);if(d1)events.push({date:d1,title:"Revisar aceptación del traslarve",apiario:r.apiario||"Apiario sin indicar",detail:[r.madre,r.cantidad? r.cantidad+" celdas":"",r.resultado].filter(Boolean).join(" · "),source:"Cría de reinas"});
+  const d2=parseDate(r.nacimiento);if(d2)events.push({date:d2,title:"Nacimiento estimado de reinas",apiario:r.apiario||"Apiario sin indicar",detail:[r.madre,r.cantidad? r.cantidad+" celdas":"",r.iniciadora].filter(Boolean).join(" · "),source:"Cría de reinas"});
+ });
+ read(keys.sanidad).forEach(r=>{const d=parseDate(r.revision);if(d)events.push({date:d,title:"Revisión posterior al tratamiento",apiario:r.apiario||"Apiario sin indicar",detail:[r.tipo,r.producto,r.colmenas? r.colmenas+" colmenas":""].filter(Boolean).join(" · "),source:"Alimentación y tratamientos"});});
+ events.sort((a,b)=>a.date-b.date);
+ const visible=events.filter(e=>!onlyNext||(e.date>=now&&e.date<=limit));
+ if(!visible.length){agenda.innerHTML='<p class="empty">'+(events.length?"No hay tareas en los próximos 7 días. Pulsa “Todas las fechas” para ver el resto.":"Todavía no hay fechas en los registros que puede leer esta agenda. Añade tareas o fechas en los módulos 22, 23 y 24.")+'</p>';return;}
+ agenda.innerHTML="";
+ visible.forEach(e=>{const diff=Math.round((e.date-now)/86400000);const label=diff<0?"Vencida":diff===0?"Hoy":diff===1?"Mañana":"En "+diff+" días";const cls=diff<0?"late":diff===0?"today":"";const div=document.createElement("article");div.className="event";const h=document.createElement("h3");h.textContent=e.title;const badge=document.createElement("span");badge.className="pill "+cls;badge.textContent=label;h.appendChild(badge);const meta=document.createElement("div");meta.className="meta";meta.textContent=fmt(e.date)+" · "+e.apiario+" · "+e.source;div.append(h,meta);if(e.detail){const p=document.createElement("p");p.className="meta";p.textContent=e.detail;div.appendChild(p)}agenda.appendChild(div);});
+ estado.textContent="Fechas encontradas: "+events.length+".";
+}
+document.getElementById("todos").addEventListener("click",()=>{onlyNext=false;render()});
+document.getElementById("proximos").addEventListener("click",()=>{onlyNext=true;render()});
+document.getElementById("actualizar").addEventListener("click",render);render();
+})();
+</script></body></html>
