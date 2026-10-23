@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ApiEcuador: acceso limitado a la prueba técnica.
+    // Cada usuario autenticado solo puede acceder a su propio diagnóstico.
+    // Esto NO habilita todavía los registros de los módulos.
+    match /users/{userId}/diagnostico/{document=**} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
+    }
+
+    // Todo lo demás permanece bloqueado hasta definir reglas específicas.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
