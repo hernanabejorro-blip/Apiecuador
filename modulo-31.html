@@ -111,6 +111,20 @@ const fields=["plant","scientific","region","locality","altitude","start","peak"
 let records=[];
 try{const saved=JSON.parse(localStorage.getItem(KEY)||"[]");if(Array.isArray(saved))records=saved;}catch(e){records=[];}
 function esc(value){return String(value==null?"":value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));}
+function apiaryMapLink(name){
+  if(!name)return "";
+  try{
+   const saved=JSON.parse(localStorage.getItem("apiecuador-apiarios-v1")||"[]");
+   if(!Array.isArray(saved))return "";
+   const target=String(name).trim().toLocaleLowerCase("es");
+   const a=saved.find(x=>x&&String(x.nombre||"").trim().toLocaleLowerCase("es")===target);
+   if(!a||a.latitud==null||a.longitud==null||String(a.latitud).trim()===""||String(a.longitud).trim()==="")return "";
+   const lat=Number(a.latitud),lon=Number(a.longitud);
+   if(!Number.isFinite(lat)||!Number.isFinite(lon)||lat < -90||lat > 90||lon < -180||lon > 180)return "";
+   const url="https://www.google.com/maps?q="+encodeURIComponent(lat+","+lon);
+   return '<p><a class="map-record-link" href="'+url+'" target="_blank" rel="noopener noreferrer">🗺️ Abrir apiario en Google Maps ↗</a></p>';
+  }catch(e){return "";}
+ }
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(records));return true;}catch(e){$("status").textContent="No se pudo guardar. Puede faltar espacio en el teléfono.";return false;}}
 function updateYear(){const d=$("start").value;$("year").value=d?d.slice(0,4):"";}
 $("start").addEventListener("change",updateYear);
@@ -173,7 +187,7 @@ root.innerHTML=shown.map(r=>'<article class="record"><h3>🌼 '+esc(r.plant)+' <
 (r.scientific?'<p><strong>Nombre científico:</strong> '+esc(r.scientific)+'</p>':"")+
 '<p><strong>Floración:</strong> inicio '+esc(r.start||"sin fecha")+' · pico '+esc(r.peak||"no anotado")+' · fin '+esc(r.end||"no anotado")+'</p>'+
 '<p><strong>Intensidad:</strong> '+esc(r.intensity)+' · <strong>Actividad de abejas:</strong> '+esc(r["bee-activity"])+' · <strong>Recurso:</strong> '+esc(r.resource)+'</p>'+
-(r.apiary?'<p><strong>Apiario:</strong> '+esc(r.apiary)+'</p>':"")+(r.notes?'<p><strong>Notas:</strong> '+esc(r.notes)+'</p>':"")+
+(r.apiary?'<p><strong>Apiario:</strong> '+esc(r.apiary)+'</p>'+apiaryMapLink(r.apiary):"")+(r.notes?'<p><strong>Notas:</strong> '+esc(r.notes)+'</p>':"")+
 '<div class="actions"><button type="button" class="secondary" data-edit="'+esc(r.id)+'">Editar</button><button type="button" class="danger" data-delete="'+esc(r.id)+'">Eliminar</button></div></article>').join("");
 root.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>edit(b.dataset.edit)));
 root.querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>remove(b.dataset.delete)));
