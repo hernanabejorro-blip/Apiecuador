@@ -5,7 +5,7 @@
 </style></head><body>
 <header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🐝 Cría de Reinas · Traslarve</h1><p>Organiza tus tandas de traslarve. Para empezar, puedes planificar de 10 a 20 celdas por tanda y registrar lo que realmente ocurrió.</p></div></header>
 <main><div class="notice"><strong>Importante:</strong> esta versión guarda los registros en este navegador y teléfono. No se sincronizan con otros dispositivos; exporta o anota la información importante como respaldo.</div>
-<section class="panel"><h2>Nuevo registro</h2><form id="registro-form"><label for="fecha">Fecha del traslarve</label><input id="fecha" name="fecha" type="date" required>
+<section class="panel"><h2 id="form-title">Nuevo registro</h2><form id="registro-form"><input id="registro-id" type="hidden"><label for="fecha">Fecha del traslarve</label><input id="fecha" name="fecha" type="date" required>
 <label for="apiario">Apiario / ubicación</label><input id="apiario" name="apiario" type="text" required>
 <label for="madre">Colonia madre (línea genética)</label><input id="madre" name="madre" type="text" required>
 <label for="iniciadora">Colonia iniciadora o criadora</label><input id="iniciadora" name="iniciadora" type="text">
@@ -14,7 +14,7 @@
 <label for="larvas">Edad aproximada de larvas / método</label><input id="larvas" name="larvas" type="text">
 <label for="revision">Fecha de revisión de aceptación</label><input id="revision" name="revision" type="date">
 <label for="nacimiento">Fecha estimada de nacimiento</label><input id="nacimiento" name="nacimiento" type="date">
-<label for="resultado">Resultado y observaciones</label><textarea id="resultado" name="resultado" rows="3"></textarea><div class="actions"><button class="primary" type="submit">Guardar registro</button><button class="secondary" id="limpiar" type="button">Limpiar formulario</button></div><p class="status" id="estado" role="status" aria-live="polite"></p></form></section>
+<label for="resultado">Resultado y observaciones</label><textarea id="resultado" name="resultado" rows="3"></textarea><div class="actions"><button class="primary" id="guardar" type="submit">Guardar registro</button><button class="secondary" id="cancelar-edicion" type="button" hidden>Cancelar edición</button><button class="secondary" id="limpiar" type="button">Limpiar formulario</button></div><p class="status" id="estado" role="status" aria-live="polite"></p></form></section>
 <section class="panel"><h2>Registros guardados</h2><div id="registros" class="record-grid"></div></section></main>
 <script>
 (function(){
@@ -23,7 +23,7 @@
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
- let rows=[];try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}
+ let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){
   list.innerHTML="";
@@ -32,23 +32,28 @@
    const card=document.createElement("article");card.className="record";
    const heading=fields.map(f=>row[f.id]).find(v=>v)||"Registro";
    const tasa=row.cantidad&&row.aceptadas!==""&&row.aceptadas!=null?(Number(row.aceptadas)/Number(row.cantidad)*100).toFixed(1)+"%":"Pendiente de revisión";
-   card.innerHTML='<h3>'+esc(heading)+'</h3>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<p><strong>Porcentaje de aceptación:</strong> '+esc(tasa)+'</p>'+'<div class="actions"><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
+   card.innerHTML='<h3>'+esc(heading)+'</h3>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<p><strong>Porcentaje de aceptación:</strong> '+esc(tasa)+'</p>'+'<div class="actions"><button class="secondary" type="button" data-edit="'+esc(row.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
    list.appendChild(card);
   });
  }
  form.addEventListener("submit",e=>{
   e.preventDefault();const total=Number(document.getElementById("cantidad").value),aceptadas=document.getElementById("aceptadas").value;if(aceptadas!==""&&(Number(aceptadas)<0||Number(aceptadas)>total)){status.textContent="Las celdas aceptadas no pueden superar las celdas transferidas.";return;}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
-  rows.push(row);
-  try{localStorage.setItem(key,JSON.stringify(rows));form.reset();render();status.textContent="Registro guardado en este teléfono.";}
-  catch(e){rows.pop();status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
+  if(editingId){row.id=editingId;rows=rows.map(r=>r.id===editingId?row:r);}else{rows.push(row);}
+  try{localStorage.setItem(key,JSON.stringify(rows));form.reset();editingId=null;document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;render();status.textContent="Registro guardado en este teléfono.";}
+  catch(e){status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
  });
  list.addEventListener("click",e=>{
+  const edit=e.target.closest("[data-edit]");
+  if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{form.elements[f.id].value=row[f.id]||"";});editingId=row.id;document.getElementById("registro-id").value=row.id;document.getElementById("form-title").textContent="Editar registro de cría de reinas";document.getElementById("guardar").textContent="Guardar cambios";document.getElementById("cancelar-edicion").hidden=false;status.textContent="Edita los datos y pulsa Guardar cambios.";window.scrollTo({top:0,behavior:"smooth"});return;}
   const b=e.target.closest("[data-delete]");if(!b)return;
+  if(!confirm("¿Eliminar este registro de cría de reinas?"))return;
   rows=rows.filter(r=>r.id!==b.dataset.delete);
   try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
  });
- document.getElementById("limpiar").addEventListener("click",()=>{form.reset();status.textContent="Formulario limpio.";});
+ function cancelEdit(){editingId=null;form.reset();document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;status.textContent="Edición cancelada.";}
+ document.getElementById("cancelar-edicion").addEventListener("click",cancelEdit);
+ document.getElementById("limpiar").addEventListener("click",()=>{if(editingId){cancelEdit();return;}form.reset();status.textContent="Formulario limpio.";});
  render();
 })();
 </script></body></html>
