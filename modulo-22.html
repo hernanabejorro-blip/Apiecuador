@@ -23,7 +23,7 @@
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
- let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}
+ let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}\n let migrated=false;rows.forEach((r,i)=>{if(r&&!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* Se mantienen disponibles los registros en memoria. */}}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){
   list.innerHTML="";
@@ -56,8 +56,8 @@
  document.getElementById("limpiar").addEventListener("click",()=>{if(editingId){cancelEdit();return;}form.reset();status.textContent="Formulario limpio.";});
  document.getElementById("exportar").addEventListener("click",()=>{
   const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
-  const csv=[fields.map(f=>cell(f.label)).join(","),...rows.map(r=>fields.map(f=>cell(r[f.id])).join(","))].join("\\r\\n");
-  const blob=new Blob(["\\ufeff"+csv],{type:"text/csv;charset=utf-8"});
+  const csv=[fields.map(f=>cell(f.label)).join(","),...rows.map(r=>fields.map(f=>cell(r[f.id])).join(","))].join("\r\n");
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
   const url=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=url;a.download="apiecuador-cria-reinas-traslarve.csv";
   document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
