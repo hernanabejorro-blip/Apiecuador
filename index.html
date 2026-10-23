@@ -105,9 +105,29 @@ footer{padding-top:24px;padding-bottom:28px}
 #estado-personalizar{font-size:13px;color:#28613f;min-height:1.3em;margin:10px 0 0}
 @media(max-width:520px){.customize-toggle{width:calc(100% - 32px)}#panel-personalizar{margin-left:16px;margin-right:16px;padding:14px}}
 
+
+/* Acceso seguro con Google: autenticación únicamente, sin escribir datos */
+.cuenta-panel{max-width:960px;margin:0 auto 18px;padding:16px 18px;border:1px solid #dce5d8;border-radius:16px;background:#fff;box-shadow:0 4px 14px #173f3208}
+.cuenta-panel h2{margin:0 0 6px;font-size:18px;color:#245c43}
+.cuenta-panel p{margin:6px 0;line-height:1.5;font-size:14px}
+.cuenta-acciones{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.cuenta-acciones button{border:0;border-radius:10px;padding:11px 14px;font:600 14px system-ui;cursor:pointer}
+#cuenta-entrar{background:#245c43;color:#fff}
+#cuenta-salir{background:#eee8dc;color:#1c1c18}
+#cuenta-estado{overflow-wrap:anywhere;padding:10px 12px;border-radius:10px;background:#f5f4ef;color:#3e493f}
+@media(max-width:520px){.cuenta-panel{margin-left:16px;margin-right:16px}}
 </style></head><body>
 <header><div class="wrap"><div class="brand"><span class="bee">🐝</span><div><h1>ApiEcuador</h1><div>Gestión apícola · Panel de módulos</div></div></div>
 <p>Herramientas de campo para cosecha, floración, sanidad y trashumancia.</p></div></header>
+<section class="cuenta-panel" aria-labelledby="cuenta-titulo">
+  <h2 id="cuenta-titulo">🔐 Mi cuenta ApiEcuador</h2>
+  <p>Entra con Google para confirmar tu identidad. Esta etapa no sincroniza ni modifica los registros de tus colmenas.</p>
+  <div class="cuenta-acciones">
+    <button id="cuenta-entrar" type="button">Entrar con Google</button>
+    <button id="cuenta-salir" type="button" hidden>Cerrar sesión</button>
+  </div>
+  <p id="cuenta-estado" role="status" aria-live="polite">Comprobando conexión segura…</p>
+</section>
 <section class="accesos-rapidos" aria-label="Accesos rápidos">
   <h2>Accesos rápidos</h2>
   <div class="accesos-rapidos-lista">
@@ -380,5 +400,70 @@ buscador.addEventListener("input", function () {
 })();
 </script>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
+    getRedirectResult, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCIw41NJ7wIYfpAMj8R_aX4jC8x1uXXWbs",
+    authDomain: "apiecuador-34b2d.firebaseapp.com",
+    projectId: "apiecuador-34b2d",
+    storageBucket: "apiecuador-34b2d.firebasestorage.app",
+    messagingSenderId: "1084250214880",
+    appId: "1:1084250214880:web:4a4babf94a7da2f0f81b85"
+  };
+
+  const estadoCuenta = document.getElementById("cuenta-estado");
+  const botonEntrar = document.getElementById("cuenta-entrar");
+  const botonSalir = document.getElementById("cuenta-salir");
+  const appFirebase = initializeApp(firebaseConfig);
+  const auth = getAuth(appFirebase);
+  const proveedorGoogle = new GoogleAuthProvider();
+
+  function mostrarError(error) {
+    const mensajes = {
+      "auth/unauthorized-domain": "Este dominio no está autorizado en Firebase Authentication.",
+      "auth/popup-closed-by-user": "Se cerró la ventana de Google antes de terminar.",
+      "auth/operation-not-allowed": "El acceso con Google no está habilitado en Firebase."
+    };
+    estadoCuenta.textContent = (mensajes[error.code] || "No se pudo completar el acceso.") +
+      " Código: " + (error.code || "desconocido") + ". Los registros siguen sin modificarse.";
+  }
+
+  botonEntrar.addEventListener("click", async () => {
+    estadoCuenta.textContent = "Abriendo el acceso seguro de Google…";
+    try {
+      await signInWithPopup(auth, proveedorGoogle);
+    } catch (error) {
+      if (error.code === "auth/popup-blocked") {
+        try { await signInWithRedirect(auth, proveedorGoogle); }
+        catch (errorRedireccion) { mostrarError(errorRedireccion); }
+      } else { mostrarError(error); }
+    }
+  });
+
+  botonSalir.addEventListener("click", async () => {
+    try { await signOut(auth); }
+    catch (error) { mostrarError(error); }
+  });
+
+  getRedirectResult(auth).catch(mostrarError);
+  onAuthStateChanged(auth, usuario => {
+    if (usuario) {
+      estadoCuenta.textContent = "Sesión iniciada con Google: " +
+        (usuario.email || "correo no disponible") +
+        ". Identidad confirmada. La sincronización de registros aún no está activada.";
+      botonEntrar.hidden = true;
+      botonSalir.hidden = false;
+    } else {
+      estadoCuenta.textContent = "Sin sesión iniciada. Puedes entrar con Google; tus registros locales no se alteran.";
+      botonEntrar.hidden = false;
+      botonSalir.hidden = true;
+    }
+  });
+</script>
 </body>
 </html>
