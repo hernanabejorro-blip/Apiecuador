@@ -40,17 +40,18 @@
  form.addEventListener("submit",e=>{
   e.preventDefault();const total=Number(document.getElementById("cantidad").value),aceptadas=document.getElementById("aceptadas").value;if(aceptadas!==""&&(Number(aceptadas)<0||Number(aceptadas)>total)){status.textContent="Las celdas aceptadas no pueden superar las celdas transferidas.";return;}const existing=editingId?rows.find(r=>r.id===editingId):null;const row={...(existing||{}),id:existing?existing.id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
+  const previousRows=rows.map(r=>({...r}));
   if(editingId){rows=rows.map(r=>r.id===editingId?row:r);}else{rows.push(row);}
   try{localStorage.setItem(key,JSON.stringify(rows));form.reset();editingId=null;document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;render();status.textContent="Registro guardado en este teléfono.";}
-  catch(e){status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
+  catch(e){rows=previousRows;render();status.textContent="No se pudo guardar. No se confirmó el cambio; revisa el espacio disponible del navegador."; }
  });
  list.addEventListener("click",e=>{
   const edit=e.target.closest("[data-edit]");
   if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{form.elements[f.id].value=row[f.id]||"";});editingId=row.id;document.getElementById("registro-id").value=row.id;document.getElementById("form-title").textContent="Editar registro de cría de reinas";document.getElementById("guardar").textContent="Guardar cambios";document.getElementById("cancelar-edicion").hidden=false;status.textContent="Edita los datos y pulsa Guardar cambios.";window.scrollTo({top:0,behavior:"smooth"});return;}
   const b=e.target.closest("[data-delete]");if(!b)return;
   if(!confirm("¿Eliminar este registro de cría de reinas?"))return;
-  rows=rows.filter(r=>r.id!==b.dataset.delete);
-  try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
+  const previousRows=rows;rows=rows.filter(r=>r.id!==b.dataset.delete);
+  try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){rows=previousRows;render();status.textContent="No se pudo actualizar el almacenamiento; el registro se conservó.";}
  });
  function cancelEdit(){editingId=null;form.reset();document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;status.textContent="Edición cancelada.";}
  document.getElementById("cancelar-edicion").addEventListener("click",cancelEdit);
