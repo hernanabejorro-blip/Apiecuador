@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#245c43">
+  <title>Prueba de acceso · ApiEcuador</title>
+  <style>
+    :root{color-scheme:light;--green:#245c43;--cream:#fcf9f2;--ink:#1c1c18}
+    *{box-sizing:border-box}
+    body{margin:0;padding:24px;background:var(--cream);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+    main{max-width:620px;margin:0 auto}
+    .panel{background:#fff;border:1px solid #e5dfd2;border-radius:18px;padding:22px;box-shadow:0 5px 22px #0000000a}
+    h1{color:var(--green);font-size:1.7rem;margin-top:0}
+    p{line-height:1.55}
+    button,a.button{display:inline-block;border:0;border-radius:12px;padding:13px 17px;font:inherit;font-weight:700;text-decoration:none;cursor:pointer;margin:6px 6px 6px 0}
+    button{background:var(--green);color:white}
+    button.secondary,a.button{background:#eee8dc;color:var(--ink)}
+    #status{margin-top:16px;padding:13px;border-radius:10px;background:#f3f0e9;white-space:pre-wrap;overflow-wrap:anywhere}
+    .small{font-size:.9rem;color:#555}
+  </style>
+</head>
+<body>
+<main>
+  <section class="panel">
+    <h1>🐝 Prueba segura de acceso</h1>
+    <p>Esta página aislada sirve para comprobar el inicio de sesión de ApiEcuador. No guarda ni modifica registros de Firestore.</p>
+    <button id="login">Entrar con Google</button>
+    <button id="logout" class="secondary" hidden>Cerrar sesión</button>
+    <div id="status" role="status" aria-live="polite">Comprobando conexión con Firebase…</div>
+    <p class="small">Esta es una prueba técnica. No introduzcas contraseñas en esta página; Google gestiona el acceso.</p>
+    <a class="button" href="../index.html">Volver a ApiEcuador</a>
+  </section>
+</main>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
+    getRedirectResult, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCIw41NJ7wIYfpAMj8R_aX4jC8x1uXXWbs",
+    authDomain: "apiecuador-34b2d.firebaseapp.com",
+    projectId: "apiecuador-34b2d",
+    storageBucket: "apiecuador-34b2d.firebasestorage.app",
+    messagingSenderId: "1084250214880",
+    appId: "1:1084250214880:web:4a4babf94a7da2f0f81b85"
+  };
+
+  const status = document.getElementById("status");
+  const login = document.getElementById("login");
+  const logout = document.getElementById("logout");
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  function showError(error) {
+    const messages = {
+      "auth/unauthorized-domain": "Este dominio aún no está autorizado en Firebase Authentication. No cambies reglas de Firestore; hay que añadir el dominio en Authentication.",
+      "auth/popup-blocked": "Chrome bloqueó la ventana emergente. Intentaremos usar el acceso por redirección.",
+      "auth/popup-closed-by-user": "Se cerró la ventana de acceso antes de terminar.",
+      "auth/operation-not-allowed": "El proveedor Google no está habilitado en este proyecto."
+    };
+    status.textContent = (messages[error.code] || "No se pudo completar el acceso.") + "\nCódigo: " + (error.code || "desconocido");
+  }
+
+  login.addEventListener("click", async () => {
+    status.textContent = "Abriendo el acceso seguro de Google…";
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      if (error.code === "auth/popup-blocked") {
+        try { await signInWithRedirect(auth, provider); }
+        catch (redirectError) { showError(redirectError); }
+      } else {
+        showError(error);
+      }
+    }
+  });
+
+  logout.addEventListener("click", async () => {
+    try { await signOut(auth); status.textContent = "Sesión cerrada."; }
+    catch (error) { showError(error); }
+  });
+
+  getRedirectResult(auth).catch(showError);
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      status.textContent = "Acceso correcto.\nCuenta: " + (user.email || "correo no disponible") + "\nIdentidad confirmada por Firebase.\nNo se han leído ni escrito datos de Firestore.";
+      login.hidden = true;
+      logout.hidden = false;
+    } else {
+      login.hidden = false;
+      logout.hidden = true;
+      if (status.textContent.startsWith("Comprobando")) status.textContent = "Firebase está preparado. Pulsa «Entrar con Google» para probar el acceso.";
+    }
+  });
+</script>
+</body>
+</html>
