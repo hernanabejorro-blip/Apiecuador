@@ -71,7 +71,8 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
  let rows=[], editing=null;
  try{const saved=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(saved))rows=saved;}catch(e){}
  // Compatibilidad: algunos registros antiguos pueden no tener identificador. Se les asigna uno sin cambiar sus datos.
- let migrated=false; rows.forEach((r,i)=>{if(!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});\n if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* No bloquear la consulta si el almacenamiento está lleno. */}}
+ let migrated=false; rows.forEach((r,i)=>{if(!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});
+ if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* No bloquear la consulta si el almacenamiento está lleno. */}}
  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function persist(){localStorage.setItem(key,JSON.stringify(rows));}
  function render(){
@@ -97,7 +98,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
  });
  list.addEventListener("click",e=>{
   const edit=e.target.closest("[data-edit]");
-  if(edit){const r=rows.find(x=>x.id===edit.dataset.edit);if(!r)return;fields.forEach(f=>document.getElementById(f[0]).value=r[f[0]]||"");editing=r.id;document.getElementById("form-title").textContent="Editar apiario";document.getElementById("guardar").textContent="Guardar cambios";status.textContent="Modifica los datos y pulsa Guardar cambios.";form.scrollIntoView({behavior:"smooth",block:"start"});return;}
+  if(edit){const r=rows.find(x=>x.id===edit.dataset.edit);if(!r)return;fields.forEach(f=>document.getElementById(f[0]).value=r[f[0]]||"");const p=validCoords();if(p)setPoint(p.lat,p.lon);else if(marker&&map){map.removeLayer(marker);marker=null;}editing=r.id;document.getElementById("form-title").textContent="Editar apiario";document.getElementById("guardar").textContent="Guardar cambios";status.textContent="Modifica los datos y pulsa Guardar cambios.";form.scrollIntoView({behavior:"smooth",block:"start"});return;}
   const del=e.target.closest("[data-delete]");if(!del)return;
   if(!confirm("¿Eliminar este apiario? Esta acción no se puede deshacer."))return;
   const before=rows;rows=rows.filter(r=>r.id!==del.dataset.delete);
