@@ -118,60 +118,51 @@ footer{padding-top:24px;padding-bottom:28px}
 @media(max-width:520px){.cuenta-panel{margin-left:16px;margin-right:16px}}
 
 /* Fotografías temáticas para las tarjetas de módulos.
-   Se añaden al final para no alterar los enlaces ni el buscador. */
+   Solo cambia la presentación: se conservan los enlaces y el buscador. */
 .grid .card{
-  position:relative;
-  isolation:isolate;
-  overflow:hidden;
-  min-height:176px;
-  justify-content:flex-end;
-  color:#fff;
-  border:1px solid #ffffff55;
-  background-color:#245c43;
-  background-size:cover;
-  background-position:center;
+  position:relative; isolation:isolate; overflow:hidden;
+  min-height:176px; justify-content:flex-end; color:#fff;
+  border:1px solid #ffffff55; background-color:#245c43;
+  background-size:cover; background-position:center;
   box-shadow:0 5px 18px #173f3224;
 }
 .grid .card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:-1;
-  background:linear-gradient(180deg,#10251a18 0%,#10251a45 38%,#10251ae8 100%);
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(180deg,#10251a10 0%,#10251a45 38%,#10251af0 100%);
   transition:background .2s ease;
 }
 .grid .card:hover::before,
 .grid .card:focus-visible::before{
-  background:linear-gradient(180deg,#10251a08 0%,#10251a35 25%,#10251af2 100%);
+  background:linear-gradient(180deg,#10251a08 0%,#10251a35 25%,#10251af5 100%);
 }
 .grid .card .dot{color:#ffe39a;font-size:11px}
 .grid .card .name{font-size:17px;text-shadow:0 1px 4px #0009}
 .grid .card .go{color:#fff4c8;text-shadow:0 1px 4px #0009}
 .grid .card:focus-visible{outline:3px solid #b76b13;outline-offset:3px}
-/* Alimentación, floración, sanidad, miel y cría de reinas */
-.grid .card:nth-child(1){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(2){background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(3){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(4){background-image:url('https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(5){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(6){background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(7){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(8){background-image:url('https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(9){background-image:url('https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(10){background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(11){background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(12){background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(13){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(14){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(15){background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(16){background-image:url('https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(17){background-image:url('https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(18){background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(19){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(20){background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(21){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(22){background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')}
-.grid .card:nth-child(23){background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80')}
+/* Fotografías temáticas: miel, flores, sanidad, apiario y reinas. */
+.grid .card:nth-child(1){background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
+.grid .card:nth-child(2){background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
+.grid .card:nth-child(3){background-image:url('https://cdn.plantiary.com/images/insects/varroa-destructor.jpg')}
+.grid .card:nth-child(4){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(5){background-image:url('https://cdn.shopify.com/s/files/1/0428/0287/2482/files/reine-abeille_480x480.png?v=1673546037')}
+.grid .card:nth-child(6){background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
+.grid .card:nth-child(7){background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
+.grid .card:nth-child(8){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(9){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(10){background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
+.grid .card:nth-child(11){background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
+.grid .card:nth-child(12){background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
+.grid .card:nth-child(13){background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
+.grid .card:nth-child(14){background-image:url('https://cdn.shopify.com/s/files/1/0428/0287/2482/files/reine-abeille_480x480.png?v=1673546037')}
+.grid .card:nth-child(15){background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
+.grid .card:nth-child(16){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(17){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(18){background-image:url('https://cdn.shopify.com/s/files/1/0428/0287/2482/files/reine-abeille_480x480.png?v=1673546037')}
+.grid .card:nth-child(19){background-image:url('https://cdn.shopify.com/s/files/1/0428/0287/2482/files/reine-abeille_480x480.png?v=1673546037')}
+.grid .card:nth-child(20){background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
+.grid .card:nth-child(21){background-image:url('https://cdn.plantiary.com/images/insects/varroa-destructor.jpg')}
+.grid .card:nth-child(22){background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
+.grid .card:nth-child(23){background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
 @media(max-width:520px){.grid .card{min-height:132px;padding:17px}}
 
 </style></head><body>
