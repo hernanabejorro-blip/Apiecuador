@@ -22,7 +22,7 @@ input:focus,textarea:focus{outline:2px solid #36734c;outline-offset:1px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
 #mapa-apiario{height:300px;border-radius:12px;border:1px solid #d2dccc;z-index:1}
 .map-help{font-size:13px;color:#65584b;margin:8px 0 0}
-.coord-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.coord-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.satellite-on{background:#245c43;color:#fff}
 button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cursor:pointer}
 .primary{background:var(--green);color:#fff}.secondary{background:#f3eee3;color:#594b3b}.delete{background:#fae8e5;color:#8b2f22}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.status{font-size:13px;color:#28613f;min-height:1.4em}
@@ -51,7 +51,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 <div class="panel" style="margin:14px 0 0">
 <h2>Ubicar el apiario en el mapa</h2>
 <p class="map-help">Pulsa «Usar mi GPS» o toca el mapa para colocar el marcador. También puedes arrastrarlo hasta el punto correcto. El navegador puede pedir permiso de ubicación.</p>
-<div class="coord-actions"><button class="primary" id="usar-gps" type="button">Usar mi GPS</button><button class="secondary" id="centrar-mapa" type="button">Ver Ecuador</button><a id="abrir-mapa" href="https://www.openstreetmap.org/" target="_blank" rel="noopener" style="align-self:center;color:#245c43;font-size:14px">Abrir mapa completo ↗</a></div>
+<div class="coord-actions"><button class="primary" id="usar-gps" type="button">Usar mi GPS</button><button class="secondary" id="alternar-satelital" type="button" aria-pressed="false">🛰️ Vista satelital</button><button class="secondary" id="centrar-mapa" type="button">Ver Ecuador</button><a id="abrir-mapa" href="https://www.openstreetmap.org/" target="_blank" rel="noopener" style="align-self:center;color:#245c43;font-size:14px">Abrir mapa completo ↗</a></div>
 <div id="mapa-apiario" role="application" aria-label="Mapa para elegir la ubicación del apiario"></div>
 <p class="status" id="estado-mapa" role="status" aria-live="polite"></p>
 </div>
@@ -69,13 +69,13 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
  const form=document.getElementById("form"), list=document.getElementById("lista"), status=document.getElementById("estado");
  const latInput=document.getElementById("latitud"), lonInput=document.getElementById("longitud");
  const mapStatus=document.getElementById("estado-mapa"), mapLink=document.getElementById("abrir-mapa");
- let map=null, marker=null, rows=[], editing=null;
+ let map=null, marker=null, rows=[], editing=null, streetLayer=null, satelliteLayer=null, satelliteOn=false;
  const ecuador=[-0.18,-78.47];
  function validCoords(lat,lon){return lat!==""&&lon!==""&&Number.isFinite(Number(lat))&&Number.isFinite(Number(lon))&&Number(lat)>=-90&&Number(lat)<=90&&Number(lon)>=-180&&Number(lon)<=180;}
  function syncMap(lat,lon,zoom){if(!validCoords(String(lat),String(lon)))return;const point=[Number(lat),Number(lon)];if(map){if(!marker){marker=L.marker(point,{draggable:true}).addTo(map);marker.on("dragend",()=>setCoords(marker.getLatLng().lat,marker.getLatLng().lng,false));}else marker.setLatLng(point);map.setView(point,zoom||15);}updateMapLink();}
  function setCoords(lat,lon,moveMarker=true){latInput.value=Number(lat).toFixed(6);lonInput.value=Number(lon).toFixed(6);if(map&&moveMarker)syncMap(lat,lon,15);updateMapLink();mapStatus.textContent="Coordenadas seleccionadas: "+latInput.value+", "+lonInput.value+". Se guardarán al guardar el apiario.";}
  function updateMapLink(){mapLink.href=validCoords(latInput.value,lonInput.value)?"https://www.openstreetmap.org/?mlat="+encodeURIComponent(latInput.value)+"&mlon="+encodeURIComponent(lonInput.value)+"#map=16/"+encodeURIComponent(latInput.value)+"/"+encodeURIComponent(lonInput.value):"https://www.openstreetmap.org/";}
- if(window.L){map=L.map("mapa-apiario").setView(ecuador,8);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);map.on("click",e=>setCoords(e.latlng.lat,e.latlng.lng));mapStatus.textContent="Toca el mapa para elegir la ubicación.";setTimeout(()=>map.invalidateSize(),150);}else{mapStatus.textContent="El mapa no se pudo cargar. Puedes introducir latitud y longitud manualmente o usar el GPS.";}
+ if(window.L){map=L.map("mapa-apiario").setView(ecuador,8);streetLayer=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"});satelliteLayer=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community"});streetLayer.addTo(map);map.on("click",e=>setCoords(e.latlng.lat,e.latlng.lng));mapStatus.textContent="Toca el mapa para elegir la ubicación.";setTimeout(()=>map.invalidateSize(),150);}else{mapStatus.textContent="El mapa no se pudo cargar. Puedes introducir latitud y longitud manualmente o usar el GPS.";}
  try{const saved=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(saved))rows=saved;}catch(e){}
  // Compatibilidad: algunos registros antiguos pueden no tener identificador. Se les asigna uno sin cambiar sus datos.
  let migrated=false; rows.forEach((r,i)=>{if(!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});
@@ -126,6 +126,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
   a.href=url;a.download="apiecuador-mis-apiarios.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
   status.textContent="Se preparó la descarga del archivo CSV.";
  });
+ document.getElementById("alternar-satelital").addEventListener("click",()=>{if(!map||!streetLayer||!satelliteLayer){mapStatus.textContent="El mapa no está disponible. Puedes introducir las coordenadas manualmente.";return;}satelliteOn=!satelliteOn;if(satelliteOn){map.removeLayer(streetLayer);satelliteLayer.addTo(map);document.getElementById("alternar-satelital").textContent="🗺️ Volver a calles";document.getElementById("alternar-satelital").classList.add("satellite-on");document.getElementById("alternar-satelital").setAttribute("aria-pressed","true");mapStatus.textContent="Vista satelital activada. Toca la imagen para marcar el apiario.";}else{map.removeLayer(satelliteLayer);streetLayer.addTo(map);document.getElementById("alternar-satelital").textContent="🛰️ Vista satelital";document.getElementById("alternar-satelital").classList.remove("satellite-on");document.getElementById("alternar-satelital").setAttribute("aria-pressed","false");mapStatus.textContent="Mapa de calles activado. Toca el mapa para marcar el apiario.";}setTimeout(()=>map.invalidateSize(),50);});
  render();
 })();
 </script>
