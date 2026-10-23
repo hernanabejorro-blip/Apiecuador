@@ -116,6 +116,64 @@ footer{padding-top:24px;padding-bottom:28px}
 #cuenta-salir{background:#eee8dc;color:#1c1c18}
 #cuenta-estado{overflow-wrap:anywhere;padding:10px 12px;border-radius:10px;background:#f5f4ef;color:#3e493f}
 @media(max-width:520px){.cuenta-panel{margin-left:16px;margin-right:16px}}
+
+/* Fotografías temáticas para las tarjetas de módulos.
+   Se añaden al final para no alterar los enlaces ni el buscador. */
+.grid .card{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  min-height:176px;
+  justify-content:flex-end;
+  color:#fff;
+  border:1px solid #ffffff55;
+  background-color:#245c43;
+  background-size:cover;
+  background-position:center;
+  box-shadow:0 5px 18px #173f3224;
+}
+.grid .card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:linear-gradient(180deg,#10251a18 0%,#10251a45 38%,#10251ae8 100%);
+  transition:background .2s ease;
+}
+.grid .card:hover::before,
+.grid .card:focus-visible::before{
+  background:linear-gradient(180deg,#10251a08 0%,#10251a35 25%,#10251af2 100%);
+}
+.grid .card .dot{color:#ffe39a;font-size:11px}
+.grid .card .name{font-size:17px;text-shadow:0 1px 4px #0009}
+.grid .card .go{color:#fff4c8;text-shadow:0 1px 4px #0009}
+.grid .card:focus-visible{outline:3px solid #b76b13;outline-offset:3px}
+/* Alimentación, floración, sanidad, miel y cría de reinas */
+.grid .card:nth-child(1){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(2){background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(3){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(4){background-image:url('https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(5){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(6){background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(7){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(8){background-image:url('https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(9){background-image:url('https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(10){background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(11){background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(12){background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(13){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(14){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(15){background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(16){background-image:url('https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(17){background-image:url('https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(18){background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(19){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(20){background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(21){background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(22){background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')}
+.grid .card:nth-child(23){background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80')}
+@media(max-width:520px){.grid .card{min-height:132px;padding:17px}}
+
 </style></head><body>
 <header><div class="wrap"><div class="brand"><span class="bee">🐝</span><div><h1>ApiEcuador</h1><div>Gestión apícola · Panel de módulos</div></div></div>
 <p>Herramientas de campo para cosecha, floración, sanidad y trashumancia.</p></div></header>
