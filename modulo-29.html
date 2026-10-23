@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#245c43">
 <link rel="manifest" href="./manifest.json">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <title>Mis apiarios · ApiEcuador</title>
 <style>
 :root{color-scheme:light;--green:#245c43;--cream:#fcf9f2;--ink:#1c1c18}
@@ -18,6 +20,9 @@ h2{font-size:19px;margin:0 0 12px}label{display:block;font-weight:650;font-size:
 input,textarea{display:block;width:100%;font:16px system-ui;padding:11px 12px;border:1px solid #d2dccc;border-radius:10px;background:#fff;color:#1c1c18}
 input:focus,textarea:focus{outline:2px solid #36734c;outline-offset:1px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+#mapa-apiario{height:300px;border-radius:12px;border:1px solid #d2dccc;z-index:1}
+.map-help{font-size:13px;color:#65584b;margin:8px 0 0}
+.coord-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cursor:pointer}
 .primary{background:var(--green);color:#fff}.secondary{background:#f3eee3;color:#594b3b}.delete{background:#fae8e5;color:#8b2f22}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.status{font-size:13px;color:#28613f;min-height:1.4em}
@@ -39,6 +44,15 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 <div><label for="flora">Flora principal</label><input id="flora" maxlength="120" placeholder="Ej.: eucalipto, aguacate"></div>
 <div><label for="agua">Agua y acceso</label><input id="agua" maxlength="120" placeholder="Fuente de agua, camino, acceso"></div>
 <div><label for="responsable">Responsable</label><input id="responsable" maxlength="100" placeholder="Nombre o identificación interna"></div>
+<div><label for="latitud">Latitud</label><input id="latitud" type="number" min="-90" max="90" step="any" inputmode="decimal" placeholder="-0.1807"></div>
+<div><label for="longitud">Longitud</label><input id="longitud" type="number" min="-180" max="180" step="any" inputmode="decimal" placeholder="-78.4678"></div>
+</div>
+<div class="panel" style="margin:14px 0 0">
+<h2>Ubicar el apiario en el mapa</h2>
+<p class="map-help">Pulsa «Usar mi GPS» o toca el mapa para colocar el marcador. También puedes arrastrarlo hasta el punto correcto. El navegador puede pedir permiso de ubicación.</p>
+<div class="coord-actions"><button class="primary" id="usar-gps" type="button">Usar mi GPS</button><button class="secondary" id="centrar-mapa" type="button">Ver Ecuador</button><a id="abrir-mapa" href="https://www.openstreetmap.org/" target="_blank" rel="noopener" style="align-self:center;color:#245c43;font-size:14px">Abrir mapa completo ↗</a></div>
+<div id="mapa-apiario" role="application" aria-label="Mapa para elegir la ubicación del apiario"></div>
+<p class="status" id="estado-mapa" role="status" aria-live="polite"></p>
 </div>
 <label for="notas">Notas del apiario</label><textarea id="notas" rows="3" maxlength="1000" placeholder="Floración, viento, seguridad, observaciones..."></textarea>
 <div class="actions"><button class="primary" type="submit" id="guardar">Guardar apiario</button><button class="secondary" type="button" id="limpiar">Limpiar</button></div>
@@ -50,9 +64,17 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 <script>
 (function(){
  const key="apiecuador-apiarios-v1";
- const fields=[["nombre","Nombre del apiario"],["ubicacion","Ubicación o referencia"],["colmenas","Número de colmenas"],["flora","Flora principal"],["agua","Agua y acceso"],["responsable","Responsable"],["notas","Notas"]];
+ const fields=[["nombre","Nombre del apiario"],["ubicacion","Ubicación o referencia"],["colmenas","Número de colmenas"],["flora","Flora principal"],["agua","Agua y acceso"],["responsable","Responsable"],["latitud","Latitud"],["longitud","Longitud"],["notas","Notas"]];
  const form=document.getElementById("form"), list=document.getElementById("lista"), status=document.getElementById("estado");
- let rows=[], editing=null;
+ const latInput=document.getElementById("latitud"), lonInput=document.getElementById("longitud");
+ const mapStatus=document.getElementById("estado-mapa"), mapLink=document.getElementById("abrir-mapa");
+ let map=null, marker=null, rows=[], editing=null;
+ const ecuador=[-0.18,-78.47];
+ function validCoords(lat,lon){return lat!==""&&lon!==""&&Number.isFinite(Number(lat))&&Number.isFinite(Number(lon))&&Number(lat)>=-90&&Number(lat)<=90&&Number(lon)>=-180&&Number(lon)<=180;}
+ function syncMap(lat,lon,zoom){if(!validCoords(String(lat),String(lon)))return;const point=[Number(lat),Number(lon)];if(map){if(!marker){marker=L.marker(point,{draggable:true}).addTo(map);marker.on("dragend",()=>setCoords(marker.getLatLng().lat,marker.getLatLng().lng,false));}else marker.setLatLng(point);map.setView(point,zoom||15);}updateMapLink();}
+ function setCoords(lat,lon,moveMarker=true){latInput.value=Number(lat).toFixed(6);lonInput.value=Number(lon).toFixed(6);if(map&&moveMarker)syncMap(lat,lon,15);updateMapLink();mapStatus.textContent="Coordenadas seleccionadas: "+latInput.value+", "+lonInput.value+". Se guardarán al guardar el apiario.";}
+ function updateMapLink(){mapLink.href=validCoords(latInput.value,lonInput.value)?"https://www.openstreetmap.org/?mlat="+encodeURIComponent(latInput.value)+"&mlon="+encodeURIComponent(lonInput.value)+"#map=16/"+encodeURIComponent(latInput.value)+"/"+encodeURIComponent(lonInput.value):"https://www.openstreetmap.org/";}
+ if(window.L){map=L.map("mapa-apiario").setView(ecuador,8);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);map.on("click",e=>setCoords(e.latlng.lat,e.latlng.lng));mapStatus.textContent="Toca el mapa para elegir la ubicación.";setTimeout(()=>map.invalidateSize(),150);}else{mapStatus.textContent="El mapa no se pudo cargar. Puedes introducir latitud y longitud manualmente o usar el GPS.";}
  try{const saved=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(saved))rows=saved;}catch(e){}\n // Compatibilidad: algunos registros antiguos pueden no tener identificador. Se les asigna uno sin cambiar sus datos.\n let migrated=false; rows.forEach((r,i)=>{if(!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});\n if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* No bloquear la consulta si el almacenamiento está lleno. */}}
  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function persist(){localStorage.setItem(key,JSON.stringify(rows));}
@@ -68,7 +90,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
    list.appendChild(card);
   });
  }
- function reset(){form.reset();editing=null;document.getElementById("form-title").textContent="Registrar apiario";document.getElementById("guardar").textContent="Guardar apiario";}
+ function reset(){form.reset();editing=null;document.getElementById("form-title").textContent="Registrar apiario";document.getElementById("guardar").textContent="Guardar apiario";mapStatus.textContent="Toca el mapa para elegir la ubicación.";updateMapLink();if(map){if(marker){map.removeLayer(marker);marker=null;}map.setView(ecuador,8);}}
  form.addEventListener("submit",e=>{
   e.preventDefault();
   const row={id:editing||("a"+Date.now().toString(36)+Math.random().toString(36).slice(2,6))};
@@ -79,12 +101,16 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
  });
  list.addEventListener("click",e=>{
   const edit=e.target.closest("[data-edit]");
-  if(edit){const r=rows.find(x=>x.id===edit.dataset.edit);if(!r)return;fields.forEach(f=>document.getElementById(f[0]).value=r[f[0]]||"");editing=r.id;document.getElementById("form-title").textContent="Editar apiario";document.getElementById("guardar").textContent="Guardar cambios";status.textContent="Modifica los datos y pulsa Guardar cambios.";form.scrollIntoView({behavior:"smooth",block:"start"});return;}
+  if(edit){const r=rows.find(x=>x.id===edit.dataset.edit);if(!r)return;fields.forEach(f=>document.getElementById(f[0]).value=r[f[0]]||"");if(validCoords(String(r.latitud||""),String(r.longitud||""))){syncMap(r.latitud,r.longitud,15);mapStatus.textContent="Ubicación guardada de este apiario.";}else{if(map){if(marker){map.removeLayer(marker);marker=null;}map.setView(ecuador,8);}mapStatus.textContent="Este registro aún no tiene coordenadas. Elige un punto en el mapa o usa el GPS.";}editing=r.id;document.getElementById("form-title").textContent="Editar apiario";document.getElementById("guardar").textContent="Guardar cambios";status.textContent="Modifica los datos y pulsa Guardar cambios.";form.scrollIntoView({behavior:"smooth",block:"start"});return;}
   const del=e.target.closest("[data-delete]");if(!del)return;
   if(!confirm("¿Eliminar este apiario? Esta acción no se puede deshacer."))return;
   const before=rows;rows=rows.filter(r=>r.id!==del.dataset.delete);
   try{persist();render();status.textContent="Apiario eliminado.";}catch(err){rows=before;status.textContent="No se pudo actualizar el almacenamiento.";}
  });
+ latInput.addEventListener("change",()=>{if(validCoords(latInput.value,lonInput.value))syncMap(latInput.value,lonInput.value,15);updateMapLink();});
+ lonInput.addEventListener("change",()=>{if(validCoords(latInput.value,lonInput.value))syncMap(latInput.value,lonInput.value,15);updateMapLink();});
+ document.getElementById("usar-gps").addEventListener("click",()=>{if(!navigator.geolocation){mapStatus.textContent="Este navegador no ofrece geolocalización.";return;}mapStatus.textContent="Buscando tu ubicación…";navigator.geolocation.getCurrentPosition(pos=>{setCoords(pos.coords.latitude,pos.coords.longitude);mapStatus.textContent="GPS obtenido. Comprueba el marcador y guarda el apiario.";},err=>{const msg={1:"Permiso de ubicación denegado. Puedes elegir el punto manualmente en el mapa.",2:"No se pudo determinar la ubicación. Comprueba el GPS e inténtalo de nuevo.",3:"La búsqueda de GPS tardó demasiado. Inténtalo de nuevo o marca el mapa."};mapStatus.textContent=msg[err.code]||"No se pudo obtener el GPS. Puedes marcar el mapa manualmente.";},{enableHighAccuracy:true,timeout:15000,maximumAge:60000});});
+ document.getElementById("centrar-mapa").addEventListener("click",()=>{if(map)map.setView(ecuador,6);mapStatus.textContent="Vista de Ecuador.";});
  document.getElementById("limpiar").addEventListener("click",()=>{reset();status.textContent="Formulario limpio.";});
  document.getElementById("exportar").addEventListener("click",()=>{
   const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
