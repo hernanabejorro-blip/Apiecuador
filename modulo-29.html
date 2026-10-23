@@ -90,9 +90,11 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
  function reset(){form.reset();editing=null;if(marker&&map){map.removeLayer(marker);marker=null;}document.getElementById("form-title").textContent="Registrar apiario";document.getElementById("guardar").textContent="Guardar apiario";}
  form.addEventListener("submit",e=>{
   e.preventDefault();
-  const row={id:editing||("a"+Date.now().toString(36)+Math.random().toString(36).slice(2,6))};
-  fields.forEach(f=>row[f[0]]=String(document.getElementById(f[0]).value||"").trim());
   const old=editing?rows.findIndex(r=>r.id===editing):-1;
+  const row={...(old>=0?rows[old]:{}),id:old>=0?rows[old].id:("a"+Date.now().toString(36)+Math.random().toString(36).slice(2,6))};
+  fields.forEach(f=>row[f[0]]=String(document.getElementById(f[0]).value||"").trim());
+  const latRaw=row.latitud.trim(),lonRaw=row.longitud.trim();
+  if((latRaw&&!lonRaw)||(!latRaw&&lonRaw)||(latRaw&&!validCoords())){status.textContent="Revisa las coordenadas: introduce una latitud y longitud válidas, o deja ambos campos vacíos.";return;}
   try{if(old>=0)rows[old]=row;else rows.push(row);persist();reset();render();status.textContent="Apiario guardado en este teléfono.";}
   catch(err){status.textContent="No se pudo guardar. Revisa el espacio disponible del navegador.";}
  });
