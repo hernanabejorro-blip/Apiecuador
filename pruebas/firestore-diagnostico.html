@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#245c43">
+  <title>Prueba de datos · ApiEcuador</title>
+  <style>
+    :root{color-scheme:light;--green:#245c43;--cream:#fcf9f2;--ink:#1c1c18}
+    *{box-sizing:border-box}body{margin:0;padding:22px;background:var(--cream);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+    main{max-width:650px;margin:auto}.panel{background:white;border:1px solid #e5dfd2;border-radius:18px;padding:22px;box-shadow:0 5px 22px #0000000a}
+    h1{color:var(--green);font-size:1.65rem;margin-top:0}p{line-height:1.55}
+    button,a{display:inline-block;border:0;border-radius:12px;padding:13px 16px;font:inherit;font-weight:700;text-decoration:none;cursor:pointer;margin:6px 6px 6px 0}
+    button{background:var(--green);color:white}a{background:#eee8dc;color:var(--ink)}
+    button:disabled{opacity:.55;cursor:wait}#status{margin-top:16px;padding:14px;border-radius:10px;background:#f3f0e9;white-space:pre-wrap;overflow-wrap:anywhere}
+    .warning{background:#fff2df;border:1px solid #e9c79e;border-radius:10px;padding:12px}
+  </style>
+</head>
+<body><main><section class="panel">
+  <h1>🐝 Prueba segura de guardado</h1>
+  <p>Esta página comprueba si tu cuenta puede guardar, leer y borrar un documento de prueba en Firestore. No modifica los registros de los módulos.</p>
+  <p class="warning"><strong>Importante:</strong> debes haber iniciado sesión con Google. La prueba crea un documento temporal asociado únicamente a tu identificador y luego intenta borrarlo. No contiene datos de tus colmenas.</p>
+  <button id="test" disabled>Comprobar guardado de datos</button>
+  <div id="status" role="status" aria-live="polite">Comprobando sesión…</div>
+  <p><a href="../index.html">Volver a ApiEcuador</a> <a href="./firebase-auth.html">Abrir prueba de acceso</a></p>
+</section></main>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCIw41NJ7wIYfpAMj8R_aX4jC8x1uXXWbs",
+    authDomain: "apiecuador-34b2d.firebaseapp.com",
+    projectId: "apiecuador-34b2d",
+    storageBucket: "apiecuador-34b2d.firebasestorage.app",
+    messagingSenderId: "1084250214880",
+    appId: "1:1084250214880:web:4a4babf94a7da2f0f81b85"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const status = document.getElementById("status");
+  const button = document.getElementById("test");
+  onAuthStateChanged(auth, user => {
+    button.disabled = !user;
+    status.textContent = user
+      ? "Sesión activa: " + (user.email || "cuenta Google") + "\nPulsa el botón para probar Firestore."
+      : "No hay sesión activa. Primero entra con Google en la prueba de acceso y vuelve aquí.";
+  });
+
+  button.addEventListener("click", async () => {
+    const user = auth.currentUser;
+    if (!user) { status.textContent = "Inicia sesión con Google antes de continuar."; return; }
+    button.disabled = true;
+    const testRef = doc(db, "users", user.uid, "diagnostico", "prueba-temporal");
+    let created = false;
+    try {
+      status.textContent = "Paso 1 de 3: intentando guardar un documento temporal…";
+      await setDoc(testRef, { tipo: "prueba-tecnica", propietario: user.uid, fecha: new Date().toISOString() });
+      created = true;
+      status.textContent = "Paso 2 de 3: documento guardado. Comprobando lectura…";
+      const snapshot = await getDoc(testRef);
+      if (!snapshot.exists() || snapshot.data().propietario !== user.uid) {
+        throw new Error("La lectura no confirmó el documento esperado.");
+      }
+      status.textContent = "Paso 3 de 3: lectura correcta. Borrando el documento temporal…";
+      await deleteDoc(testRef);
+      created = false;
+      status.textContent = "¡Prueba completada! Se pudo guardar, leer y borrar el documento temporal. No se modificaron datos de tus módulos.";
+    } catch (error) {
+      let message = "La prueba no se completó. Código: " + (error.code || "sin código") + "\n";
+      if (error.code === "permission-denied" || error.code === "firestore/permission-denied") {
+        message += "Firestore está bloqueando el acceso, como medida de seguridad. No cambies las reglas a ciegas; debemos configurar reglas que permitan a cada usuario acceder solo a sus propios datos.";
+      } else {
+        message += error.message || "Revisa la conexión y la configuración de Firebase.";
+      }
+      if (created) {
+        try { await deleteDoc(testRef); message += "\nSe intentó borrar el documento temporal."; }
+        catch { message += "\nNo se pudo confirmar el borrado automático del documento temporal. Avísame antes de repetir la prueba."; }
+      }
+      status.textContent = message;
+    } finally {
+      button.disabled = !auth.currentUser;
+    }
+  });
+</script></body></html>
