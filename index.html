@@ -117,70 +117,51 @@ footer{padding-top:24px;padding-bottom:28px}
 #cuenta-estado{overflow-wrap:anywhere;padding:10px 12px;border-radius:10px;background:#f5f4ef;color:#3e493f}
 @media(max-width:520px){.cuenta-panel{margin-left:16px;margin-right:16px}}
 
-/* Fotografías temáticas para las tarjetas de módulos.
-   Solo cambia la presentación: se conservan los enlaces y el buscador. */
+/* Fotografías propias por módulo: una imagen distinta para cada tarjeta.
+   Solo cambia la presentación; se conservan destinos, buscador y funciones. */
 .grid .card{
-  position:relative; isolation:isolate; overflow:hidden;
-  min-height:176px; justify-content:flex-end; color:#fff;
-  border:1px solid #ffffff55; background-color:#245c43;
-  background-size:cover; background-position:center;
+  position:relative;isolation:isolate;overflow:hidden;min-height:176px;
+  justify-content:flex-end;color:#fff;border:1px solid #ffffff55;
+  background-color:#245c43;background-size:cover;background-position:center;
   box-shadow:0 5px 18px #173f3224;
 }
 .grid .card::before{
-  content:""; position:absolute; inset:0; z-index:-1;
-  background:linear-gradient(180deg,#10251a10 0%,#10251a45 38%,#10251af0 100%);
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(180deg,#10251a08 0%,#10251a35 34%,#10251af0 100%);
   transition:background .2s ease;
 }
-.grid .card:hover::before,
-.grid .card:focus-visible::before{
-  background:linear-gradient(180deg,#10251a08 0%,#10251a35 25%,#10251af5 100%);
+.grid .card:hover::before,.grid .card:focus-visible::before{
+  background:linear-gradient(180deg,#10251a08 0%,#10251a28 24%,#10251af5 100%);
 }
 .grid .card .dot{color:#ffe39a;font-size:11px}
 .grid .card .name{font-size:17px;text-shadow:0 1px 4px #0009}
 .grid .card .go{color:#fff4c8;text-shadow:0 1px 4px #0009}
 .grid .card:focus-visible{outline:3px solid #b76b13;outline-offset:3px}
-/* Fotografías temáticas vinculadas al archivo de cada módulo. */
-.grid .card[href="modulo-01.html"]{background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
-.grid .card[href="modulo-02.html"]{background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
+/* Cada tarjeta usa una URL de imagen diferente. */
+.grid .card[href="modulo-01.html"]{background-image:url('https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-02.html"]{background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80')}
 .grid .card[href="modulo-03.html"]{background-image:url('https://cdn.plantiary.com/images/insects/varroa-destructor.jpg')}
-.grid .card[href="modulo-04.html"]{background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
+.grid .card[href="modulo-04.html"]{background-image:url('https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?auto=format&fit=crop&w=900&q=80')}
 .grid .card[href="modulo-05.html"]{background-image:url('https://cdn.shopify.com/s/files/1/0428/0287/2482/files/reine-abeille_480x480.png?v=1673546037')}
-.grid .card[href="modulo-06.html"]{background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
-.grid .card[href="modulo-07.html"]{background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
-.grid .card[href="modulo-08.html"]{background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
-.grid .card[href="modulo-09.html"]{background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
-.grid .card[href="modulo-10.html"]{background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
-.grid .card[href="modulo-11.html"]{background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
-.grid .card[href="modulo-12.html"]{background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
-.grid .card[href="modulo-21.html"]{background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
-.grid .card[href="modulo-22.html"]{background-image:url('https://cdn.shopify.com/s/files/1/0428/0287/2482/files/reine-abeille_480x480.png?v=1673546037')}
-.grid .card[href="modulo-23.html"]{background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
-.grid .card[href="modulo-24.html"]{background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
-.grid .card[href="modulo-25.html"]{background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
-.grid .card[href="modulo-28.html"]{background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
-.grid .card[href="modulo-30.html"]{background-image:url('https://cdn.shopify.com/s/files/1/0428/0287/2482/files/reine-abeille_480x480.png?v=1673546037')}
-.grid .card[href="modulo-27.html"]{background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
-.grid .card[href="modulo-26.html"]{background-image:url('https://cdn.plantiary.com/images/insects/varroa-destructor.jpg')}
-.grid .card[href="modulo-29.html"]{background-image:url('https://psu-gatsby-files-prod.s3.amazonaws.com/s3fs-public/2026/01/adobestock_212958820-1.jpeg')}
-.grid .card[href="modulo-31.html"]{background-image:url('https://static.wixstatic.com/media/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg/v1/fill/w_863%2Ch_626%2Cal_c%2Cq_85/ef7e82_98131e4a033249f9a54b5e615abb9d87~mv2.jpg')}
-@media(max-width:520px){.grid .card{min-height:132px;padding:17px}}
-
-/* Ajustes finales de encuadre por tema: reina, sanidad y floración. */
-.grid .card[href="modulo-05.html"],
-.grid .card[href="modulo-22.html"],
-.grid .card[href="modulo-28.html"],
-.grid .card[href="modulo-30.html"]{background-position:center 38%}
-.grid .card[href="modulo-03.html"],
-.grid .card[href="modulo-26.html"]{background-position:center 42%}
-.grid .card[href="modulo-02.html"],
-.grid .card[href="modulo-12.html"],
-.grid .card[href="modulo-23.html"],
-.grid .card[href="modulo-31.html"]{background-position:center 55%}
-.grid .card[href="modulo-04.html"],
-.grid .card[href="modulo-25.html"]{background-position:center 48%}
-@media(max-width:520px){
-  .grid .card{min-height:150px;background-position:center 45%}
-  .grid .card .name{max-width:34ch}
+.grid .card[href="modulo-06.html"]{background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-07.html"]{background-image:url('https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-08.html"]{background-image:url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-09.html"]{background-image:url('https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-10.html"]{background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-11.html"]{background-image:url('https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-12.html"]{background-image:url('https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-21.html"]{background-image:url('https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-22.html"]{background-image:url('https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-23.html"]{background-image:url('https://images.unsplash.com/photo-1468327768560-75b778cbb551?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-24.html"]{background-image:url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-25.html"]{background-image:url('https://images.unsplash.com/photo-1495231916356-a86217efff12?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-28.html"]{background-image:url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-30.html"]{background-image:url('https://images.unsplash.com/photo-1473973266408-ed4e27abdd47?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-27.html"]{background-image:url('https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-26.html"]{background-image:url('https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-29.html"]{background-image:url('https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80')}
+.grid .card[href="modulo-31.html"]{background-image:url('https://images.unsplash.com/photo-1494625927555-6ec4433b1571?auto=format&fit=crop&w=900&q=80')}
+@media(max-width:520px){.grid .card{min-height:150px;padding:17px;background-position:center 45%}.grid .card .name{max-width:34ch}}
 }
 
 </style></head><body>
