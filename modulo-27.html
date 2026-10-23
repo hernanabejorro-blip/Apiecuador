@@ -16,7 +16,7 @@
 </main>
 <script>
 (function(){
- const keys=["apiecuador-apiarios-v1","apiecuador-cuadrilla-v1","apiecuador-modulo-03-v1","apiecuador-modulo-04-v1","apiecuador-modulo-05-v1","apiecuador-modulo-06-v1","apiecuador-modulo-09-v1","apiecuador-modulo-11-v1","apiecuador-modulo-12-v1","apiecuador-modulo-21-v1","apiecuador-modulo-22-v1","apiecuador-modulo-23-v1","apiecuador-modulo-24-v1","apiecuador-modulo-25-v1","apiecuador-reinas-v1","apiecuador-floracion-v1","apiecuador-personalizacion-v1"];
+ const keys=["apiecuador-apiarios-v1","apiecuador-alimentacion-campo-v1","apiecuador-floracion-observada-v1","apiecuador-floracion-para-trashumancia-v1","apiecuador-cuadrilla-v1","apiecuador-modulo-03-v1","apiecuador-modulo-04-v1","apiecuador-modulo-05-v1","apiecuador-modulo-06-v1","apiecuador-modulo-09-v1","apiecuador-modulo-11-v1","apiecuador-modulo-12-v1","apiecuador-modulo-21-v1","apiecuador-modulo-22-v1","apiecuador-modulo-23-v1","apiecuador-modulo-24-v1","apiecuador-modulo-25-v1","apiecuador-reinas-v1","apiecuador-floracion-v1","apiecuador-personalizacion-v1"];
  const status=document.getElementById("estado");
  function read(key){try{return JSON.parse(localStorage.getItem(key)||"null")}catch(e){return null}}
  document.getElementById("exportar").addEventListener("click",function(){
