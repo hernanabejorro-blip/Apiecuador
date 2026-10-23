@@ -15,7 +15,7 @@
 <label for="revision">Fecha de revisión de aceptación</label><input id="revision" name="revision" type="date">
 <label for="nacimiento">Fecha estimada de nacimiento</label><input id="nacimiento" name="nacimiento" type="date">
 <label for="resultado">Resultado y observaciones</label><textarea id="resultado" name="resultado" rows="3"></textarea><div class="actions"><button class="primary" id="guardar" type="submit">Guardar registro</button><button class="secondary" id="cancelar-edicion" type="button" hidden>Cancelar edición</button><button class="secondary" id="limpiar" type="button">Limpiar formulario</button></div><p class="status" id="estado" role="status" aria-live="polite"></p></form></section>
-<section class="panel"><h2>Registros guardados</h2><div id="registros" class="record-grid"></div></section></main>
+<section class="panel"><h2>Registros guardados</h2><div id="registros" class="record-grid"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar respaldo CSV</button></div></section></main>
 <script>
 (function(){
  const key="apiecuador-modulo-22-v1";
@@ -54,6 +54,15 @@
  function cancelEdit(){editingId=null;form.reset();document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;status.textContent="Edición cancelada.";}
  document.getElementById("cancelar-edicion").addEventListener("click",cancelEdit);
  document.getElementById("limpiar").addEventListener("click",()=>{if(editingId){cancelEdit();return;}form.reset();status.textContent="Formulario limpio.";});
+ document.getElementById("exportar").addEventListener("click",()=>{
+  const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
+  const csv=[fields.map(f=>cell(f.label)).join(","),...rows.map(r=>fields.map(f=>cell(r[f.id])).join(","))].join("\\r\\n");
+  const blob=new Blob(["\\ufeff"+csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="apiecuador-cria-reinas-traslarve.csv";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  status.textContent="Respaldo CSV preparado. Guárdalo en un lugar seguro.";
+ });
  render();
 })();
 </script></body></html>
