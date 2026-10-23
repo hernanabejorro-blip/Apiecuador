@@ -32,23 +32,39 @@
    const card=document.createElement("article");card.className="record";
    const heading=fields.map(f=>row[f.id]).find(v=>v)||"Registro";
    const tasa=row.cantidad&&row.aceptadas!==""&&row.aceptadas!=null?(Number(row.aceptadas)/Number(row.cantidad)*100).toFixed(1)+"%":"Pendiente de revisión";
-   card.innerHTML='<h3>'+esc(heading)+'</h3>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<p><strong>Porcentaje de aceptación:</strong> '+esc(tasa)+'</p>'+'<div class="actions"><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
+   card.innerHTML='<h3>'+esc(heading)+'</h3>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<p><strong>Porcentaje de aceptación:</strong> '+esc(tasa)+'</p>'+'<div class="actions"><button class="secondary" type="button" data-edit="'+esc(row.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
    list.appendChild(card);
   });
  }
+ let editingId=null;
+ const submitButton=form.querySelector('button[type="submit"]');
+ const clearButton=document.getElementById("limpiar");
+ function resetEditing(){editingId=null;submitButton.textContent="Guardar registro";clearButton.textContent="Limpiar formulario";}
  form.addEventListener("submit",e=>{
-  e.preventDefault();const total=Number(document.getElementById("cantidad").value),aceptadas=document.getElementById("aceptadas").value;if(aceptadas!==""&&(Number(aceptadas)<0||Number(aceptadas)>total)){status.textContent="Las celdas aceptadas no pueden superar las celdas transferidas.";return;}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+  e.preventDefault();const total=Number(document.getElementById("cantidad").value),aceptadas=document.getElementById("aceptadas").value;if(aceptadas!==""&&(Number(aceptadas)<0||Number(aceptadas)>total)){status.textContent="Las celdas aceptadas no pueden superar las celdas transferidas.";return;}
+  const row={id:editingId||Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
-  rows.push(row);
-  try{localStorage.setItem(key,JSON.stringify(rows));form.reset();render();status.textContent="Registro guardado en este teléfono.";}
-  catch(e){rows.pop();status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
+  const previous=editingId?rows.findIndex(r=>r.id===editingId):-1;
+  if(previous>=0) rows[previous]=row; else rows.push(row);
+  try{localStorage.setItem(key,JSON.stringify(rows));form.reset();resetEditing();render();status.textContent=previous>=0?"Cambios guardados correctamente.":"Registro guardado en este teléfono.";}
+  catch(e){if(previous>=0)rows[previous]=JSON.parse(JSON.stringify(rows[previous]));else rows.pop();status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
  });
  list.addEventListener("click",e=>{
+  const edit=e.target.closest("[data-edit]");
+  if(edit){
+   const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;
+   fields.forEach(f=>{const input=form.elements.namedItem(f.id);if(input)input.value=row[f.id]||"";});
+   editingId=row.id;submitButton.textContent="Guardar cambios";clearButton.textContent="Cancelar edición";
+   status.textContent="Editando registro. Cambia los datos necesarios y pulsa Guardar cambios.";
+   form.scrollIntoView({behavior:"smooth",block:"start"});return;
+  }
   const b=e.target.closest("[data-delete]");if(!b)return;
+  const deleted=rows.find(r=>r.id===b.dataset.delete);
+  if(editingId===b.dataset.delete){form.reset();resetEditing();}
   rows=rows.filter(r=>r.id!==b.dataset.delete);
-  try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
+  try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){if(deleted)rows.push(deleted);status.textContent="No se pudo actualizar el almacenamiento.";}
  });
- document.getElementById("limpiar").addEventListener("click",()=>{form.reset();status.textContent="Formulario limpio.";});
+ clearButton.addEventListener("click",()=>{form.reset();resetEditing();status.textContent=editingId?"Edición cancelada.":"Formulario limpio.";});
  render();
 })();
 </script></body></html>
