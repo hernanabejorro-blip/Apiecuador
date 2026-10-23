@@ -34,6 +34,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 <div class="grid">
 <div><label for="plant">Nombre común de la planta *</label><input id="plant" required maxlength="100" placeholder="Ej.: eucalipto, aguacate, chilca"></div>
 <div><label for="scientific">Nombre científico (si lo conoces)</label><input id="scientific" maxlength="120" placeholder="Nombre botánico"></div>
+<div><label for="region">Región *</label><select id="region" required><option value="">Seleccionar región</option><option>Sierra</option><option>Costa</option><option>Oriente / Amazonía</option><option>Galápagos</option></select></div>
 <div><label for="locality">Localidad / sector *</label><input id="locality" required maxlength="120" placeholder="Ej.: Tanda, Quito"></div>
 <div><label for="altitude">Altitud aproximada (metros)</label><input id="altitude" type="number" min="0" max="6500" step="1" placeholder="Ej.: 2450"></div>
 <div><label for="start">Inicio observado *</label><input id="start" type="date" required></div>
@@ -99,7 +100,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 "use strict";
 const KEY="apiecuador-floracion-v1";
 const $=id=>document.getElementById(id);
-const fields=["plant","scientific","locality","altitude","start","peak","end","intensity","bee-activity","resource","apiary","year","notes"];
+const fields=["plant","scientific","region","locality","altitude","start","peak","end","intensity","bee-activity","resource","apiary","year","notes"];
 let records=[];
 try{const saved=JSON.parse(localStorage.getItem(KEY)||"[]");if(Array.isArray(saved))records=saved;}catch(e){records=[];}
 function esc(value){return String(value==null?"":value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));}
@@ -112,10 +113,11 @@ function refreshYearFilter(){const current=$("year-filter").value;const years=[.
 function render(){
 refreshYearFilter();
 const query=$("search").value.trim().toLocaleLowerCase("es");const year=$("year-filter").value;
-const shown=records.filter(r=>(!year||String(r.year)===year)&&(!query||[r.plant,r.scientific,r.locality,r.apiary,r.notes].join(" ").toLocaleLowerCase("es").includes(query))).sort((a,b)=>(b.start||"").localeCompare(a.start||""));
+const shown=records.filter(r=>(!year||String(r.year)===year)&&(!query||[r.plant,r.scientific,r.region,r.locality,r.apiary,r.notes].join(" ").toLocaleLowerCase("es").includes(query))).sort((a,b)=>(b.start||"").localeCompare(a.start||""));
 const root=$("records");
 if(!shown.length){root.innerHTML='<div class="empty">Todavía no hay observaciones que coincidan. Añade una floración para empezar tu calendario.</div>';return;}
 root.innerHTML=shown.map(r=>'<article class="record"><h3>🌼 '+esc(r.plant)+' <span class="tag">'+esc(r.year||"Año sin indicar")+'</span></h3>'+
+'<p><strong>Región:</strong> '+esc(r.region||"Sin indicar")+'</p>'+
 '<p><strong>Localidad:</strong> '+esc(r.locality||"Sin indicar")+(r.altitude!==""?' · <strong>Altitud:</strong> '+esc(r.altitude)+' m':"")+'</p>'+
 (r.scientific?'<p><strong>Nombre científico:</strong> '+esc(r.scientific)+'</p>':"")+
 '<p><strong>Floración:</strong> inicio '+esc(r.start||"sin fecha")+' · pico '+esc(r.peak||"no anotado")+' · fin '+esc(r.end||"no anotado")+'</p>'+
@@ -130,7 +132,7 @@ function remove(id){if(!confirm("¿Eliminar esta observación de floración? Est
 $("flower-form").addEventListener("submit",e=>{e.preventDefault();updateYear();const start=$("start").value,peak=$("peak").value,end=$("end").value;if(peak&&start&&peak<start){$("status").textContent="El pico de floración no puede ser anterior al inicio.";return;}if(end&&start&&end<start){$("status").textContent="La fecha de fin no puede ser anterior al inicio.";return;}if(end&&peak&&end<peak){$("status").textContent="La fecha de fin no puede ser anterior al pico.";return;}
 const id=$("record-id").value||("flor-"+Date.now()+"-"+Math.random().toString(36).slice(2,7));const r={id};fields.forEach(f=>r[f]=$(f).value.trim());r.year=start?start.slice(0,4):"";const old=records;const idx=records.findIndex(x=>x.id===id);if(idx>=0)records[idx]=r;else records.push(r);if(persist()){clearForm();render();$("status").textContent=idx>=0?"Observación actualizada.":"Observación de floración guardada en este teléfono.";}else records=old;});
 $("search").addEventListener("input",render);$("year-filter").addEventListener("change",render);
-$("export-btn").addEventListener("click",()=>{const labels=["Planta","Nombre científico","Localidad","Altitud m","Inicio","Pico","Fin","Año","Intensidad","Actividad de abejas","Recurso","Apiario","Notas"];const keys=["plant","scientific","locality","altitude","start","peak","end","year","intensity","bee-activity","resource","apiary","notes"];const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';const csv=[labels.map(cell).join(","),...records.map(r=>keys.map(k=>cell(r[k])).join(","))].join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="apiecuador-calendario-floral.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);$("status").textContent="CSV preparado. Guarda el archivo como respaldo.";});
+$("export-btn").addEventListener("click",()=>{const labels=["Planta","Nombre científico","Región","Localidad","Altitud m","Inicio","Pico","Fin","Año","Intensidad","Actividad de abejas","Recurso","Apiario","Notas"];const keys=["plant","scientific","region","locality","altitude","start","peak","end","year","intensity","bee-activity","resource","apiary","notes"];const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';const csv=[labels.map(cell).join(","),...records.map(r=>keys.map(k=>cell(r[k])).join(","))].join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="apiecuador-calendario-floral.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);$("status").textContent="CSV preparado. Guarda el archivo como respaldo.";});
 $("print-btn").addEventListener("click",()=>window.print());
 try{const apiaries=JSON.parse(localStorage.getItem("apiecuador-apiarios-v1")||"[]");if(Array.isArray(apiaries))apiaries.forEach(a=>{if(a&&a.nombre){const o=document.createElement("option");o.value=String(a.nombre);if(a.ubicacion)o.label=String(a.ubicacion);$("apiarios-registrados").appendChild(o);}});}catch(e){}
 render();
