@@ -17,6 +17,7 @@ main{padding:20px 16px 36px}.notice{background:#fff3dc;border:1px solid #e9d2a8;
 h2{font-size:19px;margin:0 0 12px}label{display:block;font-weight:650;font-size:14px;margin:13px 0 5px}
 input,textarea{display:block;width:100%;font:16px system-ui;padding:11px 12px;border:1px solid #d2dccc;border-radius:10px;background:#fff;color:#1c1c18}
 input:focus,textarea:focus{outline:2px solid #36734c;outline-offset:1px}
+#mapa{height:300px;border-radius:12px;border:1px solid #d2dccc;overflow:hidden;margin-top:10px}.geo-help{font-size:13px;color:#65584b;margin:8px 0}.coords{font-variant-numeric:tabular-nums}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
 button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cursor:pointer}
 .primary{background:var(--green);color:#fff}.secondary{background:#f3eee3;color:#594b3b}.delete{background:#fae8e5;color:#8b2f22}
@@ -24,6 +25,8 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 .record h3{font-size:17px;margin:0 0 8px}.record p{margin:5px 0;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}.empty{color:#65584b;font-size:14px;padding:8px 2px}
 @media(max-width:520px){header{padding:20px 16px}main{padding:16px 12px 28px}.panel,.record{padding:14px}}
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 </head>
 <body>
 <header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>📍 Mis apiarios</h1><p>Organiza la ubicación, el tamaño y las características de cada apiario.</p></div></header>
@@ -40,6 +43,15 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 <div><label for="agua">Agua y acceso</label><input id="agua" maxlength="120" placeholder="Fuente de agua, camino, acceso"></div>
 <div><label for="responsable">Responsable</label><input id="responsable" maxlength="100" placeholder="Nombre o identificación interna"></div>
 </div>
+<h2 style="margin-top:18px">📍 Geolocalización del apiario</h2>
+<p class="geo-help">Usa el GPS cuando estés en el apiario o toca un punto en el mapa para marcarlo manualmente. La ubicación es opcional.</p>
+<div class="grid">
+<div><label for="latitud">Latitud</label><input id="latitud" inputmode="decimal" placeholder="-0.123456"></div>
+<div><label for="longitud">Longitud</label><input id="longitud" inputmode="decimal" placeholder="-78.123456"></div>
+</div>
+<div class="actions"><button class="secondary" type="button" id="usar-gps">Usar GPS de este teléfono</button><button class="secondary" type="button" id="abrir-mapa">Abrir Google Maps</button></div>
+<div id="mapa" aria-label="Mapa para seleccionar la ubicación del apiario"></div>
+<p class="geo-help">Mapa interactivo para seleccionar el punto; al guardar, las coordenadas se conservarán en la ficha. «Abrir Google Maps» permite ver el punto o buscar la zona.</p>
 <label for="notas">Notas del apiario</label><textarea id="notas" rows="3" maxlength="1000" placeholder="Floración, viento, seguridad, observaciones..."></textarea>
 <div class="actions"><button class="primary" type="submit" id="guardar">Guardar apiario</button><button class="secondary" type="button" id="limpiar">Limpiar</button></div>
 <p class="status" id="estado" role="status" aria-live="polite"></p>
@@ -50,10 +62,16 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 <script>
 (function(){
  const key="apiecuador-apiarios-v1";
- const fields=[["nombre","Nombre del apiario"],["ubicacion","Ubicación o referencia"],["colmenas","Número de colmenas"],["flora","Flora principal"],["agua","Agua y acceso"],["responsable","Responsable"],["notas","Notas"]];
+ const fields=[["nombre","Nombre del apiario"],["ubicacion","Ubicación o referencia"],["colmenas","Número de colmenas"],["flora","Flora principal"],["agua","Agua y acceso"],["responsable","Responsable"],["notas","Notas"],["latitud","Latitud"],["longitud","Longitud"]];
  const form=document.getElementById("form"), list=document.getElementById("lista"), status=document.getElementById("estado");
+ let map=null, marker=null;
+ function validCoords(){const lat=Number(document.getElementById("latitud").value.replace(",",".")),lon=Number(document.getElementById("longitud").value.replace(",","."));return document.getElementById("latitud").value.trim()!==""&&document.getElementById("longitud").value.trim()!==""&&Number.isFinite(lat)&&Number.isFinite(lon)&&lat>=-90&&lat<=90&&lon>=-180&&lon<=180?{lat,lon}:null;}
+ function setPoint(lat,lon){document.getElementById("latitud").value=Number(lat).toFixed(6);document.getElementById("longitud").value=Number(lon).toFixed(6);if(map){map.setView([lat,lon],15);if(marker)marker.setLatLng([lat,lon]);else marker=L.marker([lat,lon]).addTo(map);}status.textContent="Punto seleccionado. Guarda el apiario para conservar la ubicación.";}
+ function initMap(){if(!window.L){document.getElementById("mapa").innerHTML="<p class='geo-help'>No se pudo cargar el mapa. Puedes usar el GPS o introducir las coordenadas manualmente.</p>";return;}map=L.map("mapa").setView([-0.1807,-78.4678],8);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);map.on("click",e=>setPoint(e.latlng.lat,e.latlng.lng));const p=validCoords();if(p)setPoint(p.lat,p.lon);}
  let rows=[], editing=null;
- try{const saved=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(saved))rows=saved;}catch(e){}\n // Compatibilidad: algunos registros antiguos pueden no tener identificador. Se les asigna uno sin cambiar sus datos.\n let migrated=false; rows.forEach((r,i)=>{if(!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});\n if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* No bloquear la consulta si el almacenamiento está lleno. */}}
+ try{const saved=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(saved))rows=saved;}catch(e){}
+ // Compatibilidad: algunos registros antiguos pueden no tener identificador. Se les asigna uno sin cambiar sus datos.
+ let migrated=false; rows.forEach((r,i)=>{if(!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});\n if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* No bloquear la consulta si el almacenamiento está lleno. */}}
  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function persist(){localStorage.setItem(key,JSON.stringify(rows));}
  function render(){
@@ -63,12 +81,12 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
   rows.slice().reverse().forEach(r=>{
    const card=document.createElement("article");card.className="record";
    card.innerHTML="<h3>📍 "+esc(r.nombre||"Apiario sin nombre")+"</h3>"+
-    fields.filter(f=>String(r[f[0]]||"").trim()).map(f=>"<p><strong>"+esc(f[1])+":</strong> "+esc(r[f[0]])+"</p>").join("")+
+    fields.filter(f=>String(r[f[0]]||"").trim()).map(f=>"<p><strong>"+esc(f[1])+":</strong> "+esc(r[f[0]])+"</p>").join("")+ (r.latitud&&r.longitud?'<p><a target="_blank" rel="noopener" href="https://www.google.com/maps?q='+encodeURIComponent(r.latitud+","+r.longitud)+'">Ver en Google Maps / Cómo llegar</a></p>':"")+
     '<div class="actions"><button class="secondary" type="button" data-edit="'+esc(r.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(r.id)+'">Eliminar</button></div>';
    list.appendChild(card);
   });
  }
- function reset(){form.reset();editing=null;document.getElementById("form-title").textContent="Registrar apiario";document.getElementById("guardar").textContent="Guardar apiario";}
+ function reset(){form.reset();editing=null;if(marker&&map){map.removeLayer(marker);marker=null;}document.getElementById("form-title").textContent="Registrar apiario";document.getElementById("guardar").textContent="Guardar apiario";}
  form.addEventListener("submit",e=>{
   e.preventDefault();
   const row={id:editing||("a"+Date.now().toString(36)+Math.random().toString(36).slice(2,6))};
@@ -86,6 +104,10 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
   try{persist();render();status.textContent="Apiario eliminado.";}catch(err){rows=before;status.textContent="No se pudo actualizar el almacenamiento.";}
  });
  document.getElementById("limpiar").addEventListener("click",()=>{reset();status.textContent="Formulario limpio.";});
+ document.getElementById("usar-gps").addEventListener("click",()=>{if(!navigator.geolocation){status.textContent="Este navegador no ofrece geolocalización.";return;}status.textContent="Solicitando permiso de ubicación…";navigator.geolocation.getCurrentPosition(pos=>setPoint(pos.coords.latitude,pos.coords.longitude),err=>{status.textContent=err.code===1?"Permite el acceso a la ubicación en Chrome para usar el GPS.":"No se pudo obtener la ubicación. Comprueba el GPS y la conexión.";},{enableHighAccuracy:true,timeout:15000,maximumAge:30000});});
+ document.getElementById("abrir-mapa").addEventListener("click",()=>{const p=validCoords();const q=p?p.lat+","+p.lon:document.getElementById("ubicacion").value.trim();const url="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q||"apiario");window.open(url,"_blank","noopener");});
+ document.getElementById("latitud").addEventListener("change",()=>{const p=validCoords();if(p)setPoint(p.lat,p.lon);});
+ document.getElementById("longitud").addEventListener("change",()=>{const p=validCoords();if(p)setPoint(p.lat,p.lon);});
  document.getElementById("exportar").addEventListener("click",()=>{
   const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
   const csv=[fields.map(f=>cell(f[1])).join(","),...rows.map(r=>fields.map(f=>cell(r[f[0]])).join(","))].join("\r\n");
@@ -94,6 +116,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
   status.textContent="Se preparó la descarga del archivo CSV.";
  });
  render();
+ initMap();
 })();
 </script>
 </body>
