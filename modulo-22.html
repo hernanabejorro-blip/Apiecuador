@@ -23,7 +23,8 @@
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
- let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}\n let migrated=false;rows.forEach((r,i)=>{if(r&&!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* Se mantienen disponibles los registros en memoria. */}}
+ let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}
+ let migrated=false;rows.forEach((r,i)=>{if(r&&!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* Se mantienen disponibles los registros en memoria. */}}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){
   list.innerHTML="";
