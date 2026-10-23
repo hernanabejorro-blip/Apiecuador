@@ -75,7 +75,10 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
  function setCoords(lat,lon,moveMarker=true){latInput.value=Number(lat).toFixed(6);lonInput.value=Number(lon).toFixed(6);if(map&&moveMarker)syncMap(lat,lon,15);updateMapLink();mapStatus.textContent="Coordenadas seleccionadas: "+latInput.value+", "+lonInput.value+". Se guardarán al guardar el apiario.";}
  function updateMapLink(){mapLink.href=validCoords(latInput.value,lonInput.value)?"https://www.openstreetmap.org/?mlat="+encodeURIComponent(latInput.value)+"&mlon="+encodeURIComponent(lonInput.value)+"#map=16/"+encodeURIComponent(latInput.value)+"/"+encodeURIComponent(lonInput.value):"https://www.openstreetmap.org/";}
  if(window.L){map=L.map("mapa-apiario").setView(ecuador,8);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);map.on("click",e=>setCoords(e.latlng.lat,e.latlng.lng));mapStatus.textContent="Toca el mapa para elegir la ubicación.";setTimeout(()=>map.invalidateSize(),150);}else{mapStatus.textContent="El mapa no se pudo cargar. Puedes introducir latitud y longitud manualmente o usar el GPS.";}
- try{const saved=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(saved))rows=saved;}catch(e){}\n // Compatibilidad: algunos registros antiguos pueden no tener identificador. Se les asigna uno sin cambiar sus datos.\n let migrated=false; rows.forEach((r,i)=>{if(!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});\n if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* No bloquear la consulta si el almacenamiento está lleno. */}}
+ try{const saved=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(saved))rows=saved;}catch(e){}
+ // Compatibilidad: algunos registros antiguos pueden no tener identificador. Se les asigna uno sin cambiar sus datos.
+ let migrated=false; rows.forEach((r,i)=>{if(!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});
+ if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* No bloquear la consulta si el almacenamiento está lleno. */}}
  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function persist(){localStorage.setItem(key,JSON.stringify(rows));}
  function render(){
