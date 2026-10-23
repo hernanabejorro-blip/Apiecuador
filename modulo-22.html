@@ -45,9 +45,10 @@
   const row={id:editingId||Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   const previous=editingId?rows.findIndex(r=>r.id===editingId):-1;
+  const original=previous>=0?JSON.parse(JSON.stringify(rows[previous])):null;
   if(previous>=0) rows[previous]=row; else rows.push(row);
   try{localStorage.setItem(key,JSON.stringify(rows));form.reset();resetEditing();render();status.textContent=previous>=0?"Cambios guardados correctamente.":"Registro guardado en este teléfono.";}
-  catch(e){if(previous>=0)rows[previous]=JSON.parse(JSON.stringify(rows[previous]));else rows.pop();status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
+  catch(e){if(previous>=0)rows[previous]=original;else rows.pop();status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
  });
  list.addEventListener("click",e=>{
   const edit=e.target.closest("[data-edit]");
@@ -64,7 +65,7 @@
   rows=rows.filter(r=>r.id!==b.dataset.delete);
   try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){if(deleted)rows.push(deleted);status.textContent="No se pudo actualizar el almacenamiento.";}
  });
- clearButton.addEventListener("click",()=>{form.reset();resetEditing();status.textContent=editingId?"Edición cancelada.":"Formulario limpio.";});
+ clearButton.addEventListener("click",()=>{const wasEditing=!!editingId;form.reset();resetEditing();status.textContent=wasEditing?"Edición cancelada.":"Formulario limpio.";});
  render();
 })();
 </script></body></html>
