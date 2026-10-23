@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#245c43">
+<title>Piloto de apiarios en la nube · ApiEcuador</title>
+<style>
+:root{color-scheme:light;--green:#245c43;--cream:#fcf9f2;--ink:#1c1c18}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px system-ui,sans-serif;line-height:1.45}
+header{background:linear-gradient(125deg,#173f32,#36734c);color:#fff;padding:22px 18px}
+.wrap,main{max-width:780px;margin:auto}header a{color:#fff;text-decoration:none;font-size:14px}h1{font-size:clamp(24px,5vw,32px);margin:12px 0 6px}header p{margin:0;color:#eaf3e8}
+main{padding:18px 14px 34px}.notice,.panel,.record{background:#fff;border:1px solid #e1e6db;border-radius:15px;padding:16px;margin-bottom:14px}
+.notice{background:#fff8e8;border-color:#ead5ad;font-size:14px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+label{display:block;font-size:14px;font-weight:650;margin:12px 0 5px}input,textarea{width:100%;font:16px system-ui;padding:11px;border:1px solid #d2dccc;border-radius:10px;background:#fff}
+button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cursor:pointer}.primary{background:var(--green);color:#fff}.secondary{background:#f3eee3;color:#594b3b}.danger{background:#fae8e5;color:#8b2f22}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.status{font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f4ef;border-radius:10px;padding:11px;min-height:40px}
+.record h3{margin:0 0 7px}.record p{margin:5px 0;font-size:14px;overflow-wrap:anywhere}.empty{font-size:14px;color:#65584b}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a href="../index.html">← Volver a ApiEcuador</a><h1>☁️ Piloto de apiarios en la nube</h1><p>Prueba separada para comprobar registros personales protegidos por cuenta.</p></div></header>
+<main>
+<div class="notice"><strong>Prueba aislada:</strong> esta página no modifica ni importa los registros guardados en el módulo «Mis apiarios». Usa primero un apiario de prueba. Cada cuenta solo puede ver y modificar sus propios registros en esta prueba.</div>
+<section class="panel">
+<h2>1. Acceso con Google</h2>
+<div class="actions"><button class="primary" id="login">Entrar con Google</button><button class="secondary" id="logout" hidden>Cerrar sesión</button></div>
+<p id="auth-status" class="status" role="status" aria-live="polite">Comprobando Firebase…</p>
+</section>
+<section class="panel">
+<h2>2. Registrar un apiario de prueba</h2>
+<form id="form">
+<input id="record-id" type="hidden">
+<div class="grid">
+<div><label for="nombre">Nombre del apiario *</label><input id="nombre" maxlength="80" required placeholder="Apiario de prueba"></div>
+<div><label for="ubicacion">Ubicación o referencia *</label><input id="ubicacion" maxlength="120" required placeholder="Sector o parroquia"></div>
+<div><label for="colmenas">Número de colmenas</label><input id="colmenas" type="number" min="0" max="100000" step="1" placeholder="Ej.: 2"></div>
+<div><label for="flora">Flora principal</label><input id="flora" maxlength="120" placeholder="Ej.: eucalipto"></div>
+</div>
+<label for="notas">Notas de prueba</label><textarea id="notas" rows="3" maxlength="500" placeholder="Solo datos ficticios para comprobar la nube"></textarea>
+<div class="actions"><button class="primary" type="submit" id="save" disabled>Guardar en la nube</button><button class="secondary" id="cancel" type="button">Limpiar</button></div>
+</form>
+<p id="data-status" class="status" role="status" aria-live="polite">Inicia sesión para habilitar el piloto.</p>
+</section>
+<section class="panel">
+<h2>3. Registros de prueba de esta cuenta</h2>
+<div id="records"><p class="empty">Inicia sesión para consultar tus registros de prueba.</p></div>
+</section>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyCIw41NJ7wIYfpAMj8R_aX4jC8x1uXXWbs",authDomain:"apiecuador-34b2d.firebaseapp.com",projectId:"apiecuador-34b2d",storageBucket:"apiecuador-34b2d.firebasestorage.app",messagingSenderId:"1084250214880",appId:"1:1084250214880:web:4a4babf94a7da2f0f81b85"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
+const $=id=>document.getElementById(id),form=$("form"),login=$("login"),logout=$("logout"),save=$("save"),records=$("records"),authStatus=$("auth-status"),dataStatus=$("data-status");
+let currentUser=null,editingId=null,items=[];
+const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function userCollection(){if(!currentUser)throw new Error("Primero inicia sesión con Google.");return collection(db,"users",currentUser.uid,"apiariosPiloto");}
+function showError(error){const code=error.code||"sin código";dataStatus.textContent="No se completó la operación. Código: "+code+". "+(code.includes("permission-denied")?"Firebase no permite este acceso todavía. Comprueba que las reglas del piloto estén publicadas.":(error.message||"Revisa la conexión."));}
+async function loadItems(){if(!currentUser){items=[];render();return;}try{const snap=await getDocs(userCollection());items=snap.docs.map(d=>({id:d.id,...d.data()}));render();dataStatus.textContent="Registros de prueba cargados desde la nube de esta cuenta.";}catch(e){showError(e);}}
+function render(){records.innerHTML="";if(!currentUser){records.innerHTML='<p class="empty">Inicia sesión para consultar tus registros de prueba.</p>';return;}if(!items.length){records.innerHTML='<p class="empty">No hay registros de prueba todavía.</p>';return;}items.slice().sort((a,b)=>String(b.nombre||"").localeCompare(String(a.nombre||""))).forEach(r=>{const el=document.createElement("article");el.className="record";el.innerHTML="<h3>📍 "+safe(r.nombre||"Apiario de prueba")+"</h3>"+(r.ubicacion?"<p><strong>Ubicación:</strong> "+safe(r.ubicacion)+"</p>":"")+(r.colmenas!==""&&r.colmenas!=null?"<p><strong>Colmenas:</strong> "+safe(r.colmenas)+"</p>":"")+(r.flora?"<p><strong>Flora:</strong> "+safe(r.flora)+"</p>":"")+(r.notas?"<p><strong>Notas:</strong> "+safe(r.notas)+"</p>":"")+'<div class="actions"><button class="secondary" data-edit="'+safe(r.id)+'">Editar</button><button class="danger" data-delete="'+safe(r.id)+'">Eliminar</button></div>';records.appendChild(el);});}
+login.addEventListener("click",async()=>{authStatus.textContent="Abriendo Google…";try{await signInWithPopup(auth,provider);}catch(e){if(e.code==="auth/popup-blocked"){try{await signInWithRedirect(auth,provider);}catch(er){authStatus.textContent="No se pudo iniciar sesión: "+(er.code||er.message);}}else authStatus.textContent="No se pudo iniciar sesión: "+(e.code||e.message);}});
+logout.addEventListener("click",async()=>{try{await signOut(auth);}catch(e){authStatus.textContent="No se pudo cerrar sesión: "+(e.code||e.message);}});
+getRedirectResult(auth).catch(e=>{authStatus.textContent="Error de acceso: "+(e.code||e.message);});
+onAuthStateChanged(auth,async user=>{currentUser=user;login.hidden=!!user;logout.hidden=!user;save.disabled=!user;authStatus.textContent=user?"Sesión activa: "+(user.email||"cuenta Google")+". Los datos de esta página están separados de los módulos.":"Sin sesión. Inicia sesión para usar el piloto.";await loadItems();});
+form.addEventListener("submit",async e=>{e.preventDefault();if(!currentUser){dataStatus.textContent="Inicia sesión antes de guardar.";return;}save.disabled=true;const row={nombre:$("nombre").value.trim(),ubicacion:$("ubicacion").value.trim(),colmenas:$("colmenas").value===""?null:Number($("colmenas").value),flora:$("flora").value.trim(),notas:$("notas").value.trim(),actualizadoEn:serverTimestamp()};try{if(editingId){await updateDoc(doc(db,"users",currentUser.uid,"apiariosPiloto",editingId),row);dataStatus.textContent="Cambios actualizados en la nube.";}else{row.creadoEn=serverTimestamp();await addDoc(userCollection(),row);dataStatus.textContent="Apiario de prueba guardado en la nube.";}form.reset();editingId=null;$("record-id").value="";$("save").textContent="Guardar en la nube";await loadItems();}catch(err){showError(err);}finally{save.disabled=!currentUser;}});
+records.addEventListener("click",async e=>{const edit=e.target.closest("[data-edit]");if(edit){const r=items.find(x=>x.id===edit.dataset.edit);if(!r)return;editingId=r.id;$("record-id").value=r.id;$("nombre").value=r.nombre||"";$("ubicacion").value=r.ubicacion||"";$("colmenas").value=r.colmenas??"";$("flora").value=r.flora||"";$("notas").value=r.notas||"";$("save").textContent="Guardar cambios en la nube";dataStatus.textContent="Edita el registro y guarda los cambios.";window.scrollTo({top:0,behavior:"smooth"});return;}const del=e.target.closest("[data-delete]");if(!del)return;if(!confirm("¿Eliminar este registro de prueba de la nube?"))return;try{await deleteDoc(doc(db,"users",currentUser.uid,"apiariosPiloto",del.dataset.delete));dataStatus.textContent="Registro de prueba eliminado de la nube.";await loadItems();}catch(err){showError(err);}});
+$("cancel").addEventListener("click",()=>{form.reset();editingId=null;$("record-id").value="";$("save").textContent="Guardar en la nube";dataStatus.textContent="Formulario limpio.";});
+</script>
+</body>
+</html>
