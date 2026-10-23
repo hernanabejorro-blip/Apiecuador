@@ -44,7 +44,8 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
  const key="apiecuador-reinas-v1";
  const fields=[["lote","Código de lote / reina"],["apiario","Apiario"],["fechaTraslarve","Fecha de traslarve"],["cantidad","Copas o larvas injertadas"],["aceptadas","Celdas aceptadas"],["nacimiento","Nacimiento observado"],["introduccion","Fecha de introducción en núcleo"],["postura","Postura comprobada"],["estado-reina","Estado actual"],["marca","Marca / identificación"],["notas","Observaciones"]];
  const form=document.getElementById("form"),list=document.getElementById("lista"),status=document.getElementById("estado");
- let rows=[],editing=null;try{const v=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(v))rows=v;}catch(e){}\n let migrated=false;rows.forEach((r,i)=>{if(r&&!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* La lista sigue disponible en memoria. */}}
+ let rows=[],editing=null;try{const v=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(v))rows=v;}catch(e){}
+ let migrated=false;rows.forEach((r,i)=>{if(r&&!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* La lista sigue disponible en memoria. */}}
  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){list.innerHTML="";document.getElementById("contador").textContent=rows.length+" registro(s).";
  if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay registros de reinas. Puedes comenzar con un lote de traslarve.</p>';return;}
