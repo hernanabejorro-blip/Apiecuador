@@ -60,7 +60,7 @@
 <label for="fechaPostura">Fecha de revisión de postura</label><input id="fechaPostura" name="fechaPostura" type="date">
 <label for="larvas">Edad aproximada de larvas / método</label><input id="larvas" name="larvas" type="text">
 <label for="revision">Fecha de revisión de aceptación</label><input id="revision" name="revision" type="date">
-<label for="nacimiento">Fecha estimada de nacimiento</label><input id="nacimiento" name="nacimiento" type="date">
+<label for="nacimiento">Fecha estimada de nacimiento</label><input id="nacimiento" name="nacimiento" type="date"><div class="actions"><button class="secondary" id="calcular-fechas" type="button">📅 Calcular fechas orientativas</button></div><p class="muted">Calcula una referencia desde el día del traslarve: revisión de aceptación alrededor del día 4 y emergencia aproximada alrededor del día 11. Confirma siempre según el desarrollo real de las celdas y tu método.</p>
 <label for="resultado">Resultado y observaciones</label><textarea id="resultado" name="resultado" rows="3"></textarea><div class="actions"><button class="primary" id="guardar" type="submit">Guardar registro</button><button class="secondary" id="cancelar-edicion" type="button" hidden>Cancelar edición</button><button class="secondary" id="limpiar" type="button">Limpiar formulario</button></div><p class="status" id="estado" role="status" aria-live="polite"></p></form></section>
 <section class="panel"><h2>Registros guardados</h2><p class="muted">Consejo: guarda también una copia JSON; sirve para recuperar los registros de esta tanda en otro navegador.</p><div id="registros" class="record-grid"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar CSV</button><button class="secondary" id="exportar-json" type="button">Descargar respaldo JSON</button><button class="secondary" id="importar-json" type="button">Importar respaldo JSON</button><input id="archivo-json" type="file" accept=".json,application/json" hidden></div></section></main>
 <script>
@@ -99,6 +99,14 @@
   try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
  });
  function cancelEdit(){editingId=null;form.reset();document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;status.textContent="Edición cancelada.";}
+ document.getElementById("calcular-fechas").addEventListener("click",()=>{
+   const graft=document.getElementById("fecha").value;
+   if(!graft){status.textContent="Primero selecciona la fecha del traslarve.";return;}
+   const addDays=(date,days)=>{const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+days);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+   if(!document.getElementById("revision").value)document.getElementById("revision").value=addDays(graft,4);
+   if(!document.getElementById("nacimiento").value)document.getElementById("nacimiento").value=addDays(graft,11);
+   status.textContent="Fechas orientativas calculadas. Se respetaron las fechas que ya habías escrito; revisa el desarrollo real antes de actuar.";
+  });
  document.getElementById("cancelar-edicion").addEventListener("click",cancelEdit);
  document.getElementById("limpiar").addEventListener("click",()=>{if(editingId){cancelEdit();return;}form.reset();status.textContent="Formulario limpio.";});
  document.getElementById("exportar").addEventListener("click",()=>{
