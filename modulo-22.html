@@ -66,6 +66,7 @@
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
  let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}
+ let migrated=false;rows.forEach((r,i)=>{if(r&&!r.id){r.id="legacy-"+Date.now().toString(36)+"-"+i;migrated=true;}});if(migrated){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){/* Se mantienen disponibles los registros en memoria. */}}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){
   list.innerHTML="";
@@ -79,27 +80,28 @@
   });
  }
  form.addEventListener("submit",e=>{
-  e.preventDefault();const total=Number(document.getElementById("cantidad").value),aceptadas=document.getElementById("aceptadas").value;if(aceptadas!==""&&(Number(aceptadas)<0||Number(aceptadas)>total)){status.textContent="Las celdas aceptadas no pueden superar las celdas transferidas.";return;}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+  e.preventDefault();const total=Number(document.getElementById("cantidad").value),aceptadas=document.getElementById("aceptadas").value;if(aceptadas!==""&&(Number(aceptadas)<0||Number(aceptadas)>total)){status.textContent="Las celdas aceptadas no pueden superar las celdas transferidas.";return;}const existing=editingId?rows.find(r=>r.id===editingId):null;const row={...(existing||{}),id:existing?existing.id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
-  if(editingId){row.id=editingId;rows=rows.map(r=>r.id===editingId?row:r);}else{rows.push(row);}
+  const previousRows=rows.map(r=>({...r}));
+  if(editingId){rows=rows.map(r=>r.id===editingId?row:r);}else{rows.push(row);}
   try{localStorage.setItem(key,JSON.stringify(rows));form.reset();editingId=null;document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;render();status.textContent="Registro guardado en este teléfono.";}
-  catch(e){status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
+  catch(e){rows=previousRows;render();status.textContent="No se pudo guardar. No se confirmó el cambio; revisa el espacio disponible del navegador."; }
  });
  list.addEventListener("click",e=>{
   const edit=e.target.closest("[data-edit]");
   if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{form.elements[f.id].value=row[f.id]||"";});editingId=row.id;document.getElementById("registro-id").value=row.id;document.getElementById("form-title").textContent="Editar registro de cría de reinas";document.getElementById("guardar").textContent="Guardar cambios";document.getElementById("cancelar-edicion").hidden=false;status.textContent="Edita los datos y pulsa Guardar cambios.";window.scrollTo({top:0,behavior:"smooth"});return;}
   const b=e.target.closest("[data-delete]");if(!b)return;
   if(!confirm("¿Eliminar este registro de cría de reinas?"))return;
-  rows=rows.filter(r=>r.id!==b.dataset.delete);
-  try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
+  const previousRows=rows;rows=rows.filter(r=>r.id!==b.dataset.delete);
+  try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){rows=previousRows;render();status.textContent="No se pudo actualizar el almacenamiento; el registro se conservó.";}
  });
  function cancelEdit(){editingId=null;form.reset();document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;status.textContent="Edición cancelada.";}
  document.getElementById("cancelar-edicion").addEventListener("click",cancelEdit);
  document.getElementById("limpiar").addEventListener("click",()=>{if(editingId){cancelEdit();return;}form.reset();status.textContent="Formulario limpio.";});
  document.getElementById("exportar").addEventListener("click",()=>{
   const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
-  const csv=[fields.map(f=>cell(f.label)).join(","),...rows.map(r=>fields.map(f=>cell(r[f.id])).join(","))].join("\\r\\n");
-  const blob=new Blob(["\\ufeff"+csv],{type:"text/csv;charset=utf-8"});
+  const csv=[fields.map(f=>cell(f.label)).join(","),...rows.map(r=>fields.map(f=>cell(r[f.id])).join(","))].join("\r\n");
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
   const url=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=url;a.download="apiecuador-cria-reinas-traslarve.csv";
   document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
@@ -123,18 +125,20 @@
    if(!Array.isArray(incoming))throw new Error("formato");
    const known=new Set(rows.map(r=>String(r.id)));
    const valid=incoming.filter(r=>r&&typeof r==="object"&&fields.some(f=>Object.prototype.hasOwnProperty.call(r,f.id)));
-   let added=0;
+   const additions=[];
    valid.forEach(r=>{
     const copy={};
     fields.forEach(f=>copy[f.id]=String(r[f.id]==null?"":r[f.id]));
     let id=String(r.id||"");
     if(id&&known.has(id))return;
     if(!id)id="importado-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9);
-    copy.id=id;known.add(id);rows.push(copy);added++;
+    copy.id=id;known.add(id);additions.push(copy);
    });
-   if(!added){status.textContent="El archivo no contiene registros válidos de cría de reinas.";return;}
-   localStorage.setItem(key,JSON.stringify(rows));render();
-   status.textContent="Importación terminada: "+added+" registro(s) añadidos. Los registros anteriores se conservaron.";
+   if(!additions.length){status.textContent="El archivo no contiene registros nuevos válidos de cría de reinas.";return;}
+   const candidateRows=rows.concat(additions);
+   localStorage.setItem(key,JSON.stringify(candidateRows));
+   rows=candidateRows;render();
+   status.textContent="Importación terminada: "+additions.length+" registro(s) añadidos. Los registros anteriores se conservaron.";
   }catch(e){status.textContent="No se pudo importar. Selecciona un respaldo JSON válido de ApiEcuador.";}
   finally{fileInput.value="";}
  });
