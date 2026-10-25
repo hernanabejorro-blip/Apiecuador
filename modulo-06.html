@@ -93,14 +93,10 @@ $('destination').addEventListener('input',renderFlowerHints);
   const button=e.target.closest('[data-use-flower]');
   if(!button)return;
   const plant=button.dataset.plant||'';
-  const start=button.dataset.start||'';
-  const end=button.dataset.end||'';
   const locality=button.dataset.locality||'';
   if(plant)$('flora').value=plant;
-  if(start)$('bloomStart').value=start;
-  if(end)$('bloomEnd').value=end;
   if(locality&&!$('destination').value.trim())$('destination').value=locality;
-  $('status').textContent='Se copiaron la planta y las fechas disponibles a la planificación. Verifica localidad y floración actual antes de confirmar el traslado.';
+  $('status').textContent='Se copiaron la planta y la localidad. Las fechas de la observación son históricas: introduce las fechas previstas para esta temporada y confirma la floración en el campo.';
   renderFlowerHints();
  });
 $('flora').addEventListener('input',renderFlowerHints);
@@ -116,7 +112,7 @@ $('maps').addEventListener('click',()=>{const origin=$('origin').value.trim(),de
 /* Recibe datos de una observación floral elegida; no sobrescribe campos ya escritos. */
 try{
  const params=new URLSearchParams(window.location.search);
- const incoming={flora:params.get('flora'),destination:params.get('destination'),bloomStart:params.get('bloomStart'),bloomEnd:params.get('bloomEnd')};
+ const incoming={flora:params.get('flora'),destination:params.get('destination')};
  let applied=false;
  Object.keys(incoming).forEach(id=>{const value=incoming[id],field=$(id);if(value&&field&&!field.value){field.value=value;applied=true;}});
  if(applied)$('status').textContent='Observación floral cargada desde el Calendario Floral. Comprueba localidad y fechas reales antes de guardar la ruta.';
