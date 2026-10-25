@@ -3,7 +3,31 @@
 <style>
 :root{--green:#245c43;--cream:#fcf9f2;--ink:#242720;--line:#dce4d9}*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px system-ui,sans-serif}header{background:linear-gradient(130deg,#173f32,#36734c);color:white;padding:22px 18px}header a{color:white}main{max-width:900px;margin:auto;padding:18px}.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;box-shadow:0 4px 15px #173f320b}h1{font-size:25px;margin:10px 0}h2{font-size:19px;margin:0 0 12px}p{line-height:1.5}.notice{background:#fff3dc;border:1px solid #ead1a3;border-radius:12px;padding:12px;font-size:14px}label{display:block;font-weight:650;font-size:14px;margin:10px 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid #cfd8cd;border-radius:10px;font:inherit;background:white}textarea{min-height:75px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}button{border:0;border-radius:10px;padding:11px 14px;font:600 14px system-ui;cursor:pointer;background:var(--green);color:white}.secondary{background:#eee9df;color:#453b30}.danger{background:#9a352e}.item{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}.muted{font-size:13px;color:#5e655b}a{color:var(--green)}#status{min-height:1.4em;color:var(--green)}.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:10px}.checks label{font-weight:500;display:flex;gap:8px;align-items:flex-start}.checks input{width:auto;margin-top:4px}@media(max-width:480px){main{padding:12px}.panel{padding:13px}}
 </style></head><body><header><a href="index.html">← Volver a ApiEcuador</a><h1>🚚 Planificador de trashumancia</h1><p>Organiza traslados de colmenas y lleva el seguimiento de cada ruta.</p></header><main>
-<div class="notice"><strong>Nota:</strong> esta herramienta organiza tus datos, pero no consulta mapas, tráfico, clima en tiempo real ni permisos oficiales. Verifica las condiciones de la ruta, los requisitos de movilización y la seguridad del transporte antes de salir.</div>
+<div class="notice"><strong>Nota:</strong> esta herramienta organiza tus datos, pero no consulta mapas, tráfico, clima en tiempo real ni emite permisos oficiales. Antes de salir, confirma los requisitos vigentes con AGROCALIDAD y la seguridad del transporte.</div>
+<section class="panel" id="tramites-agrocalidad">
+<h2>📄 Documentos para la trashumancia</h2>
+<p>Estos accesos llevan a fuentes oficiales. Hay que distinguir el certificado del predio apícola del certificado que ampara cada movilización: no son el mismo documento.</p>
+<div class="item">
+<strong>1. Registro y certificación del predio apícola (CZPM-F)</strong>
+<p class="muted">Consulta el instructivo oficial vigente de AGROCALIDAD, aprobado en 2024, con el procedimiento de registro/certificación y sus anexos.</p>
+<div class="actions"><a class="button-link" href="https://www.agrocalidad.gob.ec/wp-content/uploads/2025/04/Resolucion-0283-Instructivo-para-la-Obtencion-del-Certificado-Zoosanitario-de-Produccion-y-Movilidad-Funcionamiento-de-Predios-Apicolas-1.pdf" target="_blank" rel="noopener">Abrir instructivo oficial (PDF) ↗</a><a class="button-link secondary-link" href="https://www.agrocalidad.gob.ec/direccion-de-control-zoosanitario/" target="_blank" rel="noopener">Ver normativa apícola ↗</a></div>
+</div>
+<div class="item">
+<strong>2. Certificado zoosanitario de movilización de colmenas</strong>
+<p class="muted">Antes de trasladar colmenas pobladas, confirma cómo emitir el certificado de movilización aplicable a tu caso. El portal de trámites generales no garantiza por sí solo que el trámite apícola pueda completarse íntegramente en línea.</p>
+<div class="actions"><a class="button-link" href="https://guia.agrocalidad.gob.ec/agrodb/ingreso.php" target="_blank" rel="noopener">Entrar al Sistema GUIA ↗</a><a class="button-link secondary-link" href="https://www.agrocalidad.gob.ec/landing/?page_id=1123" target="_blank" rel="noopener">Consultar trámite de movilización ↗</a></div>
+</div>
+<div class="item">
+<strong>3. Confirmar requisitos para la ruta concreta</strong>
+<p class="muted">Pregunta a AGROCALIDAD si tu traslado necesita documentos adicionales, aviso previo o validación en la provincia de destino. Esto es especialmente importante si cruzas de provincia.</p>
+<p><strong>Atención oficial:</strong> 1800 247 600 · (02) 3828 860</p>
+<div class="actions"><a class="button-link secondary-link" href="https://www.agrocalidad.gob.ec/" target="_blank" rel="noopener">Web oficial de AGROCALIDAD ↗</a></div>
+</div>
+<div class="notice"><strong>Antes de marcar “Documentación verificada”:</strong> comprueba que el certificado de funcionamiento del predio esté en regla, consulta el certificado de movilización que corresponda y guarda los documentos junto con el plan de traslado. Los enlaces son oficiales, pero la confirmación del trámite específico para abejas debe darla AGROCALIDAD.</div>
+<style>
+.button-link{display:inline-block;background:var(--green);color:white;text-decoration:none;border-radius:10px;padding:11px 14px;font:600 14px system-ui}.secondary-link{background:#eee9df;color:#453b30}.actions a{margin:0}
+</style>
+</section>
 <section class="panel"><h2>Planificar traslado</h2><form id="form"><input id="editId" type="hidden"><div class="grid">
 <div><label for="name">Nombre de la ruta</label><input id="name" maxlength="100" placeholder="Ej. Traslado de temporada" required></div>
 <div><label for="origin">Origen / apiario actual</label><input id="origin" maxlength="100" placeholder="Sector o apiario" required></div>
