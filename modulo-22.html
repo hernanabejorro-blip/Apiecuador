@@ -128,7 +128,8 @@
     const copy={};
     fields.forEach(f=>copy[f.id]=String(r[f.id]==null?"":r[f.id]));
     let id=String(r.id||"");
-    if(!id||known.has(id))id="importado-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9);
+    if(id&&known.has(id))return;
+    if(!id)id="importado-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9);
     copy.id=id;known.add(id);rows.push(copy);added++;
    });
    if(!added){status.textContent="El archivo no contiene registros válidos de cría de reinas.";return;}
