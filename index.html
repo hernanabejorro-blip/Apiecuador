@@ -126,10 +126,11 @@ footer{padding-top:24px;padding-bottom:28px}
   box-shadow:0 5px 18px #173f3224;
 }
 .grid .card::before{
-  content:"";position:absolute;inset:0;z-index:-1;
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
   background:linear-gradient(180deg,#10251a08 0%,#10251a35 34%,#10251af0 100%);
   transition:background .2s ease;
 }
+.grid .card > *{position:relative;z-index:1}
 .grid .card:hover::before,.grid .card:focus-visible::before{
   background:linear-gradient(180deg,#10251a08 0%,#10251a28 24%,#10251af5 100%);
 }
