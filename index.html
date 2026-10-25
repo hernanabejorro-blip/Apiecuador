@@ -350,7 +350,11 @@ buscador.addEventListener("input", function () {
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
 
-    const coincide = contenido.includes(texto);
+    const destino = tarjeta.getAttribute("href") || "";
+    const aliasFlorales = ["observacion floral", "calendario floral", "floracion", "flores", "nectar", "polen", "plantas meliferas"];
+    const coincidePorAlias = destino === "modulo-31.html" && texto.length > 0 &&
+      aliasFlorales.some(alias => alias.includes(texto) || texto.includes(alias));
+    const coincide = contenido.includes(texto) || coincidePorAlias;
     tarjeta.style.display = coincide ? "" : "none";
     if (coincide) {
       visibles++;
