@@ -124,7 +124,8 @@ function renderObservations(){
  $('observation-summary').textContent=records.length
  ? 'Observaciones guardadas en este teléfono: '+records.length+'. Mostrando '+filtered.length+' según los filtros. Estas observaciones son tu mejor referencia local.'
  : 'Todavía no se encontraron observaciones guardadas en este navegador. Puedes añadir la primera en el Calendario Floral.';
- renderComparison(filtered);
+ // La comparación conserva todos los años; el filtro de año solo limita la lista de observaciones.
+ renderComparison(records.filter(r=>!region||r.region===region));
  const host=$('observations');
  if(!filtered.length){host.innerHTML='<p class="empty">No hay observaciones que coincidan con esos filtros.</p>';return;}
  host.innerHTML=filtered.slice().sort((a,b)=>String(b.start||'').localeCompare(String(a.start||''))).map(r=>
