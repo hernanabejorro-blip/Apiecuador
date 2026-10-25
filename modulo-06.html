@@ -105,9 +105,16 @@ $('flower-year-filter').addEventListener('change',renderFlowerHints);
   if(!button)return;
   const plant=button.dataset.plant||'';
   const locality=button.dataset.locality||'';
+  const start=button.dataset.start||'';
+  const end=button.dataset.end||'';
   if(plant)$('flora').value=plant;
   if(locality&&!$('destination').value.trim())$('destination').value=locality;
-  $('status').textContent='Se copiaron la planta y la localidad. Las fechas de la observación son históricas: introduce las fechas previstas para esta temporada y confirma la floración en el campo.';
+  const historical='Referencia floral histórica seleccionada: '+(plant||'planta no indicada')+' · '+(locality||'localidad no indicada')+' · inicio observado '+(start||'sin fecha')+' · fin observado '+(end||'sin fecha')+'. Confirmar en campo; no usar estas fechas como pronóstico.';
+  const notes=$('notes');
+  if(notes&&!notes.value.includes(historical)){
+    notes.value=notes.value.trim()?(notes.value.trim()+'\n'+historical):historical;
+  }
+  $('status').textContent='Planta y referencia floral añadidas a la ruta. Las fechas históricas quedaron anotadas, no copiadas como fechas previstas; confirma la floración en el campo.';
   renderFlowerHints();
  });
 $('flora').addEventListener('input',renderFlowerHints);
