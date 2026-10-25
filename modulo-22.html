@@ -125,18 +125,20 @@
    if(!Array.isArray(incoming))throw new Error("formato");
    const known=new Set(rows.map(r=>String(r.id)));
    const valid=incoming.filter(r=>r&&typeof r==="object"&&fields.some(f=>Object.prototype.hasOwnProperty.call(r,f.id)));
-   let added=0;
+   const additions=[];
    valid.forEach(r=>{
     const copy={};
     fields.forEach(f=>copy[f.id]=String(r[f.id]==null?"":r[f.id]));
     let id=String(r.id||"");
     if(id&&known.has(id))return;
     if(!id)id="importado-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9);
-    copy.id=id;known.add(id);rows.push(copy);added++;
+    copy.id=id;known.add(id);additions.push(copy);
    });
-   if(!added){status.textContent="El archivo no contiene registros válidos de cría de reinas.";return;}
-   localStorage.setItem(key,JSON.stringify(rows));render();
-   status.textContent="Importación terminada: "+added+" registro(s) añadidos. Los registros anteriores se conservaron.";
+   if(!additions.length){status.textContent="El archivo no contiene registros nuevos válidos de cría de reinas.";return;}
+   const candidateRows=rows.concat(additions);
+   localStorage.setItem(key,JSON.stringify(candidateRows));
+   rows=candidateRows;render();
+   status.textContent="Importación terminada: "+additions.length+" registro(s) añadidos. Los registros anteriores se conservaron.";
   }catch(e){status.textContent="No se pudo importar. Selecciona un respaldo JSON válido de ApiEcuador.";}
   finally{fileInput.value="";}
  });
