@@ -6,7 +6,7 @@
 <header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🐝 Registro de Inspección de Colmenas</h1><p>Anota lo que observas en cada revisión y compara la evolución de tus colmenas.</p></div></header>
 <main><div class="notice"><strong>Importante:</strong> esta versión guarda los registros en este navegador y teléfono. No se sincronizan con otros dispositivos; exporta o anota la información importante como respaldo.</div>
 <section class="panel"><h2>Nuevo registro</h2><form id="registro-form"><label for="fecha">Fecha de inspección</label><input id="fecha" name="fecha" type="date" required>
-<label for="apiario">Apiario</label><input id="apiario" name="apiario" type="text" required>
+<label for="apiario">Apiario</label><input id="apiario" name="apiario" type="text" list="apiarios-registrados" placeholder="Elige uno o escribe el nombre" required><datalist id="apiarios-registrados"></datalist><small class="empty">Puedes elegir un apiario registrado en “Mis apiarios” o escribir otro nombre.</small>
 <label for="colmena">Código de colmena</label><input id="colmena" name="colmena" type="text" required>
 <label for="reina">Reina</label><select id="reina" name="reina"><option value="">Seleccionar…</option><option>Vista y activa</option><option>Vista, necesita evaluación</option><option>No vista</option><option>Colmena huérfana</option></select>
 <label for="cria">Cría</label><select id="cria" name="cria"><option value="">Seleccionar…</option><option>Buena</option><option>Irregular</option><option>Escasa</option><option>Sin cría</option></select>
@@ -59,6 +59,27 @@
  const exportBtn=document.createElement("button");exportBtn.type="button";exportBtn.className="secondary";exportBtn.textContent="Exportar CSV";exportBtn.addEventListener("click",()=>{const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';const csv=[fields.map(f=>cell(f.label)).join(","),...rows.map(r=>fields.map(f=>cell(r[f.id])).join(","))].join("\r\n");const blob=new Blob(["\\ufeff"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="apiecuador-inspecciones.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);status.textContent="Archivo CSV preparado para descargar.";});
  document.querySelector("#registros").parentElement.appendChild(exportBtn);
  render();
+
+ // Sugerencias desde el registro principal de "Mis apiarios".
+ // Solo propone nombres; mantiene la posibilidad de escribir manualmente.
+ try {
+  const apiaries=JSON.parse(localStorage.getItem("apiecuador-apiarios-v1")||"[]");
+  const datalist=document.getElementById("apiarios-registrados");
+  if(Array.isArray(apiaries)&&datalist){
+   const seen=new Set();
+   apiaries.forEach(a=>{
+    const name=String(a&&a.nombre||"").trim();
+    if(!name||seen.has(name.toLocaleLowerCase("es")))return;
+    seen.add(name.toLocaleLowerCase("es"));
+    const option=document.createElement("option");
+    option.value=name;
+    if(a.ubicacion)option.label=String(a.ubicacion);
+    datalist.appendChild(option);
+   });
+  }
+ } catch(e) {
+  // El formulario sigue funcionando aunque no haya apiarios registrados.
+ }
 })();
 </script><script>
 /* Sugerencias desde "Mis apiarios". No modifica ni borra registros existentes. */
