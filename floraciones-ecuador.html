@@ -33,6 +33,9 @@ label{display:block;font-size:14px;font-weight:650;margin:8px 0 4px}input,select
 <div><label for="year-filter">Año de tus observaciones</label><select id="year-filter"><option value="">Todos los años</option></select></div>
 </div>
 <p id="observation-summary" class="muted">Buscando observaciones guardadas en este teléfono…</p>
+<h3>📆 Comparar temporadas por planta y localidad</h3>
+<p class="muted">Este resumen usa observaciones reales guardadas. No convierte una sola observación en una predicción.</p>
+<div id="yearly-comparison"></div>
 <div id="observations"></div>
 <div class="actions"><a class="button-link" href="./modulo-31.html">🌿 Registrar floración observada</a><a class="button-link" href="./modulo-06.html">🚚 Abrir planificador de trashumancia</a></div>
 </section>
@@ -91,12 +94,37 @@ let records=[];
 try{const data=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(data))records=data;}catch(e){records=[];}
 const years=[...new Set(records.map(r=>String(r.year||'').trim()).filter(Boolean))].sort((a,b)=>b.localeCompare(a));
 years.forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y;$('year-filter').appendChild(o);});
+function renderComparison(filtered){
+ const actual=filtered.filter(r=>!r.recordType||r.recordType==='observed');
+ const groups=new Map();
+ actual.forEach(r=>{
+  const plant=String(r.plant||'Planta sin nombre').trim();
+  const locality=String(r.locality||'Localidad no indicada').trim();
+  const region=String(r.region||'Región no indicada').trim();
+  const key=[plant.toLocaleLowerCase(),locality.toLocaleLowerCase(),region.toLocaleLowerCase()].join('|');
+  if(!groups.has(key))groups.set(key,{plant,locality,region,items:[]});
+  groups.get(key).items.push(r);
+ });
+ const host=$('yearly-comparison');
+ const sorted=[...groups.values()].sort((a,b)=>a.plant.localeCompare(b.plant,'es'));
+ if(!sorted.length){host.innerHTML='<p class="empty">Aún no hay observaciones reales suficientes para comparar temporadas con estos filtros.</p>';return;}
+ host.innerHTML=sorted.map(g=>{
+  const years=[...new Set(g.items.map(r=>String(r.year||'Año no indicado')))].sort((a,b)=>b.localeCompare(a));
+  const lines=years.map(y=>{
+   const items=g.items.filter(r=>String(r.year||'Año no indicado')===y);
+   const windows=items.map(r=>'inicio '+(r.start||'—')+' · pico '+(r.peak||'—')+' · fin '+(r.end||'—'));
+   return '<p><strong>'+safe(y)+':</strong> '+safe(windows.join(' / '))+'</p>';
+  }).join('');
+  return '<article class="plant"><h3>'+safe(g.plant)+'</h3><span class="tag">'+safe(g.region)+'</span><span class="tag">'+g.items.length+' observación(es)</span><p><strong>Localidad:</strong> '+safe(g.locality)+'</p>'+lines+(years.length>1?'<p class="muted">Hay registros de varios años: compara las fechas, la intensidad y las notas antes de estimar la próxima temporada.</p>':'<p class="muted">Registra más años para empezar a comparar variaciones de temporada.</p>')+'</article>';
+ }).join('');
+}
 function renderObservations(){
  const region=$('region-filter').value,year=$('year-filter').value;
  const filtered=records.filter(r=>(!region||r.region===region)&&(!year||String(r.year||'')===year));
  $('observation-summary').textContent=records.length
  ? 'Observaciones guardadas en este teléfono: '+records.length+'. Mostrando '+filtered.length+' según los filtros. Estas observaciones son tu mejor referencia local.'
  : 'Todavía no se encontraron observaciones guardadas en este navegador. Puedes añadir la primera en el Calendario Floral.';
+ renderComparison(filtered);
  const host=$('observations');
  if(!filtered.length){host.innerHTML='<p class="empty">No hay observaciones que coincidan con esos filtros.</p>';return;}
  host.innerHTML=filtered.slice().sort((a,b)=>String(b.start||'').localeCompare(String(a.start||''))).map(r=>
