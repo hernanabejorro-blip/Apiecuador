@@ -27,7 +27,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 .primary{background:var(--green);color:#fff}.secondary{background:#f3eee3;color:#594b3b}.delete{background:#fae8e5;color:#8b2f22}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.status{font-size:13px;color:#28613f;min-height:1.4em}
 .record h3{font-size:17px;margin:0 0 8px}.record p{margin:5px 0;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}.empty{color:#65584b;font-size:14px;padding:8px 2px}
-.map-record-link{display:inline-block;margin-top:4px;color:#245c43;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.map-record-link{display:inline-block;margin-top:4px;color:#245c43;font-weight:700;text-decoration:underline;text-underline-offset:3px}.route-link{display:inline-block;text-decoration:none;background:#245c43;color:#fff;border-radius:10px;padding:11px 14px;font:650 14px system-ui}
 @media(max-width:520px){header{padding:20px 16px}main{padding:16px 12px 28px}.panel,.record{padding:14px}}
 </style>
 </head>
@@ -90,10 +90,11 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
    const card=document.createElement("article");card.className="record";
    const hasCoords=validCoords(String(r.latitud||""),String(r.longitud||""));
    const mapUrl=hasCoords?"https://www.google.com/maps?q="+encodeURIComponent(r.latitud+","+r.longitud):"";
+   const routeUrl="./modulo-06.html?destination="+encodeURIComponent(String(r.nombre||r.ubicacion||"").trim());
    card.innerHTML="<h3>📍 "+esc(r.nombre||"Apiario sin nombre")+"</h3>"+
     fields.filter(f=>String(r[f[0]]||"").trim()).map(f=>"<p><strong>"+esc(f[1])+":</strong> "+esc(r[f[0]])+"</p>").join("")+
     (hasCoords?'<p><a class="map-record-link" href="'+mapUrl+'" target="_blank" rel="noopener noreferrer">🗺️ Abrir ubicación en Google Maps ↗</a></p>':'')+
-    '<div class="actions"><button class="secondary" type="button" data-edit="'+esc(r.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(r.id)+'">Eliminar</button></div>';
+    '<div class="actions"><a class="route-link" href="'+routeUrl+'">🚚 Planificar traslado hacia aquí</a><button class="secondary" type="button" data-edit="'+esc(r.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(r.id)+'">Eliminar</button></div>';
    list.appendChild(card);
   });
  }
