@@ -112,7 +112,7 @@ function renderComparison(filtered){
   const years=[...new Set(g.items.map(r=>String(r.year||'Año no indicado')))].sort((a,b)=>b.localeCompare(a));
   const lines=years.map(y=>{
    const items=g.items.filter(r=>String(r.year||'Año no indicado')===y);
-   const windows=items.map(r=>'inicio '+(r.start||'—')+' · pico '+(r.peak||'—')+' · fin '+(r.end||'—'));
+   const windows=items.map(r=>'inicio '+(r.start||'—')+' · pico '+(r.peak||'—')+' · fin '+(r.end||'—')+' · altitud '+(r.altitude?r.altitude+' m':'no indicada')+' · intensidad '+(r.intensity||'no evaluada')+' · actividad de abejas '+(r['bee-activity']||'no evaluada')+' · recurso '+(r.resource||'no indicado'));
    return '<p><strong>'+safe(y)+':</strong> '+safe(windows.join(' / '))+'</p>';
   }).join('');
   const firstByYear=years.filter(y=>/^\d{4}$/.test(y)).map(y=>{
