@@ -57,7 +57,7 @@
 <label for="revision">Fecha de revisión de aceptación</label><input id="revision" name="revision" type="date">
 <label for="nacimiento">Fecha estimada de nacimiento</label><input id="nacimiento" name="nacimiento" type="date">
 <label for="resultado">Resultado y observaciones</label><textarea id="resultado" name="resultado" rows="3"></textarea><div class="actions"><button class="primary" id="guardar" type="submit">Guardar registro</button><button class="secondary" id="cancelar-edicion" type="button" hidden>Cancelar edición</button><button class="secondary" id="limpiar" type="button">Limpiar formulario</button></div><p class="status" id="estado" role="status" aria-live="polite"></p></form></section>
-<section class="panel"><h2>Registros guardados</h2><div id="registros" class="record-grid"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar respaldo CSV</button></div></section></main>
+<section class="panel"><h2>Registros guardados</h2><p class="muted">Consejo: guarda también una copia JSON; sirve para recuperar los registros de esta tanda en otro navegador.</p><div id="registros" class="record-grid"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar CSV</button><button class="secondary" id="exportar-json" type="button">Descargar respaldo JSON</button><button class="secondary" id="importar-json" type="button">Importar respaldo JSON</button><input id="archivo-json" type="file" accept=".json,application/json" hidden></div></section></main>
 <script>
 (function(){
  const key="apiecuador-modulo-22-v1";
@@ -104,6 +104,38 @@
   a.href=url;a.download="apiecuador-cria-reinas-traslarve.csv";
   document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
   status.textContent="Respaldo CSV preparado. Guárdalo en un lugar seguro.";
+ });
+ document.getElementById("exportar-json").addEventListener("click",()=>{
+  const payload={app:"ApiEcuador",modulo:"cria-reinas-traslarve",version:1,exportado:new Date().toISOString(),registros:rows};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="apiecuador-cria-reinas-respaldo.json";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  status.textContent="Respaldo JSON descargado. Consérvalo en un lugar seguro.";
+ });
+ const fileInput=document.getElementById("archivo-json");
+ document.getElementById("importar-json").addEventListener("click",()=>fileInput.click());
+ fileInput.addEventListener("change",async()=>{
+  const file=fileInput.files&&fileInput.files[0];if(!file)return;
+  try{
+   const parsed=JSON.parse(await file.text());
+   const incoming=Array.isArray(parsed)?parsed:parsed.registros;
+   if(!Array.isArray(incoming))throw new Error("formato");
+   const known=new Set(rows.map(r=>String(r.id)));
+   const valid=incoming.filter(r=>r&&typeof r==="object"&&fields.some(f=>Object.prototype.hasOwnProperty.call(r,f.id)));
+   let added=0;
+   valid.forEach(r=>{
+    const copy={};
+    fields.forEach(f=>copy[f.id]=String(r[f.id]==null?"":r[f.id]));
+    let id=String(r.id||"");
+    if(!id||known.has(id))id="importado-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9);
+    copy.id=id;known.add(id);rows.push(copy);added++;
+   });
+   if(!added){status.textContent="El archivo no contiene registros válidos de cría de reinas.";return;}
+   localStorage.setItem(key,JSON.stringify(rows));render();
+   status.textContent="Importación terminada: "+added+" registro(s) añadidos. Los registros anteriores se conservaron.";
+  }catch(e){status.textContent="No se pudo importar. Selecciona un respaldo JSON válido de ApiEcuador.";}
+  finally{fileInput.value="";}
  });
  render();
 })();
