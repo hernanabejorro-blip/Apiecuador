@@ -37,7 +37,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 <label for="notas">Observaciones</label><textarea id="notas" rows="3" maxlength="1200" placeholder="Aceptación, calidad de la celda, clima, comportamiento, patrón de cría..."></textarea>
 <div class="actions"><button class="primary" id="guardar" type="submit">Guardar registro</button><button class="secondary" id="limpiar" type="button">Limpiar</button></div><p class="status" id="estado" role="status" aria-live="polite"></p>
 </form></section>
-<section class="panel"><h2>Historial de lotes y reinas</h2><p id="contador" class="status"></p><div id="lista"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar CSV</button></div></section>
+<section class="panel"><h2>Historial de lotes y reinas</h2><p id="contador" class="status"></p><div id="lista"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar CSV</button><button class="secondary" id="respaldo-reinas-json" type="button">Descargar copia JSON</button><button class="secondary" id="importar-reinas-json" type="button">Importar copia JSON</button><input id="archivo-reinas-json" type="file" accept="application/json,.json" hidden></div><p class="status">La copia JSON incluye todos los registros de este módulo. Importar añade registros nuevos y no reemplaza los que ya existen.</p></section>
 </main>
 <script>
 (function(){
@@ -55,6 +55,39 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
  list.addEventListener("click",e=>{const b=e.target.closest("[data-edit]");if(b){const r=rows.find(x=>x.id===b.dataset.edit);if(!r)return;fields.forEach(f=>document.getElementById(f[0]).value=r[f[0]]||"");editing=r.id;document.getElementById("form-title").textContent="Editar lote o reina";document.getElementById("guardar").textContent="Guardar cambios";status.textContent="Edita los datos y guarda los cambios.";form.scrollIntoView({behavior:"smooth",block:"start"});return;}const d=e.target.closest("[data-delete]");if(!d)return;if(!confirm("¿Eliminar este registro de reina? Esta acción no se puede deshacer."))return;const old=rows;rows=rows.filter(x=>x.id!==d.dataset.delete);try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){rows=old;status.textContent="No se pudo actualizar el almacenamiento."; }});
  document.getElementById("limpiar").addEventListener("click",()=>{reset();status.textContent="Formulario limpio.";});
  document.getElementById("exportar").addEventListener("click",()=>{const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';const csv=[fields.map(f=>cell(f[1])).join(","),...rows.map(r=>fields.map(f=>cell(r[f[0]])).join(","))].join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="apiecuador-seguimiento-reinas.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);status.textContent="Se preparó la descarga del archivo CSV.";});
+ document.getElementById("respaldo-reinas-json").addEventListener("click",()=>{
+  const payload={format:"apiecuador-seguimiento-reinas",version:1,exportedAt:new Date().toISOString(),records:rows};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="apiecuador-seguimiento-reinas-respaldo.json";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  status.textContent="Copia JSON preparada. Guárdala en un lugar seguro.";
+ });
+ const fileInput=document.getElementById("archivo-reinas-json");
+ document.getElementById("importar-reinas-json").addEventListener("click",()=>fileInput.click());
+ fileInput.addEventListener("change",async()=>{
+  const file=fileInput.files&&fileInput.files[0];if(!file)return;
+  try{
+   const parsed=JSON.parse(await file.text());
+   const incoming=Array.isArray(parsed)?parsed:(parsed&&parsed.format==="apiecuador-seguimiento-reinas"&&Array.isArray(parsed.records)?parsed.records:null);
+   if(!incoming)throw new Error("Formato no reconocido");
+   const known=new Set(rows.map(r=>String(r.id||"")).filter(Boolean));
+   let added=0,skipped=0;
+   incoming.forEach(item=>{
+    if(!item||typeof item!=="object"||Array.isArray(item)){skipped++;return;}
+    const row={};
+    fields.forEach(f=>row[f[0]]=String(item[f[0]]==null?"":item[f[0]]).slice(0,2000));
+    let id=String(item.id||"").slice(0,100);
+    if(id&&known.has(id)){skipped++;return;}
+    if(!id)id="imp"+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+    while(known.has(id))id="imp"+Math.random().toString(36).slice(2,10);
+    row.id=id;known.add(id);rows.push(row);added++;
+   });
+   localStorage.setItem(key,JSON.stringify(rows));render();
+   status.textContent="Importación terminada: "+added+" registro(s) añadido(s)"+(skipped?", "+skipped+" omitido(s) por repetición o formato inválido":"")+".";
+  }catch(err){status.textContent="No se pudo importar el archivo. Comprueba que sea una copia JSON válida de Seguimiento de Reinas.";}
+  finally{fileInput.value="";}
+ });
  render();
 })();
 </script><script>
