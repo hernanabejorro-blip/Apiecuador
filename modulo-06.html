@@ -96,6 +96,7 @@ function renderFlowerHints(){
  }).join('');
 }
 $('destination').addEventListener('input',renderFlowerHints);
+$('flora').addEventListener('input',renderFlowerHints);
 $('flower-region-filter').addEventListener('change',renderFlowerHints);
 $('flower-year-filter').addEventListener('change',renderFlowerHints);
  $('flower-hints-list').addEventListener('click',e=>{
