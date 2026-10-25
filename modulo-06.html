@@ -110,7 +110,10 @@ $('flower-year-filter').addEventListener('change',renderFlowerHints);
   const end=button.dataset.end||'';
   selectedFlowerKey=[plant,locality,start,end].join('|');
   if(plant)$('flora').value=plant;
-  if(locality&&!$('destination').value.trim())$('destination').value=locality;
+  const destinationBefore=$('destination').value.trim();
+  const destinationWasEmpty=!destinationBefore;
+  if(locality&&destinationWasEmpty)$('destination').value=locality;
+  const destinationDiffers=!!(locality&&destinationBefore&&destinationBefore.toLocaleLowerCase('es')!==locality.toLocaleLowerCase('es'));
   const historical='Referencia floral histórica seleccionada: '+(plant||'planta no indicada')+' · '+(locality||'localidad no indicada')+' · inicio observado '+(start||'sin fecha')+' · fin observado '+(end||'sin fecha')+'. Confirmar en campo; no usar estas fechas como pronóstico.';
   const notes=$('notes');
   let noteAdded=false;
@@ -119,7 +122,7 @@ $('flower-year-filter').addEventListener('change',renderFlowerHints);
     if(nextNotes.length<=notes.maxLength){notes.value=nextNotes;noteAdded=true;}
   }else if(notes&&notes.value.includes(historical)){noteAdded=true;}
   const selection=$('flower-selection-status');
-  if(selection){selection.hidden=false;selection.textContent='✓ Observación seleccionada: '+(plant||'planta no indicada')+' · '+(locality||'localidad no indicada')+'. '+(noteAdded?'La referencia está en las notas.':'Las notas están llenas; resume o copia alguna nota antes de añadir la referencia.')+' Las fechas históricas no se convierten en pronóstico.';}
+  if(selection){selection.hidden=false;selection.textContent='✓ Observación seleccionada: '+(plant||'planta no indicada')+' · '+(locality||'localidad no indicada')+'. '+(noteAdded?'La referencia está en las notas.':'Las notas están llenas; resume o copia alguna nota antes de añadir la referencia.')+(destinationDiffers?' ATENCIÓN: el destino de la ruta sigue siendo “'+destinationBefore+'”; la observación corresponde a “'+locality+'”. Comprueba si quieres cambiarlo.':destinationWasEmpty&&locality?' Se completó el destino con la localidad observada; confirma que sea el destino que deseas.':'')+' Las fechas históricas no se convierten en pronóstico.';}
   $('status').textContent='Observación floral seleccionada. Revisa la confirmación que aparece junto a las observaciones.';
   button.textContent='✓ Observación seleccionada';
   button.setAttribute('aria-pressed','true');
