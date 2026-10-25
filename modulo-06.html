@@ -76,7 +76,7 @@ function renderFlowerHints(){
  let flowers=[];
  try{const v=JSON.parse(localStorage.getItem('apiecuador-floracion-v1')||'[]');if(Array.isArray(v))flowers=v;}catch(e){}
  const yearSelect=$('flower-year-filter');
- if(yearSelect){const selected=yearSelect.value;const years=[...new Set(flowers.filter(f=>!f.recordType||f.recordType==='observed').map(f=>String(f.year||'')).filter(y=>/^\\d{4}$/.test(y)))].sort((a,b)=>b.localeCompare(a));yearSelect.innerHTML='<option value="">Todos los años</option>'+years.map(y=>'<option value="'+y+'">'+y+'</option>').join('');yearSelect.value=years.includes(selected)?selected:'';}
+ if(yearSelect){const selected=yearSelect.value;const years=[...new Set(flowers.filter(f=>!f.recordType||f.recordType==='observed').map(f=>String(f.year||'')).filter(y=>/^\d{4}$/.test(y)))].sort((a,b)=>b.localeCompare(a));yearSelect.innerHTML='<option value="">Todos los años</option>'+years.map(y=>'<option value="'+y+'">'+y+'</option>').join('');yearSelect.value=years.includes(selected)?selected:'';}
  const activeYear=yearSelect?yearSelect.value:year;
  const filtered=flowers.filter(f=>{
    if(f.recordType&&f.recordType!=="observed")return false;
