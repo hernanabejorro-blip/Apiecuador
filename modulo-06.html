@@ -64,4 +64,48 @@ render();
     /* Si no hay registros o el navegador no permite leerlos, los campos siguen funcionando normalmente. */
   }
 })();
-</script></body></html>
+</script>
+<script>
+/* Integración prudente con observaciones del Calendario Floral: solo sugiere, nunca decide el traslado. */
+(function(){
+  try {
+    const saved=JSON.parse(localStorage.getItem("apiecuador-floracion-v1")||"[]");
+    if(!Array.isArray(saved)||!saved.length)return;
+    const flora=document.getElementById("flora");
+    const start=document.getElementById("bloomStart");
+    const end=document.getElementById("bloomEnd");
+    const status=document.getElementById("status");
+    if(!flora||!start||!end)return;
+    let list=document.getElementById("floraciones-registradas");
+    if(!list){list=document.createElement("datalist");list.id="floraciones-registradas";document.body.appendChild(list);}
+    const seen=new Set();
+    saved.filter(r=>r&&r.plant).sort((a,b)=>String(b.start||"").localeCompare(String(a.start||""))).forEach(r=>{
+      const key=String(r.plant).trim().toLocaleLowerCase("es");
+      if(!key||seen.has(key))return;
+      seen.add(key);
+      const option=document.createElement("option");
+      option.value=String(r.plant).trim();
+      option.label=[r.locality,r.year||String(r.start||"").slice(0,4),r.start&&("inicio "+r.start),r.end&&("fin "+r.end)].filter(Boolean).join(" · ");
+      list.appendChild(option);
+    });
+    flora.setAttribute("list","floraciones-registradas");
+    flora.addEventListener("change",function(){
+      const selected=flora.value.trim().toLocaleLowerCase("es");
+      const match=saved.filter(r=>r&&String(r.plant||"").trim().toLocaleLowerCase("es")===selected)
+        .sort((a,b)=>String(b.start||"").localeCompare(String(a.start||"")))[0];
+      if(!match)return;
+      let changed=false;
+      if(!start.value&&match.start){start.value=match.start;changed=true;}
+      if(!end.value&&match.end){end.value=match.end;changed=true;}
+      if(changed){
+        status.textContent="Se sugirieron fechas de una observación guardada ("+(match.locality||"localidad no indicada")+", "+(match.year||String(match.start||"").slice(0,4))+"). Confirma las fechas actuales en el campo antes de planificar el traslado.";
+      } else {
+        status.textContent="Hay una observación guardada para esta floración. Revisa sus fechas y confirma la actividad actual en el campo.";
+      }
+    });
+  } catch(e) {
+    /* Sin datos florales disponibles, el planificador sigue funcionando normalmente. */
+  }
+})();
+</script>
+</body></html>
