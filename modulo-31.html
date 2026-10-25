@@ -14,7 +14,7 @@ main{max-width:920px;margin:auto;padding:18px}.intro,.panel,.record{background:#
 h1{font-size:clamp(24px,5vw,33px);line-height:1.15;margin:12px 0 7px}h2{font-size:19px;margin:0 0 12px}p{line-height:1.5}.notice{background:#fff3dc;border:1px solid #ead1a3;border-radius:12px;padding:12px;font-size:14px}
 label{display:block;font-weight:650;font-size:14px;margin:11px 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid #cfd8cd;border-radius:10px;font:inherit;background:white;color:var(--ink)}textarea{min-height:82px;resize:vertical}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cursor:pointer;background:var(--green);color:white}.secondary{background:#eee9df;color:#453b30}.danger{background:#fae8e5;color:#8b2f22}
+button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cursor:pointer;background:var(--green);color:white}.button-link{display:inline-block;background:var(--green);color:white;text-decoration:none;border-radius:10px;padding:11px 14px;font:650 14px system-ui}.secondary{background:#eee9df;color:#453b30}.danger{background:#fae8e5;color:#8b2f22}
 .muted{font-size:13px;color:#5e655b}.record h3{margin:0 0 8px;font-size:17px}.record p{margin:5px 0;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}.tag{display:inline-block;background:#e8f2e8;color:#245c43;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:650}.status{min-height:1.4em;color:#245c43;font-size:13px}.empty{padding:12px 0;color:#65584b}
 @media(max-width:520px){main{padding:12px}.panel,.record,.intro{padding:13px}}
 </style>
@@ -191,6 +191,7 @@ root.innerHTML=shown.map(r=>'<article class="record"><h3>🌼 '+esc(r.plant)+' <
 '<p><strong>Floración:</strong> inicio '+esc(r.start||"sin fecha")+' · pico '+esc(r.peak||"no anotado")+' · fin '+esc(r.end||"no anotado")+'</p>'+
 '<p><strong>Intensidad:</strong> '+esc(r.intensity)+' · <strong>Actividad de abejas:</strong> '+esc(r["bee-activity"])+' · <strong>Recurso:</strong> '+esc(r.resource)+'</p>'+
 (r.apiary?'<p><strong>Apiario:</strong> '+esc(r.apiary)+'</p>'+apiaryMapLink(r.apiary):"")+(r.notes?'<p><strong>Notas:</strong> '+esc(r.notes)+'</p>':"")+
+'<div class="actions"><a class="button-link" href="./modulo-06.html?flora='+encodeURIComponent(r.plant||"")+'&destination='+encodeURIComponent(r.locality||"")+'&bloomStart='+encodeURIComponent(r.start||"")+'&bloomEnd='+encodeURIComponent(r.end||"")+'">🚚 Planificar trashumancia con esta floración</a></div>'+
 '<div class="actions"><button type="button" class="secondary" data-edit="'+esc(r.id)+'">Editar</button><button type="button" class="danger" data-delete="'+esc(r.id)+'">Eliminar</button></div></article>').join("");
 root.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>edit(b.dataset.edit)));
 root.querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>remove(b.dataset.delete)));
