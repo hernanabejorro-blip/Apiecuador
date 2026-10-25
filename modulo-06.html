@@ -33,14 +33,15 @@ function render(){const q=$('filter').value.toLowerCase().trim(),shown=rows.filt
 function safeText(v){return String(v==null?'':v).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]))}
 function renderFlowerHints(){
  const host=$('flower-hints-list'); if(!host)return;
- const dest=$('destination').value.trim().toLocaleLowerCase('es');
- const flora=$('flora').value.trim().toLocaleLowerCase('es');
+ const norm=value=>String(value||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLocaleLowerCase('es').trim();
+ const dest=norm($('destination').value);
+ const flora=norm($('flora').value);
  let flowers=[];
  try{const v=JSON.parse(localStorage.getItem('apiecuador-floracion-v1')||'[]');if(Array.isArray(v))flowers=v;}catch(e){}
  const filtered=flowers.filter(f=>{
    if(f.recordType&&f.recordType!=="observed")return false;
-   const locality=[f.locality,f.apiary].map(x=>String(x||'').toLocaleLowerCase('es'));
-   const plant=String(f.plant||'').toLocaleLowerCase('es');
+   const locality=[f.locality,f.apiary].map(norm);
+   const plant=norm(f.plant);
    const destOk=!dest||locality.some(x=>x.includes(dest)||dest.includes(x)&&x.length>2);
    const floraOk=!flora||plant.includes(flora)||flora.includes(plant)&&plant.length>2;
    return destOk&&floraOk;
