@@ -36,6 +36,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 <div><label for="scientific">Nombre científico (si lo conoces)</label><input id="scientific" maxlength="120" placeholder="Nombre botánico"></div>
 <div><label for="region">Región *</label><select id="region" required><option value="">Seleccionar región</option><option>Sierra</option><option>Costa</option><option>Oriente / Amazonía</option><option>Galápagos</option></select></div>
 <div><label for="locality">Localidad / sector *</label><input id="locality" required maxlength="120" placeholder="Ej.: Tanda, Quito"></div>
+<div><label for="recordType">Tipo de dato</label><select id="recordType"><option value="observed">Observación real de campo</option><option value="estimate">Fecha prevista / estimación</option></select></div>
 <div><label for="altitude">Altitud aproximada (metros)</label><input id="altitude" type="number" min="0" max="6500" step="1" placeholder="Ej.: 2450"></div>
 <div><label for="start">Inicio observado *</label><input id="start" type="date" required></div>
 <div><label for="peak">Pico de floración (opcional)</label><input id="peak" type="date"></div>
@@ -96,7 +97,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 <p>Cuando registres la misma planta en la misma localidad en dos o más años, aquí podrás ver si la floración empezó antes o después y comparar el pico, el fin y los recursos observados.</p>
 <label for="compare-select">Planta y localidad</label>
 <select id="compare-select"><option value="">Todavía no hay temporadas para comparar</option></select>
-<div id="compare-results"><p class="muted">Registra la misma planta y localidad en otro año para empezar la comparación. Tus observaciones anteriores se conservan.</p></div>
+<div id="compare-results"><p class="muted">La comparación usa solo observaciones reales de campo, no estimaciones. Registra la misma planta y localidad en otro año para empezar la comparación. Tus observaciones anteriores se conservan.</p></div>
 </section>
 <section class="panel">
 <h2>🐝 Próximo paso: planificar trashumancia</h2>
@@ -108,7 +109,7 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
 "use strict";
 const KEY="apiecuador-floracion-v1";
 const $=id=>document.getElementById(id);
-const fields=["plant","scientific","region","locality","altitude","start","peak","end","intensity","bee-activity","resource","apiary","year","notes"];
+const fields=["plant","scientific","region","locality","recordType","altitude","start","peak","end","intensity","bee-activity","resource","apiary","year","notes"];
 let records=[];
 try{const saved=JSON.parse(localStorage.getItem(KEY)||"[]");if(Array.isArray(saved))records=saved;}catch(e){records=[];}
 function esc(value){return String(value==null?"":value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));}
@@ -136,7 +137,7 @@ function renderComparison(){
  const select=$("compare-select"),root=$("compare-results");
  if(!select||!root)return;
  const groups=new Map();
- records.forEach(r=>{
+ records.filter(r=>!r.recordType||r.recordType==="observed").forEach(r=>{
   const plant=String(r.plant||"").trim(),locality=String(r.locality||"").trim();
   if(!plant||!locality)return;
   const key=plant.toLocaleLowerCase("es")+"|||"+locality.toLocaleLowerCase("es");
@@ -183,6 +184,7 @@ const shown=records.filter(r=>(!year||String(r.year)===year)&&(!query||[r.plant,
 const root=$("records");
 if(!shown.length){root.innerHTML='<div class="empty">Todavía no hay observaciones que coincidan. Añade una floración para empezar tu calendario.</div>';return;}
 root.innerHTML=shown.map(r=>'<article class="record"><h3>🌼 '+esc(r.plant)+' <span class="tag">'+esc(r.year||"Año sin indicar")+'</span></h3>'+
+'<p><strong>Tipo de dato:</strong> '+esc(!r.recordType||r.recordType==="observed"?"Observación real de campo":"Fecha prevista / estimación")+'</p>'+
 '<p><strong>Región:</strong> '+esc(r.region||"Sin indicar")+'</p>'+
 '<p><strong>Localidad:</strong> '+esc(r.locality||"Sin indicar")+(r.altitude!==""?' · <strong>Altitud:</strong> '+esc(r.altitude)+' m':"")+'</p>'+
 (r.scientific?'<p><strong>Nombre científico:</strong> '+esc(r.scientific)+'</p>':"")+
