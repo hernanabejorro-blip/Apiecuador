@@ -33,7 +33,7 @@ function render(){const q=$('filter').value.toLowerCase().trim(),shown=rows.filt
 function safeText(v){return String(v==null?'':v).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]))}
 function renderFlowerHints(){
  const host=$('flower-hints-list'); if(!host)return;
- const norm=value=>String(value||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLocaleLowerCase('es').trim();
+ const norm=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es').trim();
  const dest=norm($('destination').value);
  const flora=norm($('flora').value);
  let flowers=[];
