@@ -103,8 +103,9 @@ button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cur
   const row={id:editing||("a"+Date.now().toString(36)+Math.random().toString(36).slice(2,6))};
   fields.forEach(f=>row[f[0]]=String(document.getElementById(f[0]).value||"").trim());
   const old=editing?rows.findIndex(r=>r.id===editing):-1;
+  const previousRows=rows.slice();
   try{if(old>=0)rows[old]=row;else rows.push(row);persist();reset();render();status.textContent="Apiario guardado en este teléfono.";}
-  catch(err){status.textContent="No se pudo guardar. Revisa el espacio disponible del navegador.";}
+  catch(err){rows=previousRows;render();status.textContent="No se pudo guardar. No se confirmó el cambio; revisa el espacio disponible del navegador.";}
  });
  list.addEventListener("click",e=>{
   const edit=e.target.closest("[data-edit]");
