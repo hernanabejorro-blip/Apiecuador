@@ -115,7 +115,24 @@ function renderComparison(filtered){
    const windows=items.map(r=>'inicio '+(r.start||'—')+' · pico '+(r.peak||'—')+' · fin '+(r.end||'—'));
    return '<p><strong>'+safe(y)+':</strong> '+safe(windows.join(' / '))+'</p>';
   }).join('');
-  return '<article class="plant"><h3>'+safe(g.plant)+'</h3><span class="tag">'+safe(g.region)+'</span><span class="tag">'+g.items.length+' observación(es)</span><p><strong>Localidad:</strong> '+safe(g.locality)+'</p>'+lines+(years.length>1?'<p class="muted">Hay registros de varios años: compara las fechas, la intensidad y las notas antes de estimar la próxima temporada.</p>':'<p class="muted">Registra más años para empezar a comparar variaciones de temporada.</p>')+'</article>';
+  const firstByYear=years.filter(y=>/^\\d{4}$/.test(y)).map(y=>{
+   const dates=g.items.filter(r=>String(r.year||'')===y&&/^\\d{4}-\\d{2}-\\d{2}$/.test(String(r.start||''))).map(r=>String(r.start).slice(5));
+   if(!dates.length)return null;
+   dates.sort();
+   const md=dates[0].split('-').map(Number);
+   return {year:Number(y),monthDay:md[0]*100+md[1],date:Date.UTC(2000,md[0]-1,md[1])/86400000};
+  }).filter(Boolean).sort((a,b)=>a.year-b.year);
+  let shiftNote='';
+  if(firstByYear.length>1){
+   const comparisons=[];
+   for(let i=1;i<firstByYear.length;i++){
+    const prev=firstByYear[i-1],curr=firstByYear[i];
+    const days=Math.round(curr.date-prev.date);
+    comparisons.push('<p>De '+prev.year+' a '+curr.year+': '+(days===0?'el inicio cayó en el mismo día del calendario':days<0?'se adelantó '+Math.abs(days)+' día(s)':'se retrasó '+days+' día(s)')+'.</p>');
+   }
+   shiftNote='<div class="notice"><strong>Variación del inicio observado</strong>'+comparisons.join('')+'<p class="muted">Cálculo basado en la primera fecha de inicio registrada por año para esta planta y localidad; no es una predicción.</p></div>';
+  }
+  return '<article class="plant"><h3>'+safe(g.plant)+'</h3><span class="tag">'+safe(g.region)+'</span><span class="tag">'+g.items.length+' observación(es)</span><p><strong>Localidad:</strong> '+safe(g.locality)+'</p>'+lines+shiftNote+(years.length>1?'<p class="muted">Compara las fechas, la intensidad y las notas antes de estimar la próxima temporada.</p>':'<p class="muted">Registra más años para empezar a comparar variaciones de temporada.</p>')+'</article>';
  }).join('');
 }
 function renderObservations(){
