@@ -38,6 +38,7 @@ function renderFlowerHints(){
  let flowers=[];
  try{const v=JSON.parse(localStorage.getItem('apiecuador-floracion-v1')||'[]');if(Array.isArray(v))flowers=v;}catch(e){}
  const filtered=flowers.filter(f=>{
+   if(f.recordType&&f.recordType!=="observed")return false;
    const locality=[f.locality,f.apiary].map(x=>String(x||'').toLocaleLowerCase('es'));
    const plant=String(f.plant||'').toLocaleLowerCase('es');
    const destOk=!dest||locality.some(x=>x.includes(dest)||dest.includes(x)&&x.length>2);
@@ -48,7 +49,7 @@ function renderFlowerHints(){
  host.innerHTML=filtered.map(f=>{
   let mapLink='';
   if(f.apiary){try{const apiaries=JSON.parse(localStorage.getItem('apiecuador-apiarios-v1')||'[]');const target=String(f.apiary).trim().toLocaleLowerCase('es');const a=Array.isArray(apiaries)?apiaries.find(x=>x&&String(x.nombre||'').trim().toLocaleLowerCase('es')===target):null;if(a&&a.latitud!==''&&a.longitud!==''&&Number.isFinite(Number(a.latitud))&&Number.isFinite(Number(a.longitud))&&Number(a.latitud)>=-90&&Number(a.latitud)<=90&&Number(a.longitud)>=-180&&Number(a.longitud)<=180)mapLink='<p><a href="https://www.google.com/maps?q='+encodeURIComponent(Number(a.latitud)+','+Number(a.longitud))+'" target="_blank" rel="noopener noreferrer">Abrir apiario en Google Maps ↗</a></p>';}catch(e){}}
-  return '<article class="item"><strong>'+safeText(f.plant||'Planta sin nombre')+'</strong><p>'+safeText(f.locality||'Localidad no indicada')+(f.region?' · '+safeText(f.region):'')+(f.altitude?' · '+safeText(f.altitude)+' m':'')+'</p><p>Inicio: '+safeText(f.start||'sin fecha')+' · Pico: '+safeText(f.peak||'no indicado')+' · Fin: '+safeText(f.end||'no indicado')+'</p><p>Intensidad: '+safeText(f.intensity||'no evaluada')+' · Actividad de abejas: '+safeText(f['bee-activity']||'no evaluada')+' · Recurso: '+safeText(f.resource||'no determinado')+'</p>'+(f.apiary?'<p>Apiario: '+safeText(f.apiary)+'</p>':'')+mapLink+(f.notes?'<p>'+safeText(f.notes)+'</p>':'')+'</article>';
+  return '<article class="item"><strong>'+safeText(f.plant||'Planta sin nombre')+'</strong><p><strong>Referencia histórica de campo</strong> · '+safeText(f.locality||'Localidad no indicada')+(f.region?' · '+safeText(f.region):'')+(f.altitude?' · '+safeText(f.altitude)+' m':'')+'</p><p>Inicio: '+safeText(f.start||'sin fecha')+' · Pico: '+safeText(f.peak||'no indicado')+' · Fin: '+safeText(f.end||'no indicado')+'</p><p>Intensidad: '+safeText(f.intensity||'no evaluada')+' · Actividad de abejas: '+safeText(f['bee-activity']||'no evaluada')+' · Recurso: '+safeText(f.resource||'no determinado')+'</p>'+(f.apiary?'<p>Apiario: '+safeText(f.apiary)+'</p>':'')+mapLink+(f.notes?'<p>'+safeText(f.notes)+'</p>':'')+'</article>';
  }).join('');
 }
 $('destination').addEventListener('input',renderFlowerHints);
