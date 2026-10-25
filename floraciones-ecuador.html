@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#245c43">
+<link rel="manifest" href="./manifest.json">
+<title>Inteligencia de floraciones · ApiEcuador</title>
+<style>
+:root{--green:#245c43;--cream:#fcf9f2;--ink:#242720;--line:#dce4d9;--amber:#b76b13}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5}
+header{background:linear-gradient(130deg,#173f32,#36734c);color:white;padding:22px 18px}header a{color:white;text-decoration:none;font-size:14px}
+main{max-width:960px;margin:auto;padding:16px}.panel,.plant,.source{background:white;border:1px solid var(--line);border-radius:16px;padding:15px;margin:13px 0;box-shadow:0 4px 15px #173f3209}
+h1{font-size:clamp(24px,5vw,33px);line-height:1.16;margin:12px 0 7px}h2{font-size:19px;margin:0 0 10px}h3{font-size:17px;margin:0 0 7px}
+.notice{background:#fff3dc;border:1px solid #ead1a3;border-radius:12px;padding:12px;font-size:14px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:10px}
+label{display:block;font-size:14px;font-weight:650;margin:8px 0 4px}input,select{width:100%;padding:11px;border:1px solid #cfd8cd;border-radius:10px;font:inherit;background:white;color:var(--ink)}
+.tag{display:inline-block;background:#e8f2e8;color:#245c43;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:700;margin:2px 3px 4px 0}
+.tag.warn{background:#fff0d8;color:#81500b}.muted{font-size:13px;color:#5e655b}.plant p,.source p{margin:6px 0;font-size:14px}.source a{color:#245c43;overflow-wrap:anywhere}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.button-link{display:inline-block;background:var(--green);color:white;text-decoration:none;border-radius:10px;padding:10px 13px;font-weight:650;font-size:14px}
+.empty{padding:12px 0;color:#65584b}.status{font-size:13px;color:var(--green)}
+@media(max-width:520px){main{padding:11px}.panel,.plant,.source{padding:12px}}
+</style>
+</head>
+<body>
+<header><div style="max-width:960px;margin:auto"><a href="./index.html">← Volver a ApiEcuador</a><h1>🌼 Inteligencia de floraciones de Ecuador</h1><p>Una guía para comparar estudios, observaciones del apiario y posibles ventanas de floración antes de planificar la trashumancia.</p></div></header>
+<main>
+<div class="notice"><strong>Importante:</strong> las ventanas que aparecen aquí son referencias de estudios en lugares concretos, no fechas garantizadas para todo Ecuador. La floración cambia por localidad, altitud, lluvias y año. Confirma siempre en campo antes de mover colmenas.</div>
+<section class="panel">
+<h2>🔎 Explorar por región y tus registros</h2>
+<div class="grid">
+<div><label for="region-filter">Región de interés</label><select id="region-filter"><option value="">Todas las regiones</option><option value="Sierra">Sierra</option><option value="Costa">Costa</option><option value="Oriente / Amazonía">Oriente / Amazonía</option><option value="Galápagos">Galápagos</option></select></div>
+<div><label for="year-filter">Año de tus observaciones</label><select id="year-filter"><option value="">Todos los años</option></select></div>
+</div>
+<p id="observation-summary" class="muted">Buscando observaciones guardadas en este teléfono…</p>
+<div id="observations"></div>
+<div class="actions"><a class="button-link" href="./modulo-31.html">🌿 Registrar floración observada</a><a class="button-link" href="./modulo-06.html">🚚 Abrir planificador de trashumancia</a></div>
+</section>
+<section class="panel">
+<h2>📚 Referencias regionales disponibles</h2>
+<p class="muted">Se muestran solo ventanas o conclusiones que la fuente respalda. Si un estudio describe floración general o presencia de una especie, no se inventan meses específicos para esa planta.</p>
+<div id="baseline" class="grid">
+<article class="plant" data-region="Sierra">
+<h3>🌱 Flora apícola de Tungurahua</h3><span class="tag">Sierra</span><span class="tag">Por altitud</span>
+<p>Un estudio en tres pisos altitudinales (aprox. 2.200, 2.900 y 3.300 m) encontró calendarios distintos: en la zona baja se describieron dos picos, en marzo y septiembre; en la zona intermedia se registraron varios periodos entre marzo y mayo, julio y octubre, y noviembre a enero; en la zona alta destacaron diciembre a febrero y mayo a octubre.</p>
+<p><strong>Cómo usarlo:</strong> referencia del conjunto de flora estudiada, no calendario exclusivo del eucalipto. Verifica la especie y la altitud de tu destino.</p>
+<p class="muted">Fuente: investigación de la Universidad Técnica de Ambato, publicada en 2011.</p>
+<p><a href="https://revistas.uta.edu.ec/erevista/index.php/dide/article/view/499" target="_blank" rel="noopener">Consultar estudio de Tungurahua ↗</a></p>
+</article>
+<article class="plant" data-region="Costa">
+<h3>🌳 Algarrobo / Prosopis pallida</h3><span class="tag">Costa · bosque seco</span><span class="tag">Referencia local</span>
+<p>En el sitio de Quimis, Jipijapa (Manabí), un seguimiento mensual encontró la mayor floración del conjunto de plantas estudiadas entre junio y agosto. El algarrobo (<em>Prosopis pallida</em>) presentó floración durante siete meses en el estudio.</p>
+<p><strong>Precaución:</strong> los siete meses no deben interpretarse como los mismos meses para todas las localidades ni todos los años.</p>
+<p class="muted">Fuente: estudio de flora apícola en bosque seco tropical de Quimis.</p>
+<p><a href="https://revistas.unl.edu.ec/index.php/bosques/article/view/2227?articlesBySimilarityPage=9" target="_blank" rel="noopener">Consultar estudio de Quimis ↗</a></p>
+</article>
+<article class="plant" data-region="Costa">
+<h3>🌺 Plantas melíferas de La Concordia y Mocache</h3><span class="tag">Costa / zonas tropicales</span><span class="tag">Duración variable</span>
+<p>Un estudio de dos colmenares registró 14 y 22 especies melíferas. En esos lugares, varias especies fueron observadas en floración durante periodos largos (10–12 meses); el estudio también encontró duraciones diferentes según la planta.</p>
+<p><strong>Cómo usarlo:</strong> sirve para crear una lista local de seguimiento, pero no reemplaza fechas mensuales verificadas para cada planta.</p>
+<p class="muted">Fuente: estudio publicado en 2022 sobre flora apícola en La Concordia y Mocache.</p>
+<p><a href="https://www.alfapublicaciones.com/index.php/alfapublicaciones/article/view/129" target="_blank" rel="noopener">Consultar estudio de La Concordia y Mocache ↗</a></p>
+</article>
+<article class="plant" data-region="Sierra">
+<h3>🌼 Eucalipto y Brassica spp.</h3><span class="tag">Sierra</span><span class="tag warn">Meses por confirmar</span>
+<p>Estudios en sectores de Riobamba (Tunshi y Licto) identifican <em>Eucalyptus globulus</em> y plantas del género <em>Brassica</em> entre los recursos de interés apícola. Para esta guía no asignamos meses nacionales al eucalipto: la ventana debe confirmarse por localidad, altitud y observaciones recientes.</p>
+<p><strong>Siguiente paso práctico:</strong> registra inicio, pico y fin de floración en tu zona, y compara los años.</p>
+<p><a href="https://www.dominiodelasciencias.com/ojs/index.php/es/article/view/890" target="_blank" rel="noopener">Estudio de Tunshi ↗</a> · <a href="https://dominiodelasciencias.com/ojs/index.php/es/article/view/1162" target="_blank" rel="noopener">Estudio de Licto ↗</a></p>
+</article>
+</div>
+</section>
+<section class="panel">
+<h2>🐝 Especies para vigilar en tus recorridos</h2>
+<p>Estas son candidatas para ir construyendo el calendario, no promesas de floración para un mes específico: eucalipto, chilca, alfalfa, trébol, retama, aguacate, guabo/guaba y ceibo. Anota el nombre local exacto, porque una misma denominación común puede referirse a plantas distintas.</p>
+<p class="muted">La mejor predicción se construye con tres piezas: estudio regional + registro anual propio + confirmación reciente en el destino.</p>
+</section>
+<section class="panel">
+<h2>🚚 Antes de mover las colmenas</h2>
+<p>Una floración prometedora es solo una parte de la decisión. Comprueba también la abundancia de flores, duración probable, agua, acceso para el vehículo, permiso del propietario, coste del traslado, estado sanitario y documentación oficial.</p>
+<div class="actions"><a class="button-link" href="./documentos-trashumancia.html">📄 Documentos para trashumancia</a><a class="button-link" href="./modulo-06.html">Preparar una ruta</a></div>
+</section>
+<footer class="muted">Los registros personales se leen desde el almacenamiento local de este navegador; esta página no los modifica ni los sincroniza. Si no aparecen, abre el calendario floral en el mismo navegador y dispositivo donde los guardaste.</footer>
+</main>
+<script>
+(function(){
+'use strict';
+const KEY='apiecuador-floracion-v1';
+const $=id=>document.getElementById(id);
+const safe=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let records=[];
+try{const data=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(data))records=data;}catch(e){records=[];}
+const years=[...new Set(records.map(r=>String(r.year||'').trim()).filter(Boolean))].sort((a,b)=>b.localeCompare(a));
+years.forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y;$('year-filter').appendChild(o);});
+function renderObservations(){
+ const region=$('region-filter').value,year=$('year-filter').value;
+ const filtered=records.filter(r=>(!region||r.region===region)&&(!year||String(r.year||'')===year));
+ $('observation-summary').textContent=records.length
+ ? 'Observaciones guardadas en este teléfono: '+records.length+'. Mostrando '+filtered.length+' según los filtros. Estas observaciones son tu mejor referencia local.'
+ : 'Todavía no se encontraron observaciones guardadas en este navegador. Puedes añadir la primera en el Calendario Floral.';
+ const host=$('observations');
+ if(!filtered.length){host.innerHTML='<p class="empty">No hay observaciones que coincidan con esos filtros.</p>';return;}
+ host.innerHTML=filtered.slice().sort((a,b)=>String(b.start||'').localeCompare(String(a.start||''))).map(r=>
+ '<article class="plant"><h3>'+safe(r.plant||'Planta sin nombre')+'</h3><span class="tag">'+safe(r.region||'Región no indicada')+'</span><span class="tag">'+safe(r.year||'Año no indicado')+'</span><p><strong>Localidad:</strong> '+safe(r.locality||'No indicada')+(r.altitude?' · <strong>Altitud:</strong> '+safe(r.altitude)+' m':'')+'</p><p><strong>Floración:</strong> inicio '+safe(r.start||'sin dato')+' · pico '+safe(r.peak||'sin dato')+' · fin '+safe(r.end||'sin dato')+'</p><p><strong>Intensidad:</strong> '+safe(r.intensity||'sin dato')+' · <strong>Recurso:</strong> '+safe(r.resource||'sin dato')+'</p><p class="muted">'+safe(r.notes||'Sin notas adicionales')+'</p></article>'
+ ).join('');
+}
+$('region-filter').addEventListener('change',renderObservations);
+$('year-filter').addEventListener('change',renderObservations);
+$('region-filter').addEventListener('change',()=>{document.querySelectorAll('#baseline [data-region]').forEach(card=>{card.hidden=!!$('region-filter').value&&card.dataset.region!==$('region-filter').value;});});
+renderObservations();
+})();
+</script>
+</body>
+</html>
