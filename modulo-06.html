@@ -50,10 +50,24 @@ function renderFlowerHints(){
  host.innerHTML=filtered.map(f=>{
   let mapLink='';
   if(f.apiary){try{const apiaries=JSON.parse(localStorage.getItem('apiecuador-apiarios-v1')||'[]');const target=String(f.apiary).trim().toLocaleLowerCase('es');const a=Array.isArray(apiaries)?apiaries.find(x=>x&&String(x.nombre||'').trim().toLocaleLowerCase('es')===target):null;if(a&&a.latitud!==''&&a.longitud!==''&&Number.isFinite(Number(a.latitud))&&Number.isFinite(Number(a.longitud))&&Number(a.latitud)>=-90&&Number(a.latitud)<=90&&Number(a.longitud)>=-180&&Number(a.longitud)<=180)mapLink='<p><a href="https://www.google.com/maps?q='+encodeURIComponent(Number(a.latitud)+','+Number(a.longitud))+'" target="_blank" rel="noopener noreferrer">Abrir apiario en Google Maps ↗</a></p>';}catch(e){}}
-  return '<article class="item"><strong>'+safeText(f.plant||'Planta sin nombre')+'</strong><p><strong>Referencia histórica de campo</strong> · '+safeText(f.locality||'Localidad no indicada')+(f.region?' · '+safeText(f.region):'')+(f.altitude?' · '+safeText(f.altitude)+' m':'')+'</p><p>Inicio: '+safeText(f.start||'sin fecha')+' · Pico: '+safeText(f.peak||'no indicado')+' · Fin: '+safeText(f.end||'no indicado')+'</p><p>Intensidad: '+safeText(f.intensity||'no evaluada')+' · Actividad de abejas: '+safeText(f['bee-activity']||'no evaluada')+' · Recurso: '+safeText(f.resource||'no determinado')+'</p>'+(f.apiary?'<p>Apiario: '+safeText(f.apiary)+'</p>':'')+mapLink+(f.notes?'<p>'+safeText(f.notes)+'</p>':'')+'</article>';
+  return '<article class="item"><strong>'+safeText(f.plant||'Planta sin nombre')+'</strong><p><strong>Referencia histórica de campo</strong> · '+safeText(f.locality||'Localidad no indicada')+(f.region?' · '+safeText(f.region):'')+(f.altitude?' · '+safeText(f.altitude)+' m':'')+'</p><p>Inicio: '+safeText(f.start||'sin fecha')+' · Pico: '+safeText(f.peak||'no indicado')+' · Fin: '+safeText(f.end||'no indicado')+'</p><p>Intensidad: '+safeText(f.intensity||'no evaluada')+' · Actividad de abejas: '+safeText(f['bee-activity']||'no evaluada')+' · Recurso: '+safeText(f.resource||'no determinado')+'</p>'+(f.apiary?'<p>Apiario: '+safeText(f.apiary)+'</p>':'')+mapLink+(f.notes?'<p>'+safeText(f.notes)+'</p>':'')+'<div class="actions"><button type="button" class="secondary" data-use-flower="1" data-plant="'+safeText(f.plant||'')+'" data-start="'+safeText(f.start||'')+'" data-end="'+safeText(f.end||'')+'" data-locality="'+safeText(f.locality||'')+'">Usar en esta ruta</button></div></article>';
  }).join('');
 }
 $('destination').addEventListener('input',renderFlowerHints);
+ $('flower-hints-list').addEventListener('click',e=>{
+  const button=e.target.closest('[data-use-flower]');
+  if(!button)return;
+  const plant=button.dataset.plant||'';
+  const start=button.dataset.start||'';
+  const end=button.dataset.end||'';
+  const locality=button.dataset.locality||'';
+  if(plant)$('flora').value=plant;
+  if(start)$('bloomStart').value=start;
+  if(end)$('bloomEnd').value=end;
+  if(locality&&!$('destination').value.trim())$('destination').value=locality;
+  $('status').textContent='Se copiaron la planta y las fechas disponibles a la planificación. Verifica localidad y floración actual antes de confirmar el traslado.';
+  renderFlowerHints();
+ });
 $('flora').addEventListener('input',renderFlowerHints);
 $('form').addEventListener('submit',e=>{e.preventDefault();if($('arrive').value&&$('depart').value>$('arrive').value){$('status').textContent='Revisa las fechas: la llegada no puede ser anterior a la salida.';return}if($('bloomStart').value&&$('bloomEnd').value&&$('bloomStart').value>$('bloomEnd').value){$('status').textContent='Revisa la floración: el fin no puede ser anterior al inicio.';return}const id=$('editId').value||String(Date.now()),r={id};fields.forEach(k=>r[k]=$(k).value.trim());checks.forEach(k=>r[k]=$(k).checked);rows=rows.filter(x=>x.id!==id);rows.unshift(r);if(!persist())return;const arrival=r.arrive||r.depart;const hasBloom=!!(r.bloomStart||r.bloomEnd);const overlaps=(!r.bloomStart||arrival>=r.bloomStart)&&(!r.bloomEnd||r.depart<=r.bloomEnd);reset();render();const pending=checks.filter(k=>!r[k]).map(k=>({'checkDocs':'documentación','checkSite':'sitio de destino','checkWater':'agua y acceso','checkSecure':'sujeción de colmenas','checkBloom':'floración activa','checkPesticide':'riesgo de agroquímicos','checkOwner':'permiso del propietario','checkCapacity':'capacidad de carga'}[k]));let message='Ruta guardada en este dispositivo.';if(hasBloom&&!overlaps)message+=' Atención: las fechas del traslado podrían quedar fuera del periodo de floración indicado; confirma la floración en el campo.';if(pending.length)message+=' Antes de salir, revisa: '+pending.join(', ')+'.';$('status').textContent=message});
 function reset(){$('form').reset();$('editId').value='';$('save').textContent='Guardar ruta';$('cancel').hidden=true}
