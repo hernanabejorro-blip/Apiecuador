@@ -21,6 +21,15 @@ small,.small,.hint,.help,.muted,.subtitle,.caption{font-size:0.9rem!important;li
 h1{line-height:1.2!important} h2{line-height:1.25!important} h3,h4{line-height:1.3!important}
 :focus-visible{outline:3px solid #8d4b00!important;outline-offset:2px}
 </style>
+
+<style id="apiecuador-toque-comodo">
+/* Accesibilidad móvil: controles cómodos sin cambiar la lógica del módulo. */
+button,a,input[type="button"],input[type="submit"]{min-height:44px}
+button,a{touch-action:manipulation}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #b76b13!important;outline-offset:3px;border-radius:8px}
+input,select,textarea{scroll-margin-top:12px}
+@media(max-width:520px){button,input[type="button"],input[type="submit"]{min-height:46px}main{padding-bottom:28px}}
+</style>
 </head><body>
 <header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>📦 Inventario y ciclo de cera</h1><p>Controla materiales, cuadros, alzas, cera y suministros apícolas.</p></div></header><main><div class="notice"><strong>Guardado local:</strong> el inventario se guarda en este teléfono. No descuenta materiales automáticamente al registrar cosechas ni está sincronizado con otros dispositivos.</div>
 <section class="panel"><h2 id="form-title">Añadir artículo al inventario</h2><form id="form"><input id="rid" type="hidden"><div class="two"><div><label for="name">Artículo *</label><input id="name" maxlength="100" required placeholder="Ej.: Cuadros alambrados"></div><div><label for="category">Categoría</label><select id="category"><option>Material de colmena</option><option>Cera</option><option>Alimentación</option><option>Sanidad</option><option>Protección y herramientas</option><option>Envases y cosecha</option><option>Otro</option></select></div></div><div class="two"><div><label for="qty">Cantidad disponible *</label><input id="qty" type="number" min="0" step="0.01" required value="0"></div><div><label for="unit">Unidad *</label><select id="unit"><option>unidades</option><option>kg</option><option>g</option><option>litros</option><option>ml</option><option>rollos</option><option>paquetes</option></select></div></div><div class="two"><div><label for="min">Avisar cuando quede por debajo de</label><input id="min" type="number" min="0" step="0.01" value="0"></div><div><label for="date">Fecha de revisión</label><input id="date" type="date"></div></div><label for="notes">Notas, lote o ubicación</label><textarea id="notes" maxlength="1000" placeholder="Estante, proveedor, lote, vencimiento..."></textarea><div class="actions"><button class="primary" type="submit" id="save">Guardar artículo</button><button class="secondary" type="button" id="clear">Limpiar</button></div><p class="status" id="status" role="status" aria-live="polite"></p></form></section>
