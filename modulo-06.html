@@ -185,9 +185,22 @@ $('maps').addEventListener('click',()=>{const origin=$('origin').value.trim(),de
 try{
  const params=new URLSearchParams(window.location.search);
  const incoming={flora:params.get('flora'),destination:params.get('destination')};
- let applied=false;
- Object.keys(incoming).forEach(id=>{const value=incoming[id],field=$(id);if(value&&field&&!field.value){field.value=value;applied=true;}});
- if(applied)$('status').textContent='Observación floral cargada desde el Calendario Floral. Comprueba localidad y fechas reales antes de guardar la ruta.';
+ let appliedFlora=false,appliedDestination=false;
+ Object.keys(incoming).forEach(id=>{
+  const value=incoming[id],field=$(id);
+  if(value&&field&&!field.value){
+   field.value=value;
+   if(id==='flora')appliedFlora=true;
+   if(id==='destination')appliedDestination=true;
+  }
+ });
+ if(appliedFlora&&appliedDestination){
+  $('status').textContent='Floración y destino cargados desde el Calendario Floral o Mis Apiarios. Completa el origen, las fechas y el número de colmenas antes de guardar.';
+ }else if(appliedFlora){
+  $('status').textContent='Floración cargada desde el Calendario Floral. Comprueba localidad y fechas reales antes de guardar la ruta.';
+ }else if(appliedDestination){
+  $('status').textContent='Destino sugerido desde Mis Apiarios o un enlace de la app. Completa el origen, las fechas y el número de colmenas antes de guardar.';
+ }
 }catch(e){}
 render();renderFlowerHints();
 })();
