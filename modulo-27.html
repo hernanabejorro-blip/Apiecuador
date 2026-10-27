@@ -40,7 +40,7 @@ input,select,textarea{scroll-margin-top:12px}
 <header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🛟 Copias de seguridad</h1><p>Protege tus registros de campo, cosechas y cría de reinas.</p></div></header>
 <main>
 <div class="notice"><strong>Importante:</strong> los datos de los módulos se guardan en este navegador y teléfono; no se suben automáticamente a internet. Descarga una copia periódicamente y guárdala en un lugar seguro.</div>
-<section class="panel"><h2>1. Guardar una copia</h2><p>Descarga un archivo JSON con los registros locales de apiarios, inspecciones, cría y seguimiento de reinas, floraciones, calendario, tratamientos, cosecha y otros módulos compatibles, además de los nombres personalizados de la pantalla principal.</p><div class="actions"><button class="primary" id="exportar" type="button">⬇️ Descargar copia de seguridad</button></div><p class="muted">El archivo incluye únicamente los datos disponibles en este navegador para esos módulos. No borra ni modifica tus registros.</p></section>
+<section class="panel"><h2>1. Guardar una copia</h2><p>Descarga un archivo JSON con los registros locales de apiarios, inspecciones, cría y seguimiento de reinas, floraciones, calendario, tratamientos, cosecha y otros módulos compatibles, además de los nombres personalizados de la pantalla principal.</p><div class="actions"><button class="primary" id="exportar" type="button">⬇️ Descargar copia de seguridad</button></div><p class="muted">El archivo incluye únicamente los datos disponibles en este navegador para esos módulos. No borra ni modifica tus registros.</p><p id="resumen-copia" class="status" role="status" aria-live="polite">Revisando qué datos están disponibles en este teléfono…</p></section>
 <section class="panel"><h2>2. Recuperar o combinar una copia</h2><p>Selecciona un archivo JSON exportado anteriormente por ApiEcuador. Para proteger los datos actuales, la importación combina los registros y evita duplicados; no reemplaza silenciosamente los registros que ya tienes.</p><input id="archivo" type="file" accept=".json,application/json"><div class="actions"><button class="secondary" id="importar" type="button">Importar y combinar copia</button></div><p id="estado" class="status" role="status" aria-live="polite"></p></section>
 <section class="panel"><h2>Consejos para no perder información</h2><ul><li>Haz una copia después de registrar inspecciones, tratamientos o una tanda de reinas.</li><li>Guarda el archivo en Descargas y, si puedes, en Google Drive o envíatelo por correo.</li><li>Al cambiar de teléfono, instala/abre ApiEcuador y usa aquí la opción de importar.</li><li>Conserva también el ZIP original del proyecto; ese ZIP es una copia del código, no de tus registros.</li></ul></section>
 </main>
@@ -49,6 +49,9 @@ input,select,textarea{scroll-margin-top:12px}
  const keys=["apiecuador-apiarios-v1","apiecuador-alimentacion-campo-v1","apiecuador-floracion-observada-v1","apiecuador-floracion-para-trashumancia-v1","apiecuador-cuadrilla-v1","apiecuador-modulo-03-v1","apiecuador-modulo-04-v1","apiecuador-modulo-05-v1","apiecuador-modulo-06-v1","apiecuador-modulo-09-v1","apiecuador-modulo-11-v1","apiecuador-modulo-12-v1","apiecuador-modulo-21-v1","apiecuador-modulo-22-v1","apiecuador-modulo-23-v1","apiecuador-modulo-24-v1","apiecuador-modulo-25-v1","apiecuador-reinas-v1","apiecuador-floracion-v1","apiecuador-personalizacion-v1"];
  const status=document.getElementById("estado");
  function read(key){try{return JSON.parse(localStorage.getItem(key)||"null")}catch(e){return null}}
+ function contar(value){if(Array.isArray(value))return value.length;if(value&&typeof value==="object")return Object.keys(value).length;return value==null?0:1;}
+ function actualizarResumen(){const summary=document.getElementById("resumen-copia");let modules=0,total=0;keys.forEach(k=>{const value=read(k);if(value!==null){modules++;total+=contar(value);}});summary.textContent="Datos disponibles ahora: "+modules+" grupos de datos y aproximadamente "+total+" registro(s)/elemento(s). La cifra es orientativa; revisa el archivo descargado.";}
+ actualizarResumen();
  document.getElementById("exportar").addEventListener("click",function(){
   try{
    const data={app:"ApiEcuador",formatVersion:1,exportedAt:new Date().toISOString(),data:{}};
@@ -57,7 +60,8 @@ input,select,textarea{scroll-margin-top:12px}
    const url=URL.createObjectURL(blob);const a=document.createElement("a");
    a.href=url;a.download="apiecuador-copia-"+new Date().toISOString().slice(0,10)+".json";
    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
-   status.textContent="Copia preparada para descargar. Comprueba que el archivo aparezca en Descargas.";
+   let modules=Object.keys(data.data).length;let total=0;Object.values(data.data).forEach(value=>{total+=contar(value);});
+    status.textContent="Copia preparada: "+modules+" grupos de datos y aproximadamente "+total+" registro(s)/elemento(s). Comprueba que el archivo aparezca en Descargas.";
   }catch(e){status.textContent="No se pudo crear la copia. Revisa el espacio disponible en el teléfono.";}
  });
  document.getElementById("importar").addEventListener("click",async function(){
@@ -84,7 +88,7 @@ input,select,textarea{scroll-margin-top:12px}
    const before={};keys.forEach(k=>{before[k]=localStorage.getItem(k);});
    try{Object.keys(planned).forEach(k=>localStorage.setItem(k,JSON.stringify(planned[k])));}
    catch(writeError){keys.forEach(k=>{try{if(before[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,before[k]);}catch(ignore){}});throw writeError;}
-   status.textContent="Importación terminada. Los registros se combinaron sin reemplazar los existentes. Abre cada módulo para comprobarlos.";
+   status.textContent="Importación terminada. Los registros se combinaron sin reemplazar los existentes. Abre cada módulo para comprobarlos.";actualizarResumen();
   }catch(e){status.textContent="No se pudo importar: el archivo no parece una copia válida de ApiEcuador o no hay espacio suficiente. Tus datos anteriores se conservaron.";}
  });
 })();
