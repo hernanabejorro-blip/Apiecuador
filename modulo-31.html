@@ -236,7 +236,7 @@ root.innerHTML=shown.map(r=>'<article class="record"><h3>🌼 '+esc(r.plant)+' <
 '<p><strong>Floración:</strong> inicio '+esc(r.start||"sin fecha")+' · pico '+esc(r.peak||"no anotado")+' · fin '+esc(r.end||"no anotado")+'</p>'+
 '<p><strong>Intensidad:</strong> '+esc(r.intensity)+' · <strong>Actividad de abejas:</strong> '+esc(r["bee-activity"])+' · <strong>Recurso:</strong> '+esc(r.resource)+'</p>'+
 (r.apiary?'<p><strong>Apiario:</strong> '+esc(r.apiary)+'</p>'+apiaryMapLink(r.apiary):"")+(r.notes?'<p><strong>Notas:</strong> '+esc(r.notes)+'</p>':"")+
-'<div class="actions"><a class="button-link" href="./modulo-06.html?flora='+encodeURIComponent(r.plant||"")+'&destination='+encodeURIComponent(r.locality||"")+'">🚚 Planificar trashumancia con esta floración</a></div>'+
+'<div class="actions"><a class="button-link" href="https://www.google.com/search?tbm=isch&q='+encodeURIComponent((r.scientific||"")+" "+(r.plant||"")+" flores hojas Ecuador identificación")+'" target="_blank" rel="noopener noreferrer">📷 Ver fotos de esta planta</a><a class="button-link" href="./modulo-06.html?flora='+encodeURIComponent(r.plant||"")+'&destination='+encodeURIComponent(r.locality||"")+'">🚚 Planificar trashumancia con esta floración</a></div>'+
 '<div class="actions"><button type="button" class="secondary" data-edit="'+esc(r.id)+'">Editar</button><button type="button" class="danger" data-delete="'+esc(r.id)+'">Eliminar</button></div></article>').join("");
 root.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>edit(b.dataset.edit)));
 root.querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>remove(b.dataset.delete)));
