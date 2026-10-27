@@ -15,7 +15,7 @@ h1{font-size:clamp(24px,5vw,33px);line-height:1.15;margin:12px 0 7px}h2{font-siz
 label{display:block;font-weight:650;font-size:14px;margin:11px 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid #cfd8cd;border-radius:10px;font:inherit;background:white;color:var(--ink)}textarea{min-height:82px;resize:vertical}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cursor:pointer;background:var(--green);color:white}.button-link{display:inline-block;background:var(--green);color:white;text-decoration:none;border-radius:10px;padding:11px 14px;font:650 14px system-ui}.secondary{background:#eee9df;color:#453b30}.danger{background:#fae8e5;color:#8b2f22}
-.muted{font-size:13px;color:#5e655b}.record h3{margin:0 0 8px;font-size:17px}.record p{margin:5px 0;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}.tag{display:inline-block;background:#e8f2e8;color:#245c43;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:650}.status{min-height:1.4em;color:#245c43;font-size:13px}.empty{padding:12px 0;color:#65584b}
+.muted{font-size:13px;color:#5e655b}.record h3{margin:0 0 8px;font-size:17px}.record p{margin:5px 0;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}.plant-photo{margin:10px 0 12px}.plant-photo img{display:block;width:100%;height:190px;object-fit:cover;border-radius:12px;background:#edf1e8}.plant-photo figcaption{font-size:12px;color:#59675b;margin-top:5px}.plant-photo-link{display:inline-block;margin:6px 0 10px;padding:8px 11px;border:1px solid #b7ceb9;border-radius:9px;color:#245c43;font-weight:650;text-decoration:none}.plant-photo-link:focus-visible{outline:3px solid #d6a72d;outline-offset:2px}.tag{display:inline-block;background:#e8f2e8;color:#245c43;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:650}.status{min-height:1.4em;color:#245c43;font-size:13px}.empty{padding:12px 0;color:#65584b}
 @media(max-width:520px){main{padding:12px}.panel,.record,.intro{padding:13px}}
 </style>
 
@@ -256,6 +256,29 @@ try{const apiaries=JSON.parse(localStorage.getItem("apiecuador-apiarios-v1")||"[
 try{const params=new URLSearchParams(window.location.search);const apiario=params.get("apiario");if(apiario&&!$("apiary").value){$("apiary").value=apiario; $("status").textContent="Apiario seleccionado desde Mis Apiarios. Completa la observación de campo antes de guardarla.";}}catch(e){}
 render();
 const guiaCards=Array.from(document.querySelectorAll("#guia-lista .record"));
+/* Guía visual: fotos reales solo cuando la imagen corresponde al ejemplo; las demás fichas enlazan a una búsqueda visual específica. */
+const fotosPlantas=[
+ {match:/^Eucalipto$/i,src:"https://images.unsplash.com/photo-1745508376513-aa4981eae253?auto=format&fit=crop&w=1000&q=80",alt:"Flores crema y hojas de eucalipto, con una abeja visitando una flor.",caption:"Flor y hojas de eucalipto; la especie exacta puede variar."},
+ {match:/^Flora melífera del bosque seco$/i,src:"https://static.wixstatic.com/media/8b7d3d_d5e8896ec99641fc8860cf9e695c505e~mv2.jpg/v1/fill/w_980%2Ch_974%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_auto/8b7d3d_d5e8896ec99641fc8860cf9e695c505e~mv2.jpg",alt:"Árboles de guayacán cubiertos de flores amarillas en el bosque seco ecuatoriano.",caption:"Guayacán en flor en el bosque seco de Ecuador; ejemplo visual, no representa todas las especies."}
+];
+guiaCards.forEach(card=>{
+ const title=card.querySelector("h3");
+ if(!title)return;
+ const name=title.textContent.trim();
+ const photo=fotosPlantas.find(item=>item.match.test(name));
+ if(photo){
+  const figure=document.createElement("figure");figure.className="plant-photo";
+  const img=document.createElement("img");img.src=photo.src;img.alt=photo.alt;img.loading="lazy";img.decoding="async";
+  const caption=document.createElement("figcaption");caption.textContent=photo.caption;
+  figure.append(img,caption);title.insertAdjacentElement("afterend",figure);
+ }
+ const link=document.createElement("a");link.className="plant-photo-link";link.target="_blank";link.rel="noopener noreferrer";
+ link.href="https://www.google.com/search?tbm=isch&q="+encodeURIComponent(name+" planta hojas flores Ecuador identificación");
+ link.textContent="📷 Ver más fotos reales para identificar";
+ link.setAttribute("aria-label","Ver fotografías reales de "+name+" para identificar la planta");
+ const mapLink=Array.from(card.querySelectorAll("a")).find(a=>/Google Maps|Maps|Buscar zonas|Ver Intag|Ver Quimis|Explorar la zona|Buscar ambas zonas/i.test(a.textContent));
+ if(mapLink)mapLink.insertAdjacentElement("beforebegin",link);else card.appendChild(link);
+});
 function filtrarGuia(){
  const region=document.getElementById("region-guia").value;
  const recurso=document.getElementById("recurso-guia").value;
