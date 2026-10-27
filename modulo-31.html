@@ -258,8 +258,8 @@ render();
 const guiaCards=Array.from(document.querySelectorAll("#guia-lista .record"));
 /* Guía visual: fotos reales solo cuando la imagen corresponde al ejemplo; las demás fichas enlazan a una búsqueda visual específica. */
 const fotosPlantas=[
- {match:/^Eucalipto$/i,src:"https://images.unsplash.com/photo-1745508376513-aa4981eae253?auto=format&fit=crop&w=1000&q=80",alt:"Flores crema y hojas de eucalipto, con una abeja visitando una flor.",caption:"Flor y hojas de eucalipto; la especie exacta puede variar."},
- {match:/^Flora melífera del bosque seco$/i,src:"https://static.wixstatic.com/media/8b7d3d_d5e8896ec99641fc8860cf9e695c505e~mv2.jpg/v1/fill/w_980%2Ch_974%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_auto/8b7d3d_d5e8896ec99641fc8860cf9e695c505e~mv2.jpg",alt:"Árboles de guayacán cubiertos de flores amarillas en el bosque seco ecuatoriano.",caption:"Guayacán en flor en el bosque seco de Ecuador; ejemplo visual, no representa todas las especies."}
+ {match:/^Eucalipto$/i,src:"https://images.unsplash.com/photo-1745508376513-aa4981eae253?auto=format&fit=crop&w=1000&q=80",alt:"Flores crema y hojas de eucalipto, con una abeja visitando una flor.",caption:"Flor y hojas de eucalipto; la especie exacta puede variar.",sourceUrl:"https://unsplash.com/es/s/fotos/flor-de-eucalipto"},
+ {match:/^Flora melífera del bosque seco$/i,src:"https://upload.wikimedia.org/wikipedia/commons/2/2d/Guayac%C3%A1n_amarillo_%28Tabebuia_chrysantha%29_%2815600682605%29.jpg",alt:"Árbol de guayacán cubierto de flores amarillas.",caption:"Guayacán amarillo en flor. Foto: Alejandro Bayer Tamayo, Wikimedia Commons, CC BY-SA 2.0.",sourceUrl:"https://commons.wikimedia.org/wiki/File:Guayac%C3%A1n_amarillo_(Tabebuia_chrysantha)_(15600682605).jpg"}
 ];
 guiaCards.forEach(card=>{
  const title=card.querySelector("h3");
@@ -269,7 +269,7 @@ guiaCards.forEach(card=>{
  if(photo){
   const figure=document.createElement("figure");figure.className="plant-photo";
   const img=document.createElement("img");img.src=photo.src;img.alt=photo.alt;img.loading="lazy";img.decoding="async";
-  const caption=document.createElement("figcaption");caption.textContent=photo.caption;
+  const caption=document.createElement("figcaption");caption.textContent=photo.caption;if(photo.sourceUrl){const source=document.createElement("a");source.href=photo.sourceUrl;source.target="_blank";source.rel="noopener noreferrer";source.textContent=" Fuente de la fotografía";source.style.display="inline-block";source.style.marginTop="3px";caption.appendChild(source);}
   figure.append(img,caption);title.insertAdjacentElement("afterend",figure);
  }
  const link=document.createElement("a");link.className="plant-photo-link";link.target="_blank";link.rel="noopener noreferrer";
