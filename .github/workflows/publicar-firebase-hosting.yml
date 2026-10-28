@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   deploy:
-    name: Publicación manual y controlada
+    name: Publicación de prueba controlada
     runs-on: ubuntu-latest
     steps:
       - name: Verificar rama de preparación
@@ -21,9 +21,10 @@ jobs:
       - name: Descargar código
         uses: actions/checkout@v4
 
-      - name: Publicar en Firebase Hosting
+      - name: Publicar en canal de prueba de Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_APIECUADOR_34B2D }}"
           projectId: apiecuador-34b2d
-          channelId: live
+          channelId: prueba-api-ecuador
+          expires: 7d
