@@ -156,7 +156,7 @@ input,select,textarea{scroll-margin-top:12px}
   let tasks=[];try{tasks=JSON.parse(localStorage.getItem(calendarKey)||"[]");if(!Array.isArray(tasks))tasks=[];}catch(e){tasks=[];}
   const generated=[];
   rows.forEach(row=>{
-   if(!row.fecha||!/^\\d{4}-\\d{2}-\\d{2}$/.test(row.fecha))return;
+   if(!row.fecha||!/^\d{4}-\d{2}-\d{2}$/.test(row.fecha))return;
    const notice=Math.max(0,Math.min(365,parseInt(row.avisoDias==null||row.avisoDias===""?"1":row.avisoDias,10)||0));
    const milestones=[
     {fecha:row.revision||datePlus(row.fecha,2),tarea:"Revisar aceptación de celdas"},
@@ -167,7 +167,7 @@ input,select,textarea{scroll-margin-top:12px}
     {fecha:datePlus(row.fecha,31),tarea:"Segunda revisión de postura si aún no se confirmó"}
    ];
    milestones.forEach((m,i)=>{
-    if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(m.fecha))return;
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(m.fecha))return;
     const id="reina-"+row.id+"-"+i;
     const previous=tasks.find(t=>t.id===id);
     generated.push({id,origenReina:row.id,fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(notice),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 0): "+row.fecha+". Las fechas son orientativas; confirma el desarrollo real de las celdas y adapta el manejo al clima.",completada:previous?!!previous.completada:false});
