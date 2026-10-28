@@ -321,7 +321,9 @@ function calendarDateTime(date, hour, minute) {
   }
   const hh = String(hour).padStart(2, "0");
   const mm = String(minute).padStart(2, "0");
-  return new Date(date + "T" + hh + ":" + mm + ":00-05:00").toISOString();
+  // Enviar RFC3339 con el desplazamiento local de Ecuador explícito.
+  // Evita que la conversión a UTC cambie la fecha visible del evento en Calendar.
+  return date + "T" + hh + ":" + mm + ":00-05:00";
 }
 function makeTasks(row) {
   const name = [row.lote, row.apiario, row.fecha].filter(Boolean).join(" · ") || "lote";
