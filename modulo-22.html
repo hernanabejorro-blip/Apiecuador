@@ -164,7 +164,8 @@ input,select,textarea{scroll-margin-top:12px}
     {fecha:row.fechaDistribucion||datePlus(row.fecha,10),tarea:"Proteger y distribuir celdas antes de la emergencia"},
     {fecha:row.nacimiento||datePlus(row.fecha,11),tarea:"Vigilar nacimiento estimado de reinas"},
     {fecha:row.fechaPostura||datePlus(row.fecha,25),tarea:"Revisar fecundación y postura"},
-    {fecha:datePlus(row.fecha,31),tarea:"Segunda revisión de postura si aún no se confirmó"}
+    {fecha:datePlus(row.fecha,31),tarea:"Segunda revisión de postura si aún no se confirmó"},
+    {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"}
    ];
    milestones.forEach((m,i)=>{
     if(!/^\d{4}-\d{2}-\d{2}$/.test(m.fecha))return;
@@ -189,7 +190,8 @@ input,select,textarea{scroll-margin-top:12px}
    {fecha:row.fechaDistribucion||datePlus(row.fecha,10),titulo:"ApiEcuador: proteger y distribuir celdas · "+nombre,detalle:"Comprueba el desarrollo real, protege las celdas y prepara los núcleos antes de la emergencia. Fecha orientativa: 10 días completos después de la fecha del traslarve (Día 0)."},
    {fecha:row.nacimiento||datePlus(row.fecha,11),titulo:"ApiEcuador: vigilar nacimiento de reinas · "+nombre,detalle:"Fecha estimada de emergencia. Comprueba el desarrollo real y evita manipular las celdas innecesariamente."},
    {fecha:row.fechaPostura||datePlus(row.fecha,25),titulo:"ApiEcuador: revisar fecundación y postura · "+nombre,detalle:"Revisa con cuidado si hay huevos/postura. Mal tiempo o falta de zánganos pueden retrasarlo; no declares fallida una reina solo por la fecha."},
-   {fecha:datePlus(row.fecha,31),titulo:"ApiEcuador: segunda revisión de postura · "+nombre,detalle:"Si aún no se confirmó postura, revisa evolución y condiciones. Ajusta la fecha según clima y manejo."}
+   {fecha:datePlus(row.fecha,31),titulo:"ApiEcuador: segunda revisión de postura · "+nombre,detalle:"Si aún no se confirmó postura, revisa evolución y condiciones. Ajusta la fecha según clima y manejo."},
+   {fecha:row.fecha,titulo:"🐝 INICIO DEL TRASLARVE · "+nombre,detalle:"Día 0 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."}
   ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.fecha));
   const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z");
   const diasAviso=Math.max(0,Math.min(365,parseInt(row.avisoDias==null||row.avisoDias===""?"1":row.avisoDias,10)||0));const events=tareas.map((t,i)=>"BEGIN:VEVENT\r\nUID:apiecuador-"+String(row.id||"lote")+"-"+i+"@apiecuador\r\nDTSTAMP:"+stamp+"\r\nSUMMARY:"+icsEscape(t.titulo)+"\r\nDESCRIPTION:"+icsEscape(t.detalle+" Aviso configurado con "+diasAviso+" día(s) de anticipación.")+"\r\nDTSTART;VALUE=DATE:"+icsDate(t.fecha)+"\r\nDTEND;VALUE=DATE:"+icsDate(datePlus(t.fecha,1))+"\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:"+icsEscape("Recordatorio: "+t.titulo)+"\r\nTRIGGER:-P"+diasAviso+"D\r\nEND:VALARM\r\nEND:VEVENT").join("\r\n");
@@ -314,7 +316,8 @@ function makeTasks(row) {
     {date:row.fechaDistribucion || addDays(row.fecha,10),title:"ApiEcuador: proteger y distribuir celdas · "+name,detail:"A los 10 días completos después del traslarve (Día 0), comprueba el desarrollo real, protege las celdas si corresponde y prepara los núcleos antes de la emergencia."},
     {date:row.nacimiento || addDays(row.fecha,11),title:"ApiEcuador: vigilar nacimiento de reinas · "+name,detail:"Fecha estimada de emergencia. Comprueba el desarrollo real y evita manipular las celdas innecesariamente."},
     {date:row.fechaPostura || addDays(row.fecha,25),title:"ApiEcuador: revisar fecundación y postura · "+name,detail:"Revisa si hay huevos/postura. El mal tiempo o la falta de zánganos pueden retrasarlo; no declares fallida una reina solo por la fecha."},
-    {date:addDays(row.fecha,31),title:"ApiEcuador: segunda revisión de postura · "+name,detail:"Si aún no se confirmó postura, revisa la evolución y las condiciones. Ajusta la fecha según clima y manejo."}
+    {date:addDays(row.fecha,31),title:"ApiEcuador: segunda revisión de postura · "+name,detail:"Si aún no se confirmó postura, revisa la evolución y las condiciones. Ajusta la fecha según clima y manejo."},
+    {date:row.fecha,title:"🐝 INICIO DEL TRASLARVE · "+name,detail:"Día 0 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."}
   ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.date)).map((t,i)=>({...t,index:i}));
 }
 async function createOrUpdateEvent(token, row, task, noticeDays) {
