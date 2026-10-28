@@ -1,0 +1,23 @@
+PUBLICACIÓN SEGURA DE APIECUADOR EN FIREBASE HOSTING
+
+Estado
+- La configuración de Firebase Hosting está en firebase.json.
+- .firebaserc apunta al proyecto existente apiecuador-34b2d.
+- GitHub Pages se conserva como respaldo; no se elimina ni se modifica desde este flujo.
+- La publicación es manual y está aislada en la rama preparar-publicacion-firebase.
+- Este flujo no modifica reglas de Firestore ni documentos de la base de datos.
+
+Antes de usar el flujo
+1. En Firebase Console, confirma que Hosting está habilitado para el proyecto ApiEcuador.
+2. En Google Cloud Console, crea una cuenta de servicio dedicada para despliegues de Firebase Hosting, con permisos mínimos necesarios para publicar Hosting. No uses la cuenta personal ni una clave de propietario general.
+3. Genera una clave JSON para esa cuenta solo si no hay un método de federación de identidad disponible. Trátala como contraseña: no la compartas en chats ni la subas al repositorio.
+4. En GitHub > Settings > Secrets and variables > Actions, crea el secreto de repositorio:
+   FIREBASE_SERVICE_ACCOUNT_APIECUADOR_34B2D
+   Su valor debe ser el JSON completo de la cuenta de servicio.
+5. Ve a Actions > “Publicar ApiEcuador en Firebase Hosting” > Run workflow y selecciona la rama preparar-publicacion-firebase.
+
+Precauciones
+- No pegues claves JSON en archivos del proyecto, issues, commits o conversaciones.
+- El flujo publica la versión de esta rama al canal live de Firebase Hosting; revisa los archivos de la rama antes de ejecutarlo.
+- Si el secreto no existe o los permisos son insuficientes, el despliegue fallará sin tocar Firestore.
+- La base de datos y sus reglas no forman parte de esta publicación.
