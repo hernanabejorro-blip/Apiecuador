@@ -321,9 +321,8 @@ function calendarDateTime(date, hour, minute) {
   }
   const hh = String(hour).padStart(2, "0");
   const mm = String(minute).padStart(2, "0");
-  // Enviar RFC3339 con el desplazamiento local de Ecuador explícito.
-  // Evita que la conversión a UTC cambie la fecha visible del evento en Calendar.
-  return date + "T" + hh + ":" + mm + ":00-05:00";
+  // Google Calendar recibe marcas RFC3339 UTC inequívocas. Ecuador continental = UTC-5.
+  return new Date(date + "T" + hh + ":" + mm + ":00-05:00").toISOString();
 }
 function makeTasks(row) {
   const name = [row.lote, row.apiario, row.fecha].filter(Boolean).join(" · ") || "lote";
@@ -354,8 +353,8 @@ async function createOrUpdateEvent(token, row, task, noticeDays) {
     colorId: colorPorLote,
     // Valida la fecha y genera marcas ISO explícitas para evitar "Invalid start time".
     // El evento queda a las 08:00 de Ecuador; el aviso de 1 día antes llega a las 08:00 del día previo.
-    start: { dateTime: calendarDateTime(task.date, 8, 0), timeZone: "America/Guayaquil" },
-    end: { dateTime: calendarDateTime(task.date, 8, 15), timeZone: "America/Guayaquil" },
+    start: { dateTime: calendarDateTime(task.date, 8, 0) },
+    end: { dateTime: calendarDateTime(task.date, 8, 15) },
     reminders: { useDefault: false, overrides: [{ method: "popup", minutes }] },
     extendedProperties: { private: { apiecuadorKey: uniqueKey, apiecuadorBatch: String(row.id || "") } }
   };
@@ -364,7 +363,11 @@ async function createOrUpdateEvent(token, row, task, noticeDays) {
     await calendarRequest(token, "https://www.googleapis.com/calendar/v3/calendars/primary/events/" + encodeURIComponent(existing.id), { method:"PATCH", body:JSON.stringify(event) });
     return "actualizado";
   }
-  await calendarRequest(token, "https://www.googleapis.com/calendar/v3/calendars/primary/events", { method:"POST", body:JSON.stringify(event) });
+  try {
+    await calendarRequest(token, "https://www.googleapis.com/calendar/v3/calendars/primary/events", { method:"POST", body:JSON.stringify(event) });
+  } catch (error) {
+    throw new Error(String(error && error.message || error) + " (tarea: " + task.title + "; inicio: " + event.start.dateTime + "; fin: " + event.end.dateTime + ")");
+  }
   return "creado";
 }
 async function programLotEvents(row, token) {
