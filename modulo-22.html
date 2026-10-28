@@ -403,6 +403,9 @@ async function createOrUpdateEvent(token, row, task, noticeDays) {
 }
 async function programLotEvents(row, token) {
   if (!row || !row.fecha) throw new Error("El lote no tiene fecha de traslarve guardada.");
+  const distribution = row.fechaDistribucion || addDays(row.fecha,9);
+  const birth = row.nacimiento || addDays(row.fecha,10);
+  if (distribution && birth && birth <= distribution) throw new Error("Fechas incoherentes en " + (row.lote || "este lote") + ": el nacimiento estimado debe ser posterior a proteger/distribuir las celdas. Corrige la fecha de nacimiento y vuelve a programar; no se modificó Google Calendar.");
   const tasks = makeTasks(row);
   const noticeDays = Math.max(0, Math.min(365, parseInt(row.avisoDias == null || row.avisoDias === "" ? "1" : row.avisoDias,10) || 0));
   let created = 0, updated = 0;
