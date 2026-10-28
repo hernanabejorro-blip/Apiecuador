@@ -273,7 +273,7 @@ input,select,textarea{scroll-margin-top:12px}
 </script> 
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 const calendarStatus = document.getElementById("estado-google-calendar");
 const calendarButton = document.getElementById("programar-google");
@@ -287,6 +287,8 @@ const firebaseConfig = {
 };
 const calendarApp = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const calendarAuth = getAuth(calendarApp);
+// Guarda el estado de autenticación entre la salida a Google y el regreso a GitHub Pages.
+const calendarPersistenceReady = setPersistence(calendarAuth, browserLocalPersistence);
 function googleErrorMessage(error) {
   const text = String(error && (error.message || error.code) || "");
   if (error && (error.code === "auth/unauthorized-domain")) return "Google no autoriza este dominio en Firebase Authentication. Los avisos manuales siguen disponibles.";
@@ -394,7 +396,7 @@ getRedirectResult(calendarAuth).then(async function(result) {
   calendarButton.disabled = true;
   calendarStatus.textContent = "Google devolvió la autorización. Programando los avisos del lote…";
   try {
-    if (!result) throw new Error("Google no devolvió la autorización a ApiEcuador. Pulsa de nuevo el botón y acepta los permisos.");
+    if (!result) throw new Error("Google regresó sin entregar el resultado de autorización. El navegador puede estar bloqueando la sesión entre Google y GitHub Pages; no se programó ningún evento.");
     const credential = GoogleAuthProvider.credentialFromResult(result);
     const token = credential && credential.accessToken;
     if (!token) throw new Error("Google no devolvió permiso de calendario. Vuelve a intentarlo.");
@@ -440,6 +442,7 @@ calendarButton.addEventListener("click", async () => {
     provider.setCustomParameters({ prompt: "consent" });
     localStorage.setItem(pendingCalendarKey, JSON.stringify({action:"program",rowId:row.id}));
     calendarStatus.textContent = "Abriendo Google; al aceptar, volverás aquí para programar los avisos…";
+    await calendarPersistenceReady;
     await signInWithRedirect(calendarAuth, provider);
   } catch (error) {
     localStorage.removeItem(pendingCalendarKey);
