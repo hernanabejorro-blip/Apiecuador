@@ -147,10 +147,37 @@ input,select,textarea{scroll-margin-top:12px}
   e.preventDefault();const total=Number(document.getElementById("cantidad").value);const limits=[["aceptadas","Celdas aceptadas",total],["operculadas","Celdas operculadas",document.getElementById("aceptadas").value],["distribuidas","Celdas distribuidas",document.getElementById("operculadas").value||document.getElementById("aceptadas").value],["nacidas","Reinas nacidas",document.getElementById("distribuidas").value||document.getElementById("operculadas").value||document.getElementById("aceptadas").value],["postura","Reinas en postura",document.getElementById("nacidas").value]];for(const [id,label,limit] of limits){const value=document.getElementById(id).value;if(value!==""&&(!Number.isInteger(Number(value))||Number(value)<0)){status.textContent=label+" debe ser un número entero igual o mayor que cero.";return;}if(value!==""&&limit!==""&&limit!=null&&Number(value)>Number(limit)){status.textContent=label+" no puede superar la cantidad registrada en la etapa anterior.";return;}}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   if(editingId){row.id=editingId;rows=rows.map(r=>r.id===editingId?row:r);}else{rows.push(row);}
-  try{localStorage.setItem(key,JSON.stringify(rows));form.reset();document.getElementById("lote").value=nextLotNumber();editingId=null;document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;render();status.textContent="Registro guardado en este teléfono.";}
+  try{localStorage.setItem(key,JSON.stringify(rows));const synced=sincronizarTareasCalendario();form.reset();document.getElementById("lote").value=nextLotNumber();editingId=null;document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;render();status.textContent=synced>=0?"Registro guardado. "+synced+" revisiones sincronizadas con Calendario Apícola; abre o actualiza ese módulo para verlas.":"Registro guardado, pero no se pudo sincronizar el calendario en este navegador.";}
   catch(e){status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
  });
  function datePlus(date,days){const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+days);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+ function sincronizarTareasCalendario(){
+  const calendarKey="apiecuador-modulo-23-v1";
+  let tasks=[];try{tasks=JSON.parse(localStorage.getItem(calendarKey)||"[]");if(!Array.isArray(tasks))tasks=[];}catch(e){tasks=[];}
+  const generated=[];
+  rows.forEach(row=>{
+   if(!row.fecha||!/^\\d{4}-\\d{2}-\\d{2}$/.test(row.fecha))return;
+   const notice=Math.max(0,Math.min(365,parseInt(row.avisoDias==null||row.avisoDias===""?"1":row.avisoDias,10)||0));
+   const milestones=[
+    {fecha:row.revision||datePlus(row.fecha,2),tarea:"Revisar aceptación de celdas"},
+    {fecha:datePlus(row.fecha,5),tarea:"Revisar cría abierta y buscar celdas espontáneas"},
+    {fecha:row.fechaDistribucion||datePlus(row.fecha,10),tarea:"Proteger y distribuir celdas antes de la emergencia"},
+    {fecha:row.nacimiento||datePlus(row.fecha,11),tarea:"Vigilar nacimiento estimado de reinas"},
+    {fecha:row.fechaPostura||datePlus(row.fecha,25),tarea:"Revisar fecundación y postura"},
+    {fecha:datePlus(row.fecha,31),tarea:"Segunda revisión de postura si aún no se confirmó"}
+   ];
+   milestones.forEach((m,i)=>{
+    if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(m.fecha))return;
+    const id="reina-"+row.id+"-"+i;
+    const previous=tasks.find(t=>t.id===id);
+    generated.push({id,origenReina:row.id,fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(notice),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 0): "+row.fecha+". Las fechas son orientativas; confirma el desarrollo real de las celdas y adapta el manejo al clima.",completada:previous?!!previous.completada:false});
+   });
+  });
+  const ids=new Set(generated.map(t=>t.id));
+  const preserved=tasks.filter(t=>!String(t.id||"").startsWith("reina-")||!ids.has(t.id));
+  generated.forEach(t=>{const i=preserved.findIndex(old=>old.id===t.id);if(i>=0)preserved[i]=t;else preserved.push(t);});
+  try{localStorage.setItem(calendarKey,JSON.stringify(preserved));return generated.length;}catch(e){return -1;}
+ }
  function icsEscape(value){return String(value||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
  function icsDate(value){return String(value||"").replace(/-/g,"");}
  function crearCalendario(row){
@@ -178,7 +205,7 @@ input,select,textarea{scroll-margin-top:12px}
   const b=e.target.closest("[data-delete]");if(!b)return;
   if(!confirm("¿Eliminar este registro de cría de reinas?"))return;
   rows=rows.filter(r=>r.id!==b.dataset.delete);
-  try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
+  try{localStorage.setItem(key,JSON.stringify(rows));const synced=sincronizarTareasCalendario();render();status.textContent=synced>=0?"Registro eliminado. Las tareas de otros lotes se conservaron; se sincronizaron "+synced+" revisiones.":"Registro eliminado, pero no se pudo sincronizar el calendario.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
  });
  function cancelEdit(){editingId=null;form.reset();document.getElementById("lote").value=nextLotNumber();document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;status.textContent="Edición cancelada.";}
  function calcularFechasTraslarve(){
@@ -238,6 +265,7 @@ input,select,textarea{scroll-margin-top:12px}
   finally{fileInput.value="";}
  });
  document.getElementById("lote").value=nextLotNumber();
+ sincronizarTareasCalendario();
  render();
 })();
 </script> 
