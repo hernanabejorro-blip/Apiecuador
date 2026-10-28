@@ -75,7 +75,8 @@ input,select,textarea{scroll-margin-top:12px}
     {fecha:row.fechaDistribucion||addDays(row.fecha,10),tarea:"Proteger y distribuir celdas antes de la emergencia"},
     {fecha:row.nacimiento||addDays(row.fecha,11),tarea:"Vigilar nacimiento estimado de reinas"},
     {fecha:row.fechaPostura||addDays(row.fecha,25),tarea:"Revisar fecundación y postura"},
-    {fecha:addDays(row.fecha,31),tarea:"Segunda revisión de postura si aún no se confirmó"}
+    {fecha:addDays(row.fecha,31),tarea:"Segunda revisión de postura si aún no se confirmó"},
+    {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"}
    ];
    milestones.forEach((m,i)=>{
     if(!m.fecha||m.fecha.length!==10)return;
