@@ -49,6 +49,13 @@ input,select,textarea{scroll-margin-top:12px}
 <main><div class="notice"><strong>Importante:</strong> esta versión guarda los registros en este navegador y teléfono. No se sincronizan con otros dispositivos; exporta o anota la información importante como respaldo.</div>
 <div class="notice"><strong>🔔 Recordatorios:</strong> desde cada lote puedes preparar avisos para importar en el calendario del teléfono. Comprueba que el calendario permita notificaciones; ApiEcuador por sí sola no garantiza avisos cuando está cerrada.</div>
 <section class="panel" aria-label="Continuar seguimiento"><h2>🔄 Después del traslarve</h2><p>Cuando revises la aceptación, anota las celdas aceptadas aquí y continúa el control del lote hasta la emergencia y la postura.</p><p><a href="./modulo-30.html" style="display:inline-block;background:#245c43;color:#fff;text-decoration:none;padding:11px 14px;border-radius:10px;font-weight:650">👑 Abrir Seguimiento de Reinas →</a></p></section>
+<section class="panel" id="google-calendar-panel">
+<h2>📅 Programar avisos directamente en Google Calendar</h2>
+<p>Conecta tu cuenta de Google y ApiEcuador intentará guardar en tu calendario las seis revisiones de esta tanda. Si ya existe un aviso de esta tanda, lo actualizará en lugar de duplicarlo.</p>
+<p class="muted">La primera vez, Google te pedirá permiso para gestionar eventos del calendario. El acceso se usa solo cuando pulsas el botón. Si el servicio de Calendar aún no está habilitado en el proyecto de Google, aparecerá un mensaje indicándolo; mientras tanto, puedes seguir usando «Crear recordatorios».</p>
+<div class="actions"><button class="primary" id="programar-google" type="button">🔐 Autorizar y programar avisos</button></div>
+<p class="status" id="estado-google-calendar" role="status" aria-live="polite"></p>
+</section>
 <section class="panel" id="guia-traslarve">
 <h2>📘 Guía práctica: una tanda de 10–20 reinas</h2>
 <p>La meta es criar pocas reinas bien atendidas, registrar cada revisión y adaptar el calendario al clima y a la fuerza real de las colonias.</p>
@@ -223,4 +230,121 @@ input,select,textarea{scroll-margin-top:12px}
  });
  render();
 })();
-</script></body></html>
+</script> 
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+const calendarStatus = document.getElementById("estado-google-calendar");
+const calendarButton = document.getElementById("programar-google");
+const firebaseConfig = {
+  apiKey: "AIzaSyCIw41NJ7wIYfpAMj8R_aX4jC8x1uXXWbs",
+  authDomain: "apiecuador-34b2d.firebaseapp.com",
+  projectId: "apiecuador-34b2d",
+  storageBucket: "apiecuador-34b2d.firebasestorage.app",
+  messagingSenderId: "1084250214880",
+  appId: "1:1084250214880:web:4a4babf94a7da2f0f81b85"
+};
+const calendarApp = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const calendarAuth = getAuth(calendarApp);
+function googleErrorMessage(error) {
+  const text = String(error && (error.message || error.code) || "");
+  if (error && (error.code === "auth/unauthorized-domain")) return "Google no autoriza este dominio en Firebase Authentication. Los avisos manuales siguen disponibles.";
+  if (/access_denied|popup-closed-by-user/i.test(text) || (error && error.code === "auth/popup-closed-by-user")) return "Se canceló el permiso de Google. No se cambió ningún evento.";
+  if (/SERVICE_DISABLED|Calendar API has not been used|calendar.googleapis.com.*disabled|accessNotConfigured/i.test(text)) return "Falta habilitar Google Calendar API en el proyecto de Google Cloud asociado a apiecuador-34b2d. No se han programado los avisos.";
+  if (/insufficientPermissions|insufficient authentication scopes|ACCESS_TOKEN_SCOPE_INSUFFICIENT/i.test(text)) return "Google todavía no concedió permiso para crear eventos. Vuelve a autorizar el acceso al calendario.";
+  if (/quota|rateLimit/i.test(text)) return "Google limitó temporalmente las solicitudes. Inténtalo más tarde.";
+  return "No se pudo conectar con Google Calendar. Detalle: " + text.slice(0,220) + ". Los registros de ApiEcuador no se han borrado.";
+}
+function apiDate(date) { return date + "T00:00:00"; }
+function addDays(date, days) {
+  const d = new Date(date + "T12:00:00");
+  d.setDate(d.getDate() + days);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+async function calendarRequest(token, url, options={}) {
+  const response = await fetch(url, { ...options, headers: { Authorization: "Bearer " + token, "Content-Type": "application/json", ...(options.headers || {}) } });
+  const payload = await response.json().catch(()=>({}));
+  if (!response.ok) throw new Error((payload.error && (payload.error.message || payload.error.status)) || ("Google Calendar HTTP " + response.status));
+  return payload;
+}
+function makeTasks(row) {
+  const name = row.apiario || "lote";
+  return [
+    {date:row.revision || addDays(row.fecha,2),title:"ApiEcuador: revisar aceptación · "+name,detail:"Comprueba con cuidado la aceptación y registra cuántas celdas fueron aceptadas. Fecha orientativa; confirma el desarrollo real."},
+    {date:addDays(row.fecha,5),title:"ApiEcuador: revisar cría abierta y celdas espontáneas · "+name,detail:"Revisa la cría abierta y busca celdas reales espontáneas. Confirma el estado de la colonia y tu método antes de actuar; no elimines celdas útiles ni actúes sin localizar la reina."},
+    {date:row.fechaDistribucion || addDays(row.fecha,10),title:"ApiEcuador: proteger y distribuir celdas · "+name,detail:"Comprueba el desarrollo, protege las celdas y prepara los núcleos antes de la emergencia."},
+    {date:row.nacimiento || addDays(row.fecha,11),title:"ApiEcuador: vigilar nacimiento de reinas · "+name,detail:"Fecha estimada de emergencia. Comprueba el desarrollo real y evita manipular las celdas innecesariamente."},
+    {date:row.fechaPostura || addDays(row.fecha,25),title:"ApiEcuador: revisar fecundación y postura · "+name,detail:"Revisa si hay huevos/postura. El mal tiempo o la falta de zánganos pueden retrasarlo; no declares fallida una reina solo por la fecha."},
+    {date:addDays(row.fecha,31),title:"ApiEcuador: segunda revisión de postura · "+name,detail:"Si aún no se confirmó postura, revisa la evolución y las condiciones. Ajusta la fecha según clima y manejo."}
+  ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.date)).map((t,i)=>({...t,index:i}));
+}
+async function createOrUpdateEvent(token, row, task, noticeDays) {
+  const uniqueKey = String(row.id || "lote") + "-" + task.index;
+  const query = new URL("https://www.googleapis.com/calendar/v3/calendars/primary/events");
+  query.searchParams.set("privateExtendedProperty", "apiecuadorKey=" + uniqueKey);
+  query.searchParams.set("maxResults", "5");
+  const found = await calendarRequest(token, query.toString());
+  const minutes = Math.min(40320, Math.max(0, noticeDays * 1440));
+  const event = {
+    summary: task.title,
+    description: task.detail + "\nGenerado por ApiEcuador. Aviso: " + noticeDays + " día(s) antes.",
+    start: { date: task.date },
+    end: { date: addDays(task.date,1) },
+    reminders: { useDefault: false, overrides: [{ method: "popup", minutes }] },
+    extendedProperties: { private: { apiecuadorKey: uniqueKey, apiecuadorBatch: String(row.id || "") } }
+  };
+  const existing = found.items && found.items[0];
+  if (existing && existing.id) {
+    await calendarRequest(token, "https://www.googleapis.com/calendar/v3/calendars/primary/events/" + encodeURIComponent(existing.id), { method:"PATCH", body:JSON.stringify(event) });
+    return "actualizado";
+  }
+  await calendarRequest(token, "https://www.googleapis.com/calendar/v3/calendars/primary/events", { method:"POST", body:JSON.stringify(event) });
+  return "creado";
+}
+calendarButton.addEventListener("click", async () => {
+  const original = calendarButton.textContent;
+  calendarButton.disabled = true;
+  calendarStatus.textContent = "Abriendo Google para autorizar el calendario…";
+  try {
+    const form = document.getElementById("registro-form");
+    const activeId = document.getElementById("registro-id").value;
+    let row = null;
+    if (activeId) {
+      calendarStatus.textContent = "Primero guarda los cambios de este lote y después programa los avisos.";
+      return;
+    }
+    const cards = Array.from(document.querySelectorAll("#registros [data-reminder]"));
+    const selected = window.prompt("Escribe el número del lote que quieres programar (1 = el primero de la lista).");
+    if (selected === null) { calendarStatus.textContent = "No se hicieron cambios."; return; }
+    const index = Number(selected) - 1;
+    const rowCards = Array.from(document.querySelectorAll("#registros .record"));
+    const reminderButton = cards[index];
+    if (!reminderButton) { calendarStatus.textContent = "No encuentro ese lote. Revisa la lista de registros."; return; }
+    const rowId = reminderButton.dataset.reminder;
+    row = (JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1") || "[]")).find(item => item.id === rowId);
+    if (!row || !row.fecha) { calendarStatus.textContent = "El lote no tiene fecha de traslarve guardada."; return; }
+    const provider = new GoogleAuthProvider();
+    provider.addScope("https://www.googleapis.com/auth/calendar.events");
+    provider.setCustomParameters({ prompt: "consent" });
+    const result = await signInWithPopup(calendarAuth, provider);
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential && credential.accessToken;
+    if (!token) throw new Error("Google no devolvió permiso de calendario. Vuelve a intentarlo.");
+    const tasks = makeTasks(row);
+    const noticeDays = Math.max(0, Math.min(365, parseInt(row.avisoDias == null || row.avisoDias === "" ? "1" : row.avisoDias,10) || 0));
+    let created = 0, updated = 0;
+    for (const task of tasks) {
+      const outcome = await createOrUpdateEvent(token,row,task,noticeDays);
+      if (outcome === "creado") created++; else updated++;
+    }
+    calendarStatus.textContent = "Listo: " + created + " avisos nuevos y " + updated + " actualizados en el calendario principal de Google. Comprueba en Google Calendar que las notificaciones estén activadas.";
+  } catch (error) {
+    calendarStatus.textContent = googleErrorMessage(error);
+  } finally {
+    calendarButton.disabled = false;
+    calendarButton.textContent = original;
+  }
+});
+</script>
+</body></html>
