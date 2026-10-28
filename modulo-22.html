@@ -121,7 +121,10 @@ input,select,textarea{scroll-margin-top:12px}
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
- let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}\n function lotNumber(n){return "Lote "+String(n).padStart(3,"0");}\n function nextLotNumber(){let max=0;rows.forEach(r=>{const m=String(r.lote||"").match(/Lote\\s+(\\d+)/i);if(m)max=Math.max(max,Number(m[1]));});return lotNumber(max+1);}\n rows.forEach((r,i)=>{if(!r.lote)r.lote=lotNumber(i+1);});try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
+ let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[]}
+ function lotNumber(n){return "Lote "+String(n).padStart(3,"0")}
+ function nextLotNumber(){let max=0;rows.forEach(r=>{const m=String(r.lote||"").match(/Lote\s+(\d+)/i);if(m)max=Math.max(max,Number(m[1]));});return lotNumber(max+1)}
+ rows.forEach((r,i)=>{if(!r.lote)r.lote=lotNumber(i+1);});try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){
   list.innerHTML="";
