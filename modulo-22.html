@@ -175,7 +175,7 @@ input,select,textarea{scroll-margin-top:12px}
    });
   });
   const ids=new Set(generated.map(t=>t.id));
-  const preserved=tasks.filter(t=>!String(t.id||"").startsWith("reina-")||!ids.has(t.id));
+  const preserved=tasks.filter(t=>!String(t.id||"").startsWith("reina-"));
   generated.forEach(t=>{const i=preserved.findIndex(old=>old.id===t.id);if(i>=0)preserved[i]=t;else preserved.push(t);});
   try{localStorage.setItem(calendarKey,JSON.stringify(preserved));return generated.length;}catch(e){return -1;}
  }
