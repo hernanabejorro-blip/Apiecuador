@@ -170,7 +170,7 @@ input,select,textarea{scroll-margin-top:12px}
    const notice=Math.max(0,Math.min(365,parseInt(row.avisoDias==null||row.avisoDias===""?"1":row.avisoDias,10)||0));
    const milestones=[
     {fecha:row.revision||datePlus(row.fecha,1),tarea:"Revisar aceptación de celdas"},
-    {fecha:datePlus(row.fecha,4),tarea:"Revisar cría abierta y buscar celdas espontáneas"},
+    {fecha:datePlus(row.fecha,5),tarea:"Revisar cría abierta y buscar celdas espontáneas"},
     {fecha:row.fechaDistribucion||datePlus(row.fecha,9),tarea:"Proteger y distribuir celdas antes de la emergencia"},
     {fecha:row.nacimiento||datePlus(row.fecha,10),tarea:"Vigilar nacimiento estimado de reinas"},
     {fecha:row.fechaPostura||datePlus(row.fecha,24),tarea:"Revisar fecundación y postura"},
@@ -196,7 +196,7 @@ input,select,textarea{scroll-margin-top:12px}
   const nombre=row.lote||row.apiario||"lote";
   const tareas=[
    {fecha:row.revision||datePlus(row.fecha,1),titulo:"ApiEcuador: revisar aceptación · "+nombre,detalle:"Comprueba con cuidado la aceptación de las celdas y registra cuántas fueron aceptadas. Fecha orientativa: alrededor del Día 2–3, contando el traslarve como Día 1."},
-   {fecha:datePlus(row.fecha,4),titulo:"ApiEcuador: revisar cría abierta y celdas espontáneas · "+nombre,detalle:"Revisa la cría abierta y busca celdas reales construidas espontáneamente. Actúa solo tras confirmar el estado de la colonia y según tu método; no elimines celdas útiles ni actúes sin localizar la reina."},
+   {fecha:datePlus(row.fecha,5),titulo:"ApiEcuador: revisar cría abierta y celdas espontáneas · "+nombre,detalle:"Revisa la cría abierta y busca celdas reales construidas espontáneamente. Actúa solo tras confirmar el estado de la colonia y según tu método; no elimines celdas útiles ni actúes sin localizar la reina."},
    {fecha:row.fechaDistribucion||datePlus(row.fecha,9),titulo:"ApiEcuador: proteger y distribuir celdas · "+nombre,detalle:"Comprueba el desarrollo real, protege las celdas y prepara los núcleos antes de la emergencia. Fecha orientativa: Día 10 contando la fecha del traslarve como Día 1."},
    {fecha:row.nacimiento||datePlus(row.fecha,10),titulo:"ApiEcuador: vigilar nacimiento de reinas · "+nombre,detalle:"Fecha estimada de emergencia. Comprueba el desarrollo real y evita manipular las celdas innecesariamente."},
    {fecha:row.fechaPostura||datePlus(row.fecha,24),titulo:"ApiEcuador: revisar fecundación y postura · "+nombre,detalle:"Revisa con cuidado si hay huevos/postura. Mal tiempo o falta de zánganos pueden retrasarlo; no declares fallida una reina solo por la fecha."},
