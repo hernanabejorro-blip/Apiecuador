@@ -51,7 +51,7 @@ input,select,textarea{scroll-margin-top:12px}
 <section class="panel" aria-label="Continuar seguimiento"><h2>🔄 Después del traslarve</h2><p>Cuando revises la aceptación, anota las celdas aceptadas aquí y continúa el control del lote hasta la emergencia y la postura.</p><p><a href="./modulo-30.html" style="display:inline-block;background:#245c43;color:#fff;text-decoration:none;padding:11px 14px;border-radius:10px;font-weight:650">👑 Abrir Seguimiento de Reinas →</a></p></section>
 <section class="panel" id="google-calendar-panel">
 <h2>📅 Programar avisos directamente en Google Calendar</h2>
-<p>Conecta tu cuenta de Google y ApiEcuador intentará guardar en tu calendario las seis revisiones de esta tanda. Si ya existe un aviso de esta tanda, lo actualizará en lugar de duplicarlo.</p>
+<p>Conecta tu cuenta de Google y ApiEcuador intentará guardar en tu calendario las siete tareas de esta tanda, incluido el inicio del traslarve (Día 0). Si ya existe un aviso de esta tanda, lo actualizará en lugar de duplicarlo.</p>
 <p class="muted">La primera vez, Google te pedirá permiso para gestionar eventos del calendario. El acceso se usa solo cuando pulsas el botón. Si el servicio de Calendar aún no está habilitado en el proyecto de Google, aparecerá un mensaje indicándolo; mientras tanto, puedes seguir usando «Crear recordatorios».</p>
 <div class="actions"><button class="primary" id="programar-google" type="button">🔐 Autorizar y programar avisos</button></div>
 <p class="status" id="estado-google-calendar" role="status" aria-live="polite"></p>
@@ -308,6 +308,19 @@ async function calendarRequest(token, url, options={}) {
   if (!response.ok) throw new Error((payload.error && (payload.error.message || payload.error.status)) || ("Google Calendar HTTP " + response.status));
   return payload;
 }
+function calendarDateTime(date, hour, minute) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(date || ""))) {
+    throw new Error("Fecha inválida para Google Calendar: " + String(date || "(vacía)"));
+  }
+  const parts = date.split("-").map(Number);
+  const check = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+  if (check.getUTCFullYear() !== parts[0] || check.getUTCMonth() !== parts[1] - 1 || check.getUTCDate() !== parts[2]) {
+    throw new Error("La fecha " + date + " no existe. Revisa la fecha del lote antes de programar.");
+  }
+  const hh = String(hour).padStart(2, "0");
+  const mm = String(minute).padStart(2, "0");
+  return new Date(date + "T" + hh + ":" + mm + ":00-05:00").toISOString();
+}
 function makeTasks(row) {
   const name = [row.lote, row.apiario, row.fecha].filter(Boolean).join(" · ") || "lote";
   return [
@@ -335,9 +348,10 @@ async function createOrUpdateEvent(token, row, task, noticeDays) {
     summary: task.title,
     description: task.detail + "\nGenerado por ApiEcuador. Aviso: " + noticeDays + " día(s) antes. Color asignado automáticamente a " + (row.lote || "este lote") + ".",
     colorId: colorPorLote,
-    // Evento a las 08:00 de Ecuador: el aviso de 1 día antes llega a las 08:00 del día previo.
-    start: { dateTime: task.date + "T08:00:00-05:00", timeZone: "America/Guayaquil" },
-    end: { dateTime: task.date + "T08:15:00-05:00", timeZone: "America/Guayaquil" },
+    // Valida la fecha y genera marcas ISO explícitas para evitar "Invalid start time".
+    // El evento queda a las 08:00 de Ecuador; el aviso de 1 día antes llega a las 08:00 del día previo.
+    start: { dateTime: calendarDateTime(task.date, 8, 0), timeZone: "America/Guayaquil" },
+    end: { dateTime: calendarDateTime(task.date, 8, 15), timeZone: "America/Guayaquil" },
     reminders: { useDefault: false, overrides: [{ method: "popup", minutes }] },
     extendedProperties: { private: { apiecuadorKey: uniqueKey, apiecuadorBatch: String(row.id || "") } }
   };
