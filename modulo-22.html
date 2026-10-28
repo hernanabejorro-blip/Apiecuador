@@ -319,11 +319,13 @@ calendarButton.addEventListener("click", async () => {
       return;
     }
     const cards = Array.from(document.querySelectorAll("#registros [data-reminder]"));
-    const choices = rowCards.map((card,i)=>{const title=card.querySelector("h3")?.textContent||("Lote "+(i+1));return (i+1)+". "+title;}).join("\\n");\n    const selected = window.prompt("¿Qué lote quieres programar? Escribe el número de la lista:\\n\\n"+choices);
+    const rowCards = Array.from(document.querySelectorAll("#registros .record"));
+    const choices = rowCards.map((card,i)=>{const title=card.querySelector("h3")?.textContent||("Lote "+(i+1));return (i+1)+". "+title;}).join("\n");
+    const selected = window.prompt("¿Qué lote quieres programar? Escribe el número de la lista:\n\n"+choices);
     if (selected === null) { calendarStatus.textContent = "No se hicieron cambios."; return; }
     const index = Number(selected) - 1;
-    const rowCards = Array.from(document.querySelectorAll("#registros .record"));
-    const reminderButton = cards[index];
+    const selectedCard = rowCards[index];
+    const reminderButton = selectedCard && selectedCard.querySelector("[data-reminder]");
     if (!reminderButton) { calendarStatus.textContent = "No encuentro ese lote. Revisa la lista de registros."; return; }
     const rowId = reminderButton.dataset.reminder;
     row = (JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1") || "[]")).find(item => item.id === rowId);
