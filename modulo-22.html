@@ -97,7 +97,7 @@ input,select,textarea{scroll-margin-top:12px}
 </details>
 <div class="notice"><strong>Registro recomendado para cada tanda:</strong> celdas transferidas → aceptadas → operculadas → celdas distribuidas → reinas nacidas → reinas con postura. Así podrás calcular resultados reales y mejorar cada ciclo. Si tienes dudas sobre la configuración de la criadora, consulta a un apicultor con experiencia en cría de reinas antes de reorganizar cuadros o retirar la reina.</div>
 </section>
-<section class="panel"><h2 id="form-title">Nuevo registro</h2><form id="registro-form"><input id="registro-id" type="hidden"><label for="fecha">Fecha del traslarve</label><input id="fecha" name="fecha" type="date" required>
+<section class="panel"><h2 id="form-title">Nuevo registro</h2><form id="registro-form"><input id="registro-id" type="hidden"><label for="lote">Número identificador del lote</label><input id="lote" name="lote" type="text" readonly placeholder="Se asigna al guardar"><p class="muted">Cada tanda tendrá su número propio (Lote 001, Lote 002…). El número se conserva aunque edites el registro.</p><label for="fecha">Fecha del traslarve</label><input id="fecha" name="fecha" type="date" required>
 <label for="apiario">Apiario / ubicación</label><input id="apiario" name="apiario" type="text" required>
 <label for="madre">Colonia madre (línea genética)</label><input id="madre" name="madre" type="text" required>
 <label for="iniciadora">Colonia iniciadora o criadora</label><input id="iniciadora" name="iniciadora" type="text">
@@ -117,18 +117,18 @@ input,select,textarea{scroll-margin-top:12px}
 <script>
 (function(){
  const key="apiecuador-modulo-22-v1";
- const fields=[{"id":"fecha","label":"Fecha del traslarve"},{"id":"apiario","label":"Apiario / ubicación"},{"id":"madre","label":"Colonia madre (línea genética)"},{"id":"iniciadora","label":"Colonia iniciadora o criadora"},{"id":"cantidad","label":"Celdas transferidas"},{"id":"aceptadas","label":"Celdas aceptadas"},{"id":"operculadas","label":"Celdas operculadas"},{"id":"distribuidas","label":"Celdas distribuidas a núcleos"},{"id":"nacidas","label":"Reinas nacidas"},{"id":"postura","label":"Reinas confirmadas en postura"},{"id":"larvas","label":"Edad aproximada de larvas / método"},{"id":"revision","label":"Fecha estimada de revisión de aceptación"},{"id":"fechaDistribucion","label":"Fecha estimada para proteger/distribuir celdas"},{"id":"nacimiento","label":"Fecha estimada de nacimiento"},{"id":"avisoDias","label":"Aviso con días de anticipación"},{"id":"fechaPostura","label":"Fecha estimada para revisar postura"},{"id":"resultado","label":"Resultado y observaciones"}];
+ const fields=[{"id":"lote","label":"Número de lote"},{"id":"fecha","label":"Fecha del traslarve"},{"id":"apiario","label":"Apiario / ubicación"},{"id":"madre","label":"Colonia madre (línea genética)"},{"id":"iniciadora","label":"Colonia iniciadora o criadora"},{"id":"cantidad","label":"Celdas transferidas"},{"id":"aceptadas","label":"Celdas aceptadas"},{"id":"operculadas","label":"Celdas operculadas"},{"id":"distribuidas","label":"Celdas distribuidas a núcleos"},{"id":"nacidas","label":"Reinas nacidas"},{"id":"postura","label":"Reinas confirmadas en postura"},{"id":"larvas","label":"Edad aproximada de larvas / método"},{"id":"revision","label":"Fecha estimada de revisión de aceptación"},{"id":"fechaDistribucion","label":"Fecha estimada para proteger/distribuir celdas"},{"id":"nacimiento","label":"Fecha estimada de nacimiento"},{"id":"avisoDias","label":"Aviso con días de anticipación"},{"id":"fechaPostura","label":"Fecha estimada para revisar postura"},{"id":"resultado","label":"Resultado y observaciones"}];
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
- let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}
+ let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}\n function lotNumber(n){return "Lote "+String(n).padStart(3,"0");}\n function nextLotNumber(){let max=0;rows.forEach(r=>{const m=String(r.lote||"").match(/Lote\\s+(\\d+)/i);if(m)max=Math.max(max,Number(m[1]));});return lotNumber(max+1);}\n rows.forEach((r,i)=>{if(!r.lote)r.lote=lotNumber(i+1);});try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){
   list.innerHTML="";
   if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay registros. Completa el formulario para comenzar.</p>';return;}
   rows.slice().reverse().forEach(row=>{
    const card=document.createElement("article");card.className="record";
-   const heading=fields.map(f=>row[f.id]).find(v=>v)||"Registro";
+   const heading=(row.lote?row.lote+" · ":"")+(row.apiario||"Apiario sin nombre")+" · "+(row.fecha||"sin fecha");
    const tasa=row.cantidad&&row.aceptadas!==""&&row.aceptadas!=null?(Number(row.aceptadas)/Number(row.cantidad)*100).toFixed(1)+"%":"Pendiente de revisión";const etapa=(label,value,base)=>value!==""&&value!=null?label+": "+value+(base&&Number(base)>0?" ("+(Number(value)/Number(base)*100).toFixed(1)+"%)":""):"";const etapas=[etapa("Operculadas",row.operculadas,row.aceptadas),etapa("Distribuidas",row.distribuidas,row.operculadas||row.aceptadas),etapa("Reinas nacidas",row.nacidas,row.distribuidas||row.operculadas||row.aceptadas),etapa("En postura",row.postura,row.nacidas)].filter(Boolean).join(" · ");
    card.innerHTML='<h3>'+esc(heading)+'</h3>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<p><strong>Porcentaje de aceptación:</strong> '+esc(tasa)+'</p>'+(etapas?'<p><strong>Seguimiento:</strong> '+esc(etapas)+'</p>':'')+'<div class="actions"><button class="edit-record" type="button" data-edit="'+esc(row.id)+'">✏️ Editar fechas y datos</button><button class="reminder" type="button" data-reminder="'+esc(row.id)+'">🔔 Crear recordatorios</button><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
    list.appendChild(card);
@@ -138,7 +138,7 @@ input,select,textarea{scroll-margin-top:12px}
   e.preventDefault();const total=Number(document.getElementById("cantidad").value);const limits=[["aceptadas","Celdas aceptadas",total],["operculadas","Celdas operculadas",document.getElementById("aceptadas").value],["distribuidas","Celdas distribuidas",document.getElementById("operculadas").value||document.getElementById("aceptadas").value],["nacidas","Reinas nacidas",document.getElementById("distribuidas").value||document.getElementById("operculadas").value||document.getElementById("aceptadas").value],["postura","Reinas en postura",document.getElementById("nacidas").value]];for(const [id,label,limit] of limits){const value=document.getElementById(id).value;if(value!==""&&(!Number.isInteger(Number(value))||Number(value)<0)){status.textContent=label+" debe ser un número entero igual o mayor que cero.";return;}if(value!==""&&limit!==""&&limit!=null&&Number(value)>Number(limit)){status.textContent=label+" no puede superar la cantidad registrada en la etapa anterior.";return;}}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   if(editingId){row.id=editingId;rows=rows.map(r=>r.id===editingId?row:r);}else{rows.push(row);}
-  try{localStorage.setItem(key,JSON.stringify(rows));form.reset();editingId=null;document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;render();status.textContent="Registro guardado en este teléfono.";}
+  try{localStorage.setItem(key,JSON.stringify(rows));form.reset();document.getElementById("lote").value=nextLotNumber();editingId=null;document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;render();status.textContent="Registro guardado en este teléfono.";}
   catch(e){status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
  });
  function datePlus(date,days){const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+days);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
@@ -165,13 +165,13 @@ input,select,textarea{scroll-margin-top:12px}
  }
  list.addEventListener("click",e=>{const reminder=e.target.closest("[data-reminder]");if(reminder){const row=rows.find(r=>r.id===reminder.dataset.reminder);if(row)crearCalendario(row);return;} 
   const edit=e.target.closest("[data-edit]");
-  if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{form.elements[f.id].value=row[f.id]||"";});editingId=row.id;document.getElementById("registro-id").value=row.id;document.getElementById("form-title").textContent="Editar registro de cría de reinas";document.getElementById("guardar").textContent="Guardar cambios";document.getElementById("cancelar-edicion").hidden=false;status.textContent="Edita los datos y pulsa Guardar cambios.";window.scrollTo({top:0,behavior:"smooth"});return;}
+  if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{form.elements[f.id].value=row[f.id]||"";});document.getElementById("lote").value=row.lote||"Lote";editingId=row.id;document.getElementById("registro-id").value=row.id;document.getElementById("form-title").textContent="Editar registro de cría de reinas";document.getElementById("guardar").textContent="Guardar cambios";document.getElementById("cancelar-edicion").hidden=false;status.textContent="Edita los datos y pulsa Guardar cambios.";window.scrollTo({top:0,behavior:"smooth"});return;}
   const b=e.target.closest("[data-delete]");if(!b)return;
   if(!confirm("¿Eliminar este registro de cría de reinas?"))return;
   rows=rows.filter(r=>r.id!==b.dataset.delete);
   try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
  });
- function cancelEdit(){editingId=null;form.reset();document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;status.textContent="Edición cancelada.";}
+ function cancelEdit(){editingId=null;form.reset();document.getElementById("lote").value=nextLotNumber();document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;status.textContent="Edición cancelada.";}
  function calcularFechasTraslarve(){
    const graft=document.getElementById("fecha").value;
    if(!graft){status.textContent="Primero selecciona la fecha del traslarve.";return;}
@@ -269,7 +269,7 @@ async function calendarRequest(token, url, options={}) {
   return payload;
 }
 function makeTasks(row) {
-  const name = row.apiario || "lote";
+  const name = [row.lote, row.apiario, row.fecha].filter(Boolean).join(" · ") || "lote";
   return [
     {date:row.revision || addDays(row.fecha,2),title:"ApiEcuador: revisar aceptación · "+name,detail:"Comprueba con cuidado la aceptación y registra cuántas celdas fueron aceptadas. Fecha orientativa; confirma el desarrollo real."},
     {date:addDays(row.fecha,5),title:"ApiEcuador: revisar cría abierta y celdas espontáneas · "+name,detail:"Revisa la cría abierta y busca celdas reales espontáneas. Confirma el estado de la colonia y tu método antes de actuar; no elimines celdas útiles ni actúes sin localizar la reina."},
@@ -315,7 +315,7 @@ calendarButton.addEventListener("click", async () => {
       return;
     }
     const cards = Array.from(document.querySelectorAll("#registros [data-reminder]"));
-    const selected = window.prompt("Escribe el número del lote que quieres programar (1 = el primero de la lista).");
+    const choices = rowCards.map((card,i)=>{const title=card.querySelector("h3")?.textContent||("Lote "+(i+1));return (i+1)+". "+title;}).join("\\n");\n    const selected = window.prompt("¿Qué lote quieres programar? Escribe el número de la lista:\\n\\n"+choices);
     if (selected === null) { calendarStatus.textContent = "No se hicieron cambios."; return; }
     const index = Number(selected) - 1;
     const rowCards = Array.from(document.querySelectorAll("#registros .record"));
