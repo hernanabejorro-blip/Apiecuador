@@ -154,7 +154,7 @@ input,select,textarea{scroll-margin-top:12px}
 
  // Ajuste de registros anteriores: solo cambia fechas que coincidan exactamente con el cálculo automático antiguo.
  rows.forEach(r=>{
-  if(!r.fecha||!/^\\d{4}-\\d{2}-\\d{2}$/.test(r.fecha))return;
+  if(!r.fecha||!/^\d{4}-\d{2}-\d{2}$/.test(r.fecha))return;
   if(r.revision===datePlus(r.fecha,2))r.revision=datePlus(r.fecha,1);
   if(r.fechaDistribucion===datePlus(r.fecha,10))r.fechaDistribucion=datePlus(r.fecha,9);
   if(r.nacimiento===datePlus(r.fecha,11))r.nacimiento=datePlus(r.fecha,10);
