@@ -454,8 +454,10 @@ calendarButton.addEventListener("click", async () => {
       localStorage.removeItem(pendingCalendarKey);
     } catch (popupError) {
       const code = String(popupError && popupError.code || "");
-      if (code === "auth/popup-blocked" || code === "auth/operation-not-supported-in-this-environment") {
-        await signInWithRedirect(calendarAuth, provider);
+      if (code === "auth/popup-blocked") {
+        throw new Error("Chrome bloqueó la ventana de Google. Permite las ventanas emergentes para hernanabejorro-blip.github.io y vuelve a intentarlo. No se programó ningún evento.");
+      } else if (code === "auth/operation-not-supported-in-this-environment") {
+        throw new Error("Este navegador no admite la ventana segura de Google. Abre esta página directamente en Chrome y permite las ventanas emergentes. No se programó ningún evento.");
       } else {
         throw popupError;
       }
