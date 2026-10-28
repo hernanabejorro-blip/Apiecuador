@@ -360,7 +360,11 @@ async function createOrUpdateEvent(token, row, task, noticeDays) {
   };
   const existing = found.items && found.items[0];
   if (existing && existing.id) {
-    await calendarRequest(token, "https://www.googleapis.com/calendar/v3/calendars/primary/events/" + encodeURIComponent(existing.id), { method:"PATCH", body:JSON.stringify(event) });
+    try {
+      await calendarRequest(token, "https://www.googleapis.com/calendar/v3/calendars/primary/events/" + encodeURIComponent(existing.id), { method:"PATCH", body:JSON.stringify(event) });
+    } catch (error) {
+      throw new Error(String(error && error.message || error) + " (al actualizar aviso existente " + existing.id + "; tarea: " + task.title + "; fecha: " + task.date + "; inicio enviado: " + event.start.dateTime + "; fin enviado: " + event.end.dateTime + ")");
+    }
     return "actualizado";
   }
   try {
