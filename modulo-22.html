@@ -422,18 +422,19 @@ calendarButton.addEventListener("click", async () => {
     const activeId = document.getElementById("registro-id").value;
     if (activeId) {
       calendarStatus.textContent = "Primero guarda los cambios de este lote y después programa los avisos.";
+      calendarButton.disabled = false;
       return;
     }
     const rowCards = Array.from(document.querySelectorAll("#registros .record"));
     const choices = rowCards.map((card,i)=>{const title=card.querySelector("h3")?.textContent||("Lote "+(i+1));return (i+1)+". "+title;}).join("\n");
     const selected = window.prompt("¿Qué lote quieres programar? Escribe el número de la lista:\n\n"+choices);
-    if (selected === null) { calendarStatus.textContent = "No se hicieron cambios."; return; }
+    if (selected === null) { calendarStatus.textContent = "No se hicieron cambios."; calendarButton.disabled = false; return; }
     const index = Number(selected) - 1;
     const selectedCard = rowCards[index];
     const reminderButton = selectedCard && selectedCard.querySelector("[data-reminder]");
-    if (!reminderButton) { calendarStatus.textContent = "No encuentro ese lote. Revisa la lista de registros."; return; }
+    if (!reminderButton) { calendarStatus.textContent = "No encuentro ese lote. Revisa la lista de registros."; calendarButton.disabled = false; return; }
     const row = findSavedLot(reminderButton.dataset.reminder);
-    if (!row || !row.fecha) { calendarStatus.textContent = "El lote no tiene fecha de traslarve guardada."; return; }
+    if (!row || !row.fecha) { calendarStatus.textContent = "El lote no tiene fecha de traslarve guardada."; calendarButton.disabled = false; return; }
     const provider = new GoogleAuthProvider();
     provider.addScope("https://www.googleapis.com/auth/calendar.events");
     provider.setCustomParameters({ prompt: "consent" });
