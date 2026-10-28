@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   deploy:
@@ -21,10 +22,14 @@ jobs:
       - name: Descargar código
         uses: actions/checkout@v4
 
-      - name: Publicar en canal de prueba de Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Autenticar en Google Cloud mediante OIDC
+        uses: google-github-actions/auth@v2
         with:
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_APIECUADOR_34B2D }}"
-          projectId: apiecuador-34b2d
-          channelId: prueba-api-ecuador
-          expires: 7d
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: apiecuador-github-deploy@apiecuador-34b2d.iam.gserviceaccount.com
+
+      - name: Instalar Firebase CLI
+        run: npm install --global firebase-tools
+
+      - name: Publicar en canal temporal de prueba
+        run: firebase hosting:channel:deploy prueba-api-ecuador --project apiecuador-34b2d --expires 7d
