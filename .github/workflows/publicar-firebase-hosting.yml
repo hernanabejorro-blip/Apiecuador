@@ -1,0 +1,35 @@
+name: Publicar ApiEcuador en Firebase Hosting
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    name: Publicación de prueba controlada
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar rama de preparación
+        run: |
+          if [ "${GITHUB_REF}" != "refs/heads/preparar-publicacion-firebase" ]; then
+            echo "Por seguridad, este flujo solo se ejecuta desde preparar-publicacion-firebase."
+            exit 1
+          fi
+
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Autenticar en Google Cloud mediante OIDC
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: apiecuador-github-deploy@apiecuador-34b2d.iam.gserviceaccount.com
+
+      - name: Instalar Firebase CLI
+        run: npm install --global firebase-tools
+
+      - name: Publicar en canal temporal de prueba
+        run: firebase hosting:channel:deploy prueba-api-ecuador --project apiecuador-34b2d --expires 7d
