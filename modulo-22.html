@@ -157,7 +157,7 @@ input,select,textarea{scroll-margin-top:12px}
   const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=url;a.download="apiecuador-cria-reinas-traslarve.csv";
-  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
   status.textContent="Respaldo CSV preparado. Guárdalo en un lugar seguro.";
  });
  document.getElementById("exportar-json").addEventListener("click",()=>{
