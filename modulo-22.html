@@ -273,7 +273,7 @@ input,select,textarea{scroll-margin-top:12px}
 </script> 
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 const calendarStatus = document.getElementById("estado-google-calendar");
 const calendarButton = document.getElementById("programar-google");
@@ -363,19 +363,67 @@ async function createOrUpdateEvent(token, row, task, noticeDays) {
   await calendarRequest(token, "https://www.googleapis.com/calendar/v3/calendars/primary/events", { method:"POST", body:JSON.stringify(event) });
   return "creado";
 }
+async function programLotEvents(row, token) {
+  if (!row || !row.fecha) throw new Error("El lote no tiene fecha de traslarve guardada.");
+  const tasks = makeTasks(row);
+  const noticeDays = Math.max(0, Math.min(365, parseInt(row.avisoDias == null || row.avisoDias === "" ? "1" : row.avisoDias,10) || 0));
+  let created = 0, updated = 0;
+  for (const task of tasks) {
+    const outcome = await createOrUpdateEvent(token,row,task,noticeDays);
+    if (outcome === "creado") created++; else updated++;
+  }
+  calendarStatus.textContent = "Listo: " + created + " avisos nuevos y " + updated + " actualizados en el calendario principal de Google. Todos quedan a las 8:00 a. m.; revisa que las notificaciones estén activadas.";
+}
+function findSavedLot(rowId) {
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1") || "[]"); } catch (_) {}
+  return saved.find(item => String(item.id) === String(rowId));
+}
+const pendingCalendarKey = "apiecuador-calendar-pending-action-v1";
+// En Android/PWA el navegador puede cerrar el popup al volver de Google.
+// El flujo redirect devuelve el permiso a esta misma página sin depender de una ventana emergente.
+getRedirectResult(calendarAuth).then(async function(result) {
+  const pendingRaw = localStorage.getItem(pendingCalendarKey);
+  if (!pendingRaw) return;
+  let pending;
+  try { pending = JSON.parse(pendingRaw); } catch (_) { pending = null; }
+  if (!pending || pending.action !== "program") {
+    localStorage.removeItem(pendingCalendarKey);
+    return;
+  }
+  calendarButton.disabled = true;
+  calendarStatus.textContent = "Google devolvió la autorización. Programando los avisos del lote…";
+  try {
+    if (!result) throw new Error("Google no devolvió la autorización a ApiEcuador. Pulsa de nuevo el botón y acepta los permisos.");
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential && credential.accessToken;
+    if (!token) throw new Error("Google no devolvió permiso de calendario. Vuelve a intentarlo.");
+    const row = findSavedLot(pending.rowId);
+    if (!row) throw new Error("No encuentro el lote guardado en este navegador. Tus registros no se han borrado.");
+    await programLotEvents(row, token);
+  } catch (error) {
+    calendarStatus.textContent = googleErrorMessage(error) + " El lote guardado se conserva; vuelve a intentarlo.";
+  } finally {
+    localStorage.removeItem(pendingCalendarKey);
+    calendarButton.disabled = false;
+  }
+}).catch(function(error) {
+  const pendingRaw = localStorage.getItem(pendingCalendarKey);
+  if (!pendingRaw) return;
+  localStorage.removeItem(pendingCalendarKey);
+  calendarStatus.textContent = googleErrorMessage(error) + " El lote guardado se conserva; vuelve a intentarlo.";
+  calendarButton.disabled = false;
+});
 calendarButton.addEventListener("click", async () => {
   const original = calendarButton.textContent;
   calendarButton.disabled = true;
-  calendarStatus.textContent = "Abriendo Google para autorizar el calendario…";
+  calendarStatus.textContent = "Preparando autorización segura de Google…";
   try {
-    const form = document.getElementById("registro-form");
     const activeId = document.getElementById("registro-id").value;
-    let row = null;
     if (activeId) {
       calendarStatus.textContent = "Primero guarda los cambios de este lote y después programa los avisos.";
       return;
     }
-    const cards = Array.from(document.querySelectorAll("#registros [data-reminder]"));
     const rowCards = Array.from(document.querySelectorAll("#registros .record"));
     const choices = rowCards.map((card,i)=>{const title=card.querySelector("h3")?.textContent||("Lote "+(i+1));return (i+1)+". "+title;}).join("\n");
     const selected = window.prompt("¿Qué lote quieres programar? Escribe el número de la lista:\n\n"+choices);
@@ -384,32 +432,22 @@ calendarButton.addEventListener("click", async () => {
     const selectedCard = rowCards[index];
     const reminderButton = selectedCard && selectedCard.querySelector("[data-reminder]");
     if (!reminderButton) { calendarStatus.textContent = "No encuentro ese lote. Revisa la lista de registros."; return; }
-    const rowId = reminderButton.dataset.reminder;
-    row = (JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1") || "[]")).find(item => item.id === rowId);
+    const row = findSavedLot(reminderButton.dataset.reminder);
     if (!row || !row.fecha) { calendarStatus.textContent = "El lote no tiene fecha de traslarve guardada."; return; }
     const provider = new GoogleAuthProvider();
     provider.addScope("https://www.googleapis.com/auth/calendar.events");
     provider.setCustomParameters({ prompt: "consent" });
-    const result = await signInWithPopup(calendarAuth, provider);
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential && credential.accessToken;
-    if (!token) throw new Error("Google no devolvió permiso de calendario. Vuelve a intentarlo.");
-    const tasks = makeTasks(row);
-    const noticeDays = Math.max(0, Math.min(365, parseInt(row.avisoDias == null || row.avisoDias === "" ? "1" : row.avisoDias,10) || 0));
-    let created = 0, updated = 0;
-    for (const task of tasks) {
-      const outcome = await createOrUpdateEvent(token,row,task,noticeDays);
-      if (outcome === "creado") created++; else updated++;
-    }
-    calendarStatus.textContent = "Listo: " + created + " avisos nuevos y " + updated + " actualizados en el calendario principal de Google. Comprueba en Google Calendar que las notificaciones estén activadas.";
+    localStorage.setItem(pendingCalendarKey, JSON.stringify({action:"program",rowId:row.id}));
+    calendarStatus.textContent = "Abriendo Google; al aceptar, volverás aquí para programar los avisos…";
+    await signInWithRedirect(calendarAuth, provider);
   } catch (error) {
-    calendarStatus.textContent = googleErrorMessage(error);
-  } finally {
+    localStorage.removeItem(pendingCalendarKey);
+    calendarStatus.textContent = googleErrorMessage(error) + " El lote guardado se conserva; vuelve a intentarlo.";
     calendarButton.disabled = false;
     calendarButton.textContent = original;
   }
 });
- document.getElementById("registros").addEventListener("click", async function(event) {
+  document.getElementById("registros").addEventListener("click", async function(event) {
   const button = event.target.closest("[data-delete-google]"); if (!button) return;
   const rowId = button.dataset.deleteGoogle; let savedRows = [];
   try { savedRows = JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1") || "[]"); } catch (_) {}
