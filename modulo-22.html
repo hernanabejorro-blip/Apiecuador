@@ -443,7 +443,23 @@ calendarButton.addEventListener("click", async () => {
     localStorage.setItem(pendingCalendarKey, JSON.stringify({action:"program",rowId:row.id}));
     calendarStatus.textContent = "Abriendo Google; al aceptar, volverás aquí para programar los avisos…";
     await calendarPersistenceReady;
-    await signInWithRedirect(calendarAuth, provider);
+    // Preferimos popup: evita que Android/Chrome pierda el resultado OAuth al volver desde Google a GitHub Pages.
+    // Si el navegador bloquea la ventana, conservamos el flujo redirect como alternativa.
+    try {
+      const authResult = await signInWithPopup(calendarAuth, provider);
+      const credential = GoogleAuthProvider.credentialFromResult(authResult);
+      const token = credential && credential.accessToken;
+      if (!token) throw new Error("Google no devolvió permiso para gestionar el calendario.");
+      await programLotEvents(row, token);
+      localStorage.removeItem(pendingCalendarKey);
+    } catch (popupError) {
+      const code = String(popupError && popupError.code || "");
+      if (code === "auth/popup-blocked" || code === "auth/operation-not-supported-in-this-environment") {
+        await signInWithRedirect(calendarAuth, provider);
+      } else {
+        throw popupError;
+      }
+    }
   } catch (error) {
     localStorage.removeItem(pendingCalendarKey);
     calendarStatus.textContent = googleErrorMessage(error) + " El lote guardado se conserva; vuelve a intentarlo.";
