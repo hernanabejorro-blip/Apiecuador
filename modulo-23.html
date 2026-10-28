@@ -34,7 +34,7 @@ input,select,textarea{scroll-margin-top:12px}
 </style>
 </head><body>
 <header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🐝 Calendario Apícola y Tareas</h1><p>Lleva una lista de labores por fecha y apiario: revisiones, alimentación, cosecha, recambio de reinas y más.</p></div></header>
-<main><div class="notice"><strong>Importante:</strong> esta versión guarda los registros en este navegador y teléfono. No se sincronizan con otros dispositivos; exporta o anota la información importante como respaldo.</div>
+<main><div class="notice"><strong>ApiEcuador planifica; Calendario solo avisa.</strong> Guarda aquí los traslarves futuros. En cada tarea puedes preparar un archivo de calendario con aviso un día antes. Después abre el archivo en el teléfono y confirma que el evento y la notificación quedaron guardados. Los registros siguen guardados solo en este navegador y teléfono; conserva una copia de seguridad.</div>
 <section class="panel"><h2>Nuevo registro</h2><form id="registro-form"><label for="fecha">Fecha prevista</label><input id="fecha" name="fecha" type="date" required>
 <label for="apiario">Apiario</label><input id="apiario" name="apiario" type="text" required>
 <label for="tipo">Tipo de tarea</label><select id="tipo" name="tipo" required><option value="">Seleccionar…</option><option>Inspección</option><option>Alimentación</option><option>Sanidad</option><option>Cría de reinas</option><option>Cosecha</option><option>Trashumancia</option><option>Mantenimiento</option><option>Otra</option></select>
@@ -59,7 +59,7 @@ input,select,textarea{scroll-margin-top:12px}
    const today=new Date();today.setHours(0,0,0,0);const due=row.fecha?new Date(row.fecha+"T00:00:00"):null;
    if(due&&due<=today){card.style.borderColor="#d9a441";card.style.background="#fffaf0";}
    const heading=fields.map(f=>row[f.id]).find(v=>v)||"Registro";
-   card.innerHTML='<h3>'+esc(heading)+'</h3>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<div class="actions"><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
+   card.innerHTML='<h3>'+esc(heading)+'</h3>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<div class="actions"><button class="primary" type="button" data-calendar="'+esc(row.id)+'">Preparar aviso para Calendario</button><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
    list.appendChild(card);
   });
  }
@@ -71,6 +71,7 @@ input,select,textarea{scroll-margin-top:12px}
   catch(e){rows.pop();status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
  });
  list.addEventListener("click",e=>{
+  const cal=e.target.closest("[data-calendar]");if(cal){const row=rows.find(r=>r.id===cal.dataset.calendar);if(!row||!row.fecha){status.textContent="Añade una fecha antes de preparar el aviso.";return;}const date=row.fecha.replace(/-/g,"");const escIcs=s=>String(s||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");const summary=escIcs(row.tarea||row.tipo||"Tarea apícola");const desc=escIcs("Apiario: "+(row.apiario||"Sin especificar")+"\\nNotas: "+(row.notas||"")+"\\nGestionar la tarea en ApiEcuador.");const ics="BEGIN:VCALENDAR\\r\\nVERSION:2.0\\r\\nPRODID:-//ApiEcuador//Calendario Apicola//ES\\r\\nCALSCALE:GREGORIAN\\r\\nBEGIN:VEVENT\\r\\nUID:apiecuador-"+row.id+"@apiecuador\\r\\nDTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").replace(/\\.\\d{3}/,"")+"\\r\\nDTSTART;VALUE=DATE:"+date+"\\r\\nDTEND;VALUE=DATE:"+(()=>{const d=new Date(row.fecha+"T12:00:00");d.setDate(d.getDate()+1);return d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0")})()+"\\r\\nSUMMARY:"+summary+"\\r\\nDESCRIPTION:"+desc+"\\r\\nBEGIN:VALARM\\r\\nACTION:DISPLAY\\r\\nDESCRIPTION:Recordatorio ApiEcuador\\r\\nTRIGGER:-P1D\\r\\nEND:VALARM\\r\\nEND:VEVENT\\r\\nEND:VCALENDAR";const blob=new Blob([ics],{type:"text/calendar;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="aviso-apiecuador-"+date+".ics";a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);status.textContent="Aviso preparado. Abre el archivo descargado y añádelo al Calendario; confirma que quede guardado.";return;}
   const b=e.target.closest("[data-delete]");if(!b)return;
   rows=rows.filter(r=>r.id!==b.dataset.delete);
   try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
