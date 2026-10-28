@@ -384,7 +384,7 @@ function findSavedLot(rowId) {
 const pendingCalendarKey = "apiecuador-calendar-pending-action-v1";
 // En Android/PWA el navegador puede cerrar el popup al volver de Google.
 // El flujo redirect devuelve el permiso a esta misma página sin depender de una ventana emergente.
-getRedirectResult(calendarAuth).then(async function(result) {
+calendarPersistenceReady.then(() => getRedirectResult(calendarAuth)).then(async function(result) {
   const pendingRaw = localStorage.getItem(pendingCalendarKey);
   if (!pendingRaw) return;
   let pending;
