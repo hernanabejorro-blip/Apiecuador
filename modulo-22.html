@@ -358,7 +358,8 @@ async function createOrUpdateEvent(token, row, task, noticeDays) {
     reminders: { useDefault: false, overrides: [{ method: "popup", minutes }] },
     extendedProperties: { private: { apiecuadorKey: uniqueKey, apiecuadorBatch: String(row.id || "") } }
   };
-  const existing = found.items && found.items[0];
+  // Ignora eventos cancelados devueltos por Google: no deben seleccionarse para PATCH.
+  const existing = (found.items || []).find(item => item && item.id && item.status !== "cancelled");
   if (existing && existing.id) {
     try {
       await calendarRequest(token, "https://www.googleapis.com/calendar/v3/calendars/primary/events/" + encodeURIComponent(existing.id), { method:"PATCH", body:JSON.stringify(event) });
