@@ -228,6 +228,7 @@ input,select,textarea{scroll-margin-top:12px}
   }catch(e){status.textContent="No se pudo importar. Selecciona un respaldo JSON válido de ApiEcuador.";}
   finally{fileInput.value="";}
  });
+ document.getElementById("lote").value=nextLotNumber();
  render();
 })();
 </script> 
