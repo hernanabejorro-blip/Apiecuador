@@ -335,8 +335,9 @@ async function createOrUpdateEvent(token, row, task, noticeDays) {
     summary: task.title,
     description: task.detail + "\nGenerado por ApiEcuador. Aviso: " + noticeDays + " día(s) antes. Color asignado automáticamente a " + (row.lote || "este lote") + ".",
     colorId: colorPorLote,
-    start: { date: task.date },
-    end: { date: addDays(task.date,1) },
+    // Evento a las 08:00 de Ecuador: el aviso de 1 día antes llega a las 08:00 del día previo.
+    start: { dateTime: task.date + "T08:00:00-05:00", timeZone: "America/Guayaquil" },
+    end: { dateTime: task.date + "T08:15:00-05:00", timeZone: "America/Guayaquil" },
     reminders: { useDefault: false, overrides: [{ method: "popup", minutes }] },
     extendedProperties: { private: { apiecuadorKey: uniqueKey, apiecuadorBatch: String(row.id || "") } }
   };
