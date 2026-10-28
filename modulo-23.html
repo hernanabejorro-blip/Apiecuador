@@ -38,6 +38,7 @@ input,select,textarea{scroll-margin-top:12px}
 <section class="panel"><h2>Nuevo registro</h2><form id="registro-form"><label for="fecha">Fecha prevista</label><input id="fecha" name="fecha" type="date" required>
 <label for="apiario">Apiario</label><input id="apiario" name="apiario" type="text" required>
 <label for="tipo">Tipo de tarea</label><select id="tipo" name="tipo" required><option value="">Seleccionar…</option><option>Inspección</option><option>Alimentación</option><option>Sanidad</option><option>Cría de reinas</option><option>Cosecha</option><option>Trashumancia</option><option>Mantenimiento</option><option>Otra</option></select>
+<label for="loteReina">Lote de reinas asociado (opcional)</label><select id="loteReina" name="loteReina"><option value="">Sin lote asociado</option></select><p class="empty">Elige un lote para que esta tarea use el mismo color que su ficha de cría de reinas.</p>
 <label for="tarea">Tarea pendiente</label><input id="tarea" name="tarea" type="text" required>
 <label for="prioridad">Prioridad</label><select id="prioridad" name="prioridad"><option value="">Seleccionar…</option><option>Normal</option><option>Importante</option><option>Urgente</option></select>
 <label for="avisoDias">¿Cuántos días antes quieres que te avise?</label><input id="avisoDias" name="avisoDias" type="number" min="0" max="365" step="1" value="1" required><p class="empty">Ejemplos: 1 = el día anterior; 3 = tres días antes; 7 = una semana antes; 0 = el mismo día. Al preparar el aviso podrás añadirlo al calendario del teléfono.</p><label for="notas">Notas</label><textarea id="notas" name="notas" rows="3"></textarea><div class="actions"><button class="primary" type="submit">Guardar registro</button><button class="secondary" id="limpiar" type="button">Limpiar formulario</button><button class="secondary" id="traslarve" type="button">Preparar tarea de traslarve</button></div><p class="status" id="estado" role="status" aria-live="polite"></p></form></section>
@@ -45,8 +46,18 @@ input,select,textarea{scroll-margin-top:12px}
 <script>
 (function(){
  const key="apiecuador-modulo-23-v1";
- const fields=[{"id":"fecha","label":"Fecha prevista"},{"id":"apiario","label":"Apiario"},{"id":"tipo","label":"Tipo de tarea"},{"id":"tarea","label":"Tarea pendiente"},{"id":"prioridad","label":"Prioridad"},{"id":"avisoDias","label":"Avisarme con días de anticipación"},{"id":"notas","label":"Notas"}];
+ const fields=[{"id":"fecha","label":"Fecha prevista"},{"id":"apiario","label":"Apiario"},{"id":"tipo","label":"Tipo de tarea"},{"id":"loteReina","label":"Lote de reinas asociado"},{"id":"tarea","label":"Tarea pendiente"},{"id":"prioridad","label":"Prioridad"},{"id":"avisoDias","label":"Avisarme con días de anticipación"},{"id":"notas","label":"Notas"}];
  const form=document.getElementById("registro-form");
+ const loteSelect=document.getElementById("loteReina");
+ function cargarLotesReina(){
+  const selected=loteSelect.value;let lots=[];
+  try{lots=JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1")||"[]");if(!Array.isArray(lots))lots=[];}catch(e){lots=[];}
+  loteSelect.innerHTML='<option value="">Sin lote asociado</option>';
+  lots.forEach(r=>{if(!r.lote)return;const o=document.createElement("option");o.value=r.lote;o.textContent=r.lote+" · "+(r.apiario||"apiario sin nombre")+" · "+(r.fecha||"sin fecha");loteSelect.appendChild(o);});
+  if(selected&&!Array.from(loteSelect.options).some(o=>o.value===selected)){const o=document.createElement("option");o.value=selected;o.textContent=selected+" · lote guardado anteriormente";loteSelect.appendChild(o);}
+  loteSelect.value=selected;
+ }
+ cargarLotesReina();
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
  let rows=[];try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}
@@ -57,8 +68,11 @@ input,select,textarea{scroll-margin-top:12px}
   rows.slice().sort((a,b)=>String(a.fecha||"").localeCompare(String(b.fecha||""))).forEach(row=>{
    const card=document.createElement("article");card.className="record";
    const today=new Date();today.setHours(0,0,0,0);const due=row.fecha?new Date(row.fecha+"T00:00:00"):null;
-   if(due&&due<=today){card.style.borderColor="#d9a441";card.style.background="#fffaf0";}
-   const heading=fields.map(f=>row[f.id]).find(v=>v)||"Registro";
+   const palette=[["#176b45","#e8f5ed"],["#2459a6","#eaf1ff"],["#8a4b08","#fff1dc"],["#7b3fa1","#f5eaff"],["#b52d46","#ffedf0"],["#087e8b","#e5f8fa"],["#596315","#f4f7df"],["#9a4f25","#fff0e7"]];
+   const lm=String(row.loteReina||"").match(/(\d+)/);const lc=lm?palette[(Math.max(1,Number(lm[1]))-1)%palette.length]:null;
+   if(lc){card.style.borderLeft="7px solid "+lc[0];card.style.background="linear-gradient(90deg,"+lc[1]+" 0%,#ffffff 46%)";}
+   else if(due&&due<=today){card.style.borderColor="#d9a441";card.style.background="#fffaf0";}
+   const heading=(row.loteReina?row.loteReina+" · ":"")+((row.tarea||row.tipo)||"Registro");
    card.innerHTML='<h3>'+esc(heading)+'</h3><p><strong>Estado:</strong> '+(row.completada?'Completada':'Pendiente')+'</p>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<div class="actions"><button class="primary" type="button" data-calendar="'+esc(row.id)+'">Preparar aviso para Calendario</button><button class="secondary" type="button" data-edit="'+esc(row.id)+'">Editar / reprogramar</button><button class="secondary" type="button" data-done="'+esc(row.id)+'">'+(row.completada?'Marcar pendiente':'Marcar completada')+'</button><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
    list.appendChild(card);
   });
@@ -77,8 +91,8 @@ input,select,textarea{scroll-margin-top:12px}
   rows=rows.filter(r=>r.id!==b.dataset.delete);
   try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
  });
- document.getElementById("limpiar").addEventListener("click",()=>{form.reset();delete form.dataset.editing;form.querySelector('button[type="submit"]').textContent="Guardar registro";status.textContent="Formulario limpio.";});
- document.getElementById("traslarve").addEventListener("click",()=>{document.getElementById("tipo").value="Cría de reinas";document.getElementById("tarea").value="Preparar y realizar lote de traslarve (10–20 cúpulas)";document.getElementById("prioridad").value="Importante";document.getElementById("notas").value="Comprobar colonia donante, larvas jóvenes, material limpio, colonia criadora y alimento. Registrar aceptación, emergencia e introducción de reinas en el módulo Seguimiento de Reinas.";document.getElementById("avisoDias").value="1";status.textContent="Plantilla de traslarve cargada. Completa la fecha y el apiario antes de guardar.";});
+ document.getElementById("limpiar").addEventListener("click",()=>{form.reset();delete form.dataset.editing;form.querySelector('button[type="submit"]').textContent="Guardar registro";cargarLotesReina();status.textContent="Formulario limpio.";});
+ document.getElementById("traslarve").addEventListener("click",()=>{document.getElementById("tipo").value="Cría de reinas";cargarLotesReina();document.getElementById("tarea").value="Preparar y realizar lote de traslarve (10–20 cúpulas)";document.getElementById("prioridad").value="Importante";document.getElementById("notas").value="Comprobar colonia donante, larvas jóvenes, material limpio, colonia criadora y alimento. Registrar aceptación, emergencia e introducción de reinas en el módulo Seguimiento de Reinas.";document.getElementById("avisoDias").value="1";status.textContent="Plantilla de traslarve cargada. Completa la fecha y el apiario antes de guardar.";});
  document.getElementById("exportar").addEventListener("click",()=>{if(!rows.length){status.textContent="No hay registros para exportar.";return;}const csv=[fields.map(f=>f.label).join(","),...rows.map(r=>fields.map(f=>'"'+String(r[f.id]||"").replace(/"/g,'""')+'"').join(","))].join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="calendario-apicola.csv";a.click();URL.revokeObjectURL(url);status.textContent="Archivo CSV preparado para guardar.";});
  render();
 })();
