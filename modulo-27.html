@@ -55,7 +55,7 @@ input,select,textarea{scroll-margin-top:12px}
  document.getElementById("exportar").addEventListener("click",function(){
   try{
    const data={app:"ApiEcuador",formatVersion:1,exportedAt:new Date().toISOString(),data:{}};
-   keys.forEach(k=>{const v=read(k);if(v!==null)data.data[k]=v;});
+   const allKeys=new Set(keys);for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("apiecuador-"))allKeys.add(k);}allKeys.forEach(k=>{const v=read(k);if(v!==null)data.data[k]=v;});
    const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
    const url=URL.createObjectURL(blob);const a=document.createElement("a");
    a.href=url;a.download="apiecuador-copia-"+new Date().toISOString().slice(0,10)+".json";
@@ -71,7 +71,7 @@ input,select,textarea{scroll-margin-top:12px}
    const backup=JSON.parse(await file.text());
    if(!backup||backup.app!=="ApiEcuador"||backup.formatVersion!==1||!backup.data||typeof backup.data!=="object")throw new Error("formato");
    const planned={};let found=0;
-   keys.forEach(k=>{
+   Array.from(new Set([...keys,...Object.keys(backup.data).filter(k=>k.startsWith("apiecuador-"))])).forEach(k=>{
     if(!Object.prototype.hasOwnProperty.call(backup.data,k))return;
     const incoming=backup.data[k];
     if(k==="apiecuador-personalizacion-v1"){
@@ -85,9 +85,9 @@ input,select,textarea{scroll-margin-top:12px}
     planned[k]=merged;found++;
    });
    if(!found)throw new Error("vacio");
-   const before={};keys.forEach(k=>{before[k]=localStorage.getItem(k);});
+   const before={};Object.keys(planned).forEach(k=>{before[k]=localStorage.getItem(k);});
    try{Object.keys(planned).forEach(k=>localStorage.setItem(k,JSON.stringify(planned[k])));}
-   catch(writeError){keys.forEach(k=>{try{if(before[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,before[k]);}catch(ignore){}});throw writeError;}
+   catch(writeError){Object.keys(planned).forEach(k=>{try{if(before[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,before[k]);}catch(ignore){}});throw writeError;}
    status.textContent="Importación terminada. Los registros se combinaron sin reemplazar los existentes. Abre cada módulo para comprobarlos.";actualizarResumen();
   }catch(e){status.textContent="No se pudo importar: el archivo no parece una copia válida de ApiEcuador o no hay espacio suficiente. Tus datos anteriores se conservaron.";}
  });
