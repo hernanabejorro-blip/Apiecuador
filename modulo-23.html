@@ -85,7 +85,7 @@ input,select,textarea{scroll-margin-top:12px}
     const id="reina-"+row.id+"-"+i,previous=saved.find(t=>t.id===id);
     const automatic={fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(notice),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 1): "+row.fecha+". Fechas orientativas: confirma el desarrollo real y adapta el manejo al clima."};
     const item={id,origenReina:row.id,completada:previous?!!previous.completada:false};
-    Object.keys(automatic).forEach(k=>{const baseKey=k+"Auto";const oldBase=previous&&previous[baseKey];const oldValue=previous&&previous[k];const isManual=previous&&oldBase!==undefined&&oldValue!==oldBase;item[k]=isManual?oldValue:automatic[k];item[baseKey]=automatic[k];});
+    Object.keys(automatic).forEach(k=>{const baseKey=k+"Auto";const oldBase=previous&&previous[baseKey];const oldValue=previous&&previous[k];const isManual=previous&&(oldBase!==undefined?oldValue!==oldBase:oldValue!==automatic[k]);item[k]=isManual?oldValue:automatic[k];item[baseKey]=automatic[k];});
     generated.push(item);
    });
   });
