@@ -50,7 +50,7 @@ input,select,textarea{scroll-margin-top:12px}
  const status=document.getElementById("estado");
  function read(key){try{return JSON.parse(localStorage.getItem(key)||"null")}catch(e){return null}}
  function contar(value){if(Array.isArray(value))return value.length;if(value&&typeof value==="object")return Object.keys(value).length;return value==null?0:1;}
- function actualizarResumen(){const summary=document.getElementById("resumen-copia");let modules=0,total=0;keys.forEach(k=>{const value=read(k);if(value!==null){modules++;total+=contar(value);}});summary.textContent="Datos disponibles ahora: "+modules+" grupos de datos y aproximadamente "+total+" registro(s)/elemento(s). La cifra es orientativa; revisa el archivo descargado.";}
+function actualizarResumen(){const summary=document.getElementById("resumen-copia");let modules=0,total=0;const allKeys=new Set(keys);for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("apiecuador-"))allKeys.add(k);}allKeys.forEach(k=>{const value=read(k);if(value!==null){modules++;total+=contar(value);}});summary.textContent="Datos disponibles ahora: "+modules+" grupos de datos y aproximadamente "+total+" registro(s)/elemento(s). La cifra es orientativa; revisa el archivo descargado."; }
  actualizarResumen();
  document.getElementById("exportar").addEventListener("click",function(){
   try{
@@ -75,15 +75,20 @@ input,select,textarea{scroll-margin-top:12px}
    if(!importKeys.length)throw new Error("sin datos ApiEcuador");
    importKeys.forEach(k=>{
     const incoming=backup.data[k];
+    const currentRaw=localStorage.getItem(k);
     if(k==="apiecuador-personalizacion-v1"){
      if(!incoming||typeof incoming!=="object"||Array.isArray(incoming)){unsupported++;return;}
-     if(read(k)===null){planned[k]=incoming;restored++;groups++;}
+     if(currentRaw===null){planned[k]=incoming;restored++;groups++;}
      else{duplicates++;}
      return;
     }
-    const currentRaw=localStorage.getItem(k);
     if(Array.isArray(incoming)){
-     const current=read(k);const merged=Array.isArray(current)?current.slice():[];
+     let current=[];
+     if(currentRaw!==null){
+      try{const parsedCurrent=JSON.parse(currentRaw);if(!Array.isArray(parsedCurrent)){unsupported++;return;}current=parsedCurrent;}
+      catch(parseCurrentError){unsupported++;return;}
+     }
+     const merged=current.slice();
      const seen=new Set(merged.map(r=>r&&r.id!=null?"id:"+String(r.id):"json:"+JSON.stringify(r)));
      let changed=0;
      incoming.forEach(item=>{
@@ -101,7 +106,7 @@ input,select,textarea{scroll-margin-top:12px}
    const before={};Object.keys(planned).forEach(k=>{before[k]=localStorage.getItem(k);});
    if(!confirm("Revisión de la copia:\\n"+groups+" grupo(s) se actualizarán o recuperarán.\\n"+added+" registro(s) nuevo(s) en listas.\\n"+restored+" grupo(s) de configuración/datos se recuperarán.\\n"+duplicates+" elemento(s) repetido(s) o ya existente(s) se conservarán sin sobrescribir.\\n"+unsupported+" elemento(s) con formato no compatible se omitirán.\\n\\n¿Quieres combinar esta copia con los datos actuales?"))return;
    try{Object.keys(planned).forEach(k=>localStorage.setItem(k,JSON.stringify(planned[k])));}
-   catch(writeError){Object.keys(planned).forEach(k=>{try{if(before[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,before[k]);}catch(ignore){}});throw writeError;}
+   catch(writeError){let rollbackFailed=false;Object.keys(planned).forEach(k=>{try{if(before[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,before[k]);}catch(ignore){rollbackFailed=true;}});if(rollbackFailed)throw new Error("falló la escritura y no se pudo revertir todo");throw writeError;}
    status.textContent="Recuperación terminada: "+added+" registro(s) añadidos, "+restored+" grupo(s) recuperados, "+duplicates+" repetido(s) conservado(s) y "+unsupported+" elemento(s) omitido(s). Los datos actuales no se reemplazaron.";actualizarResumen();
   }catch(e){status.textContent="No se pudo importar: el archivo no parece una copia válida de ApiEcuador o no hay espacio suficiente. Tus datos anteriores se conservaron.";}
  });
