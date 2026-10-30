@@ -163,7 +163,7 @@ input,select,textarea{scroll-margin-top:12px}
  try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
  function sincronizarTareasCalendario(){
   const calendarKey="apiecuador-modulo-23-v1";
-  let tasks=[];try{tasks=JSON.parse(localStorage.getItem(calendarKey)||"[]");if(!Array.isArray(tasks))tasks=[];}catch(e){tasks=[];}
+  let tasks=[];const rawTasks=localStorage.getItem(calendarKey);try{tasks=JSON.parse(rawTasks||"[]");if(!Array.isArray(tasks))return -1;}catch(e){return -1;}
   const generated=[];
   rows.forEach(row=>{
    if(!row.fecha||!/^\d{4}-\d{2}-\d{2}$/.test(row.fecha))return;
@@ -181,7 +181,10 @@ input,select,textarea{scroll-margin-top:12px}
     if(!/^\d{4}-\d{2}-\d{2}$/.test(m.fecha))return;
     const id="reina-"+row.id+"-"+i;
     const previous=tasks.find(t=>t.id===id);
-    generated.push({id,origenReina:row.id,fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(notice),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 1): "+row.fecha+". Las fechas son orientativas; confirma el desarrollo real de las celdas y adapta el manejo al clima.",completada:previous?!!previous.completada:false});
+    const automatic={fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(notice),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 1): "+row.fecha+". Las fechas son orientativas; confirma el desarrollo real de las celdas y adapta el manejo al clima."};
+     const item={id,origenReina:row.id,completada:previous?!!previous.completada:false};
+     Object.keys(automatic).forEach(k=>{const baseKey=k+"Auto";const oldBase=previous&&previous[baseKey];const oldValue=previous&&previous[k];const isManual=previous&&oldBase!==undefined&&oldValue!==oldBase;item[k]=isManual?oldValue:automatic[k];item[baseKey]=automatic[k];});
+     generated.push(item);
    });
   });
   const ids=new Set(generated.map(t=>t.id));
