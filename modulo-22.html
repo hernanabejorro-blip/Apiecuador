@@ -121,10 +121,10 @@ input,select,textarea{scroll-margin-top:12px}
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
- let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[]}
+ let rows=[];let editingId=null,rowsStorageValid=true;try{const rawRows=localStorage.getItem(key);rows=JSON.parse(rawRows||"[]");if(!Array.isArray(rows)){rows=[];rowsStorageValid=false;}}catch(e){rows=[];rowsStorageValid=false;}
  function lotNumber(n){return "Lote "+String(n).padStart(3,"0")}
  function nextLotNumber(){let max=0;rows.forEach(r=>{const m=String(r.lote||"").match(/Lote\s+(\d+)/i);if(m)max=Math.max(max,Number(m[1]));});return lotNumber(max+1)}
- rows.forEach((r,i)=>{if(!r.lote)r.lote=lotNumber(i+1);});try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
+ rows.forEach((r,i)=>{if(!r.lote)r.lote=lotNumber(i+1);});if(rowsStorageValid){try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}}else{status.textContent="⚠️ No pude leer los lotes guardados. Para protegerlos, no guardaré encima de esos datos. Recupera primero una copia JSON.";form.querySelectorAll("input,select,textarea,button").forEach(el=>el.disabled=true);}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){
   list.innerHTML="";
@@ -144,7 +144,7 @@ input,select,textarea{scroll-margin-top:12px}
   });
  }
  form.addEventListener("submit",e=>{
-  e.preventDefault();const total=Number(document.getElementById("cantidad").value);const limits=[["aceptadas","Celdas aceptadas",total],["operculadas","Celdas operculadas",document.getElementById("aceptadas").value],["distribuidas","Celdas distribuidas",document.getElementById("operculadas").value||document.getElementById("aceptadas").value],["nacidas","Reinas nacidas",document.getElementById("distribuidas").value||document.getElementById("operculadas").value||document.getElementById("aceptadas").value],["postura","Reinas en postura",document.getElementById("nacidas").value]];for(const [id,label,limit] of limits){const value=document.getElementById(id).value;if(value!==""&&(!Number.isInteger(Number(value))||Number(value)<0)){status.textContent=label+" debe ser un número entero igual o mayor que cero.";return;}if(value!==""&&limit!==""&&limit!=null&&Number(value)>Number(limit)){status.textContent=label+" no puede superar la cantidad registrada en la etapa anterior.";return;}}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+  e.preventDefault();if(!rowsStorageValid){status.textContent="Recupera primero los lotes desde una copia JSON; no se sobrescribirán los datos ilegibles.";return;}const total=Number(document.getElementById("cantidad").value);const limits=[["aceptadas","Celdas aceptadas",total],["operculadas","Celdas operculadas",document.getElementById("aceptadas").value],["distribuidas","Celdas distribuidas",document.getElementById("operculadas").value||document.getElementById("aceptadas").value],["nacidas","Reinas nacidas",document.getElementById("distribuidas").value||document.getElementById("operculadas").value||document.getElementById("aceptadas").value],["postura","Reinas en postura",document.getElementById("nacidas").value]];for(const [id,label,limit] of limits){const value=document.getElementById(id).value;if(value!==""&&(!Number.isInteger(Number(value))||Number(value)<0)){status.textContent=label+" debe ser un número entero igual o mayor que cero.";return;}if(value!==""&&limit!==""&&limit!=null&&Number(value)>Number(limit)){status.textContent=label+" no puede superar la cantidad registrada en la etapa anterior.";return;}}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   if(editingId){row.id=editingId;const previous=rows.find(r=>r.id===editingId);if(previous&&previous.cerrado)row.cerrado=true;rows=rows.map(r=>r.id===editingId?row:r);}else{row.cerrado=false;rows.push(row);}
   try{localStorage.setItem(key,JSON.stringify(rows));const synced=sincronizarTareasCalendario();form.reset();document.getElementById("lote").value=nextLotNumber();editingId=null;document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;render();status.textContent=synced>=0?"Registro guardado. "+synced+" revisiones sincronizadas con Calendario Apícola; abre o actualiza ese módulo para verlas.":"Registro guardado, pero no se pudo sincronizar el calendario en este navegador.";}
@@ -277,7 +277,7 @@ input,select,textarea{scroll-margin-top:12px}
    });
    if(!added){status.textContent="No se añadieron registros: "+skipped+" repetido(s) y "+invalid+" inválido(s). Los datos actuales siguen intactos.";return;}
    if(!confirm("Respaldo revisado: "+added+" lote(s) nuevo(s), "+skipped+" repetido(s) y "+invalid+" inválido(s). Se conservarán los registros actuales y los datos adicionales del respaldo. ¿Continuar?"))return;
-   localStorage.setItem(key,JSON.stringify(candidate));rows=candidate;
+   localStorage.setItem(key,JSON.stringify(candidate));rows=candidate;rowsStorageValid=true;form.querySelectorAll("input,select,textarea,button").forEach(el=>el.disabled=false);
    const synced=sincronizarTareasCalendario();render();
    status.textContent="Importación segura: "+added+" lote(s) añadidos, "+skipped+" repetido(s) omitido(s) y "+invalid+" inválido(s). Los registros existentes se conservaron; "+synced+" revisiones sincronizadas.";
   }catch(e){status.textContent="No se pudo importar. Selecciona un respaldo JSON válido de ApiEcuador.";}
