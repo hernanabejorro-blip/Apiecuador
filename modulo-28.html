@@ -39,7 +39,7 @@ input,select,textarea{scroll-margin-top:12px}
 <section class="panel"><h2>Consejo de Abejorro 🐝</h2><p>Revisa esta agenda al comenzar la jornada y después de cambios de clima. En cría de reinas, la fecha estimada de nacimiento es una guía: comprueba el desarrollo de las celdas y evita manipulaciones innecesarias.</p><p class="meta">Esta página no envía notificaciones automáticas; para ver cambios, abre o actualiza ApiEcuador.</p></section>
 </main><script>
 (function(){
-const keys={tareas:"apiecuador-modulo-23-v1",reinas:"apiecuador-modulo-22-v1",sanidad:"apiecuador-modulo-24-v1"};
+const keys={tareas:"apiecuador-modulo-23-v1",sanidad:"apiecuador-modulo-24-v1"};
 const agenda=document.getElementById("agenda"),estado=document.getElementById("estado");let onlyNext=false;
 function localDate(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
 function parseDate(v){if(!v||typeof v!=="string")return null;const m=v.match(/^(\d{4})-(\d{2})-(\d{2})/);if(!m)return null;const d=new Date(+m[1],+m[2]-1,+m[3]);return Number.isNaN(d.getTime())?null:d;}
@@ -47,11 +47,7 @@ function fmt(d){return d.toLocaleDateString("es-EC",{day:"numeric",month:"short"
 function read(key){try{const v=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(v)?v:[]}catch(e){return []}}
 function render(){
  const now=localDate(new Date()),limit=new Date(now);limit.setDate(limit.getDate()+7);const events=[];
- read(keys.tareas).forEach(r=>{const d=parseDate(r.fecha);if(d)events.push({date:d,title:r.tarea||r.tipo||"Tarea apícola",apiario:r.apiario||"Apiario sin indicar",detail:[r.tipo,r.prioridad,r.notas].filter(Boolean).join(" · "),source:"Calendario y tareas"});});
- read(keys.reinas).forEach(r=>{
-  const d1=parseDate(r.revision);if(d1)events.push({date:d1,title:"Revisar aceptación del traslarve",apiario:r.apiario||"Apiario sin indicar",detail:[r.madre,r.cantidad? r.cantidad+" celdas":"",r.resultado].filter(Boolean).join(" · "),source:"Cría de reinas"});
-  const d2=parseDate(r.nacimiento);if(d2)events.push({date:d2,title:"Nacimiento estimado de reinas",apiario:r.apiario||"Apiario sin indicar",detail:[r.madre,r.cantidad? r.cantidad+" celdas":"",r.iniciadora].filter(Boolean).join(" · "),source:"Cría de reinas"});
- });
+ read(keys.tareas).forEach(r=>{const d=parseDate(r.fecha);if(d)events.push({date:d,title:(r.tarea||r.tipo||"Tarea apícola")+(r.loteReina?" · "+r.loteReina:""),apiario:r.apiario||"Apiario sin indicar",detail:[r.tipo,r.prioridad,r.notas].filter(Boolean).join(" · "),source:"Calendario y tareas"});});
  read(keys.sanidad).forEach(r=>{const d=parseDate(r.revision);if(d)events.push({date:d,title:"Revisión posterior al tratamiento",apiario:r.apiario||"Apiario sin indicar",detail:[r.tipo,r.producto,r.colmenas? r.colmenas+" colmenas":""].filter(Boolean).join(" · "),source:"Alimentación y tratamientos"});});
  events.sort((a,b)=>a.date-b.date);
  const visible=events.filter(e=>!onlyNext||(e.date>=now&&e.date<=limit));
