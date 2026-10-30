@@ -127,8 +127,13 @@ input,select,textarea{scroll-margin-top:12px}
   rows.forEach(r=>{
    const mother=String(r.madreGenetica||"").trim();
    if(!mother)return;
-   if(!groups.has(mother))groups.set(mother,{madre:mother,lotes:0,transferidas:0,aceptadas:0,operculadas:0,distribuidas:0,nacidas:0,postura:0,datos:{transferidas:0,aceptadas:0,operculadas:0,distribuidas:0,nacidas:0,postura:0}});
+   if(!groups.has(mother))groups.set(mother,{madre:mother,lotes:0,transferidas:0,aceptadas:0,operculadas:0,distribuidas:0,nacidas:0,postura:0,pares:{aceptacion:{n:0,d:0},emergencia:{n:0,d:0},postura:{n:0,d:0}},datos:{transferidas:0,aceptadas:0,operculadas:0,distribuidas:0,nacidas:0,postura:0}});
    const g=groups.get(mother);g.lotes++;
+   const num=k=>r["metric_"+k]!==""&&r["metric_"+k]!=null&&Number.isFinite(Number(r["metric_"+k]))&&Number(r["metric_"+k])>=0?Number(r["metric_"+k]):null;
+   const pairAdd=(name,n,d)=>{if(n!==null&&d!==null){g.pares[name].n+=n;g.pares[name].d+=d;}};
+   pairAdd("aceptacion",num("aceptadas"),num("transferidas"));
+   pairAdd("emergencia",num("nacidas"),num("distribuidas"));
+   pairAdd("postura",num("postura"),num("nacidas"));
    ["transferidas","aceptadas","operculadas","distribuidas","nacidas","postura"].forEach(k=>{
     const value=r["metric_"+k];
     if(value!==""&&value!=null&&Number.isFinite(Number(value))&&Number(value)>=0){g[k]+=Number(value);g.datos[k]++;}
@@ -137,9 +142,9 @@ input,select,textarea{scroll-margin-top:12px}
   if(!groups.size){target.innerHTML='<p class="status">Aún no hay datos de colonias madre. Pulsa «Traer lotes de Cría de Reinas» para importar los registros.</p>';return;}
   const pct=(n,d)=>d>0?Math.round(n/d*100)+"%":"Sin datos";
   target.innerHTML=Array.from(groups.values()).sort((a,b)=>a.madre.localeCompare(b.madre,"es")).map(g=>{
-   const accept=g.datos.transferidas&&g.datos.aceptadas?pct(g.aceptadas,g.transferidas):"Sin datos";
-   const emerge=g.datos.distribuidas&&g.datos.nacidas?pct(g.nacidas,g.distribuidas):"Sin datos";
-   const laying=g.datos.nacidas&&g.datos.postura?pct(g.postura,g.nacidas):"Sin datos";
+   const accept=pct(g.pares.aceptacion.n,g.pares.aceptacion.d);
+   const emerge=pct(g.pares.emergencia.n,g.pares.emergencia.d);
+   const laying=pct(g.pares.postura.n,g.pares.postura.d);
    return '<article class="record" style="margin:8px 0"><h4>🐝 '+esc(g.madre)+'</h4><p><strong>Tandas registradas:</strong> '+g.lotes+'</p><p><strong>Transferidas:</strong> '+(g.datos.transferidas?g.transferidas:"Sin datos")+' · <strong>Aceptadas:</strong> '+(g.datos.aceptadas?g.aceptadas:"Sin datos")+' · <strong>Nacidas:</strong> '+(g.datos.nacidas?g.nacidas:"Sin datos")+' · <strong>En postura:</strong> '+(g.datos.postura?g.postura:"Sin datos")+'</p><p><strong>Aceptación:</strong> '+accept+' · <strong>Nacimiento sobre celdas distribuidas:</strong> '+emerge+' · <strong>Postura sobre reinas nacidas:</strong> '+laying+'</p></article>';
   }).join("");
  }
