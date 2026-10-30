@@ -104,20 +104,24 @@ input,select,textarea{scroll-margin-top:12px}
    const parsed=JSON.parse(await file.text());
    const incoming=Array.isArray(parsed)?parsed:(parsed&&parsed.format==="apiecuador-seguimiento-reinas"&&Array.isArray(parsed.records)?parsed.records:null);
    if(!incoming)throw new Error("Formato no reconocido");
-   const known=new Set(rows.map(r=>String(r.id||"")).filter(Boolean));
-   let added=0,skipped=0;
+   const knownIds=new Set(rows.map(r=>String(r.id||"")).filter(Boolean));
+   const recordKey=r=>[r.origenCriaId,r.lote,r.fechaTraslarve,r.apiario,r.madreGenetica].map(v=>String(v||"").trim().toLowerCase()).join("|");
+   const knownKeys=new Set(rows.map(recordKey));
+   const candidate=rows.slice();let added=0,skipped=0,invalid=0;
    incoming.forEach(item=>{
-    if(!item||typeof item!=="object"||Array.isArray(item)){skipped++;return;}
-    const row={};
+    if(!item||typeof item!=="object"||Array.isArray(item)){invalid++;return;}
+    const id=String(item.id||"").slice(0,100),signature=recordKey(item);
+    if((id&&knownIds.has(id))||(signature!=="||||"&&knownKeys.has(signature))){skipped++;return;}
+    const row={...item};
     fields.forEach(f=>row[f[0]]=String(item[f[0]]==null?"":item[f[0]]).slice(0,2000));
-    let id=String(item.id||"").slice(0,100);
-    if(id&&known.has(id)){skipped++;return;}
-    if(!id)id="imp"+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-    while(known.has(id))id="imp"+Math.random().toString(36).slice(2,10);
-    row.id=id;known.add(id);rows.push(row);added++;
+    row.id=id||("imp"+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
+    while(knownIds.has(row.id))row.id="imp"+Math.random().toString(36).slice(2,10);
+    knownIds.add(row.id);if(signature!=="||||")knownKeys.add(signature);candidate.push(row);added++;
    });
-   localStorage.setItem(key,JSON.stringify(rows));render();
-   status.textContent="Importación terminada: "+added+" registro(s) añadido(s)"+(skipped?", "+skipped+" omitido(s) por repetición o formato inválido":"")+".";
+   if(!added){status.textContent="No se añadieron registros: "+skipped+" repetido(s) y "+invalid+" inválido(s). Los datos actuales siguen intactos.";return;}
+   if(!confirm("Copia revisada: "+added+" registro(s) nuevo(s), "+skipped+" repetido(s) y "+invalid+" inválido(s). Se conservarán todos los registros actuales y los campos adicionales de la copia. ¿Continuar?"))return;
+   localStorage.setItem(key,JSON.stringify(candidate));rows=candidate;render();
+   status.textContent="Importación segura: "+added+" registro(s) añadidos, "+skipped+" repetido(s) omitido(s) y "+invalid+" inválido(s). Los datos anteriores se conservaron.";
   }catch(err){status.textContent="No se pudo importar el archivo. Comprueba que sea una copia JSON válida de Seguimiento de Reinas.";}
   finally{fileInput.value="";}
  });
