@@ -259,20 +259,24 @@ input,select,textarea{scroll-margin-top:12px}
    const parsed=JSON.parse(await file.text());
    const incoming=Array.isArray(parsed)?parsed:parsed.registros;
    if(!Array.isArray(incoming))throw new Error("formato");
-   const known=new Set(rows.map(r=>String(r.id)));
-   const valid=incoming.filter(r=>r&&typeof r==="object"&&fields.some(f=>Object.prototype.hasOwnProperty.call(r,f.id)));
-   let added=0;
-   valid.forEach(r=>{
-    const copy={};
-    fields.forEach(f=>copy[f.id]=String(r[f.id]==null?"":r[f.id]));
-    let id=String(r.id||"");
-    if(id&&known.has(id))return;
-    if(!id)id="importado-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9);
-    copy.id=id;known.add(id);rows.push(copy);added++;
+   const knownIds=new Set(rows.map(r=>String(r.id||"")).filter(Boolean));
+   const lotKey=r=>[r.lote,r.fecha,r.apiario,r.madre].map(v=>String(v||"").trim().toLowerCase()).join("|");
+   const knownLots=new Set(rows.map(lotKey));
+   const candidate=rows.slice();let added=0,skipped=0,invalid=0;
+   incoming.forEach(r=>{
+    if(!r||typeof r!=="object"||Array.isArray(r)||!fields.some(f=>Object.prototype.hasOwnProperty.call(r,f.id))){invalid++;return;}
+    const id=String(r.id||"").slice(0,120),signature=lotKey(r);
+    if((id&&knownIds.has(id))||(signature!=="|||"&&knownLots.has(signature))){skipped++;return;}
+    const copy={...r};
+    fields.forEach(f=>copy[f.id]=String(r[f.id]==null?"":r[f.id]).slice(0,2000));
+    copy.id=id||("importado-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,9));
+    knownIds.add(copy.id);if(signature!=="|||")knownLots.add(signature);candidate.push(copy);added++;
    });
-   if(!added){status.textContent="El archivo no contiene registros válidos de cría de reinas.";return;}
-   localStorage.setItem(key,JSON.stringify(rows));const synced=sincronizarTareasCalendario();render();
-   status.textContent="Importación terminada: "+added+" registro(s) añadidos y "+synced+" revisiones sincronizadas con Calendario Apícola. Los registros anteriores se conservaron.";
+   if(!added){status.textContent="No se añadieron registros: "+skipped+" repetido(s) y "+invalid+" inválido(s). Los datos actuales siguen intactos.";return;}
+   if(!confirm("Respaldo revisado: "+added+" lote(s) nuevo(s), "+skipped+" repetido(s) y "+invalid+" inválido(s). Se conservarán los registros actuales y los datos adicionales del respaldo. ¿Continuar?"))return;
+   localStorage.setItem(key,JSON.stringify(candidate));rows=candidate;
+   const synced=sincronizarTareasCalendario();render();
+   status.textContent="Importación segura: "+added+" lote(s) añadidos, "+skipped+" repetido(s) omitido(s) y "+invalid+" inválido(s). Los registros existentes se conservaron; "+synced+" revisiones sincronizadas.";
   }catch(e){status.textContent="No se pudo importar. Selecciona un respaldo JSON válido de ApiEcuador.";}
   finally{fileInput.value="";}
  });
