@@ -18,8 +18,14 @@ function render(){
  const now=localDate(new Date()),limit=new Date(now);limit.setDate(limit.getDate()+7);const events=[];
  read(keys.tareas).forEach(r=>{const d=parseDate(r.fecha);if(d)events.push({date:d,title:r.tarea||r.tipo||"Tarea apícola",apiario:r.apiario||"Apiario sin indicar",detail:[r.tipo,r.prioridad,r.notas].filter(Boolean).join(" · "),source:"Calendario y tareas"});});
  read(keys.reinas).forEach(r=>{
-  const d1=parseDate(r.revision);if(d1)events.push({date:d1,title:"Revisar aceptación del traslarve",apiario:r.apiario||"Apiario sin indicar",detail:[r.madre,r.cantidad? r.cantidad+" celdas":"",r.resultado].filter(Boolean).join(" · "),source:"Cría de reinas"});
-  const d2=parseDate(r.nacimiento);if(d2)events.push({date:d2,title:"Nacimiento estimado de reinas",apiario:r.apiario||"Apiario sin indicar",detail:[r.madre,r.cantidad? r.cantidad+" celdas":"",r.iniciadora].filter(Boolean).join(" · "),source:"Cría de reinas"});
+  const lot=r.lote||"Lote sin identificar",base=[lot,r.apiario||"Apiario sin indicar",r.cantidad?r.cantidad+" celdas":"",r.madre].filter(Boolean);
+  const add=(field,title,kind)=>{const d=parseDate(r[field]);if(d)events.push({date:d,title:lot+" · "+title,apiario:r.apiario||"Apiario sin indicar",detail:base.concat(kind?[kind]:[]).join(" · "),source:"Cría de reinas"});};
+  add("revision","Revisión de aceptación","Fecha planificada");
+  add("fechaOperculacion","Operculación de celdas","Fecha registrada");
+  add("fechaDistribucion","Distribución de celdas","Fecha planificada");
+  add("nacimiento","Nacimiento estimado","Estimación; confirmar en el apiario");
+  add("fechaNacimientoReal","Nacimiento observado","Hecho registrado");
+  add("fechaPostura","Comprobación de postura","Fecha prevista; confirmar postura");
  });
  read(keys.sanidad).forEach(r=>{const d=parseDate(r.revision);if(d)events.push({date:d,title:"Revisión posterior al tratamiento",apiario:r.apiario||"Apiario sin indicar",detail:[r.tipo,r.producto,r.colmenas? r.colmenas+" colmenas":""].filter(Boolean).join(" · "),source:"Alimentación y tratamientos"});});
  events.sort((a,b)=>a.date-b.date);
