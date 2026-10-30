@@ -69,13 +69,15 @@ input,select,textarea{scroll-margin-top:12px}
   lots.forEach(row=>{
    if(!row.fecha||row.fecha.length!==10||row.fecha[4]!=="-"||row.fecha[7]!=="-")return;
    const notice=Math.max(0,Math.min(365,parseInt(row.avisoDias==null||row.avisoDias===""?"1":row.avisoDias,10)||0));
+   // Fechas alineadas con Cría de Reinas (módulo 22): el traslarve es Día 1.
+   // Se usan los mismos desplazamientos que Google Calendar para evitar avisos con un día de diferencia.
    const milestones=[
-    {fecha:row.revision||addDays(row.fecha,2),tarea:"Revisar aceptación de celdas"},
+    {fecha:row.revision||addDays(row.fecha,1),tarea:"Revisar aceptación de celdas"},
     {fecha:addDays(row.fecha,5),tarea:"Revisar cría abierta y buscar celdas espontáneas"},
-    {fecha:row.fechaDistribucion||addDays(row.fecha,10),tarea:"Proteger y distribuir celdas antes de la emergencia"},
-    {fecha:row.nacimiento||addDays(row.fecha,11),tarea:"Vigilar nacimiento estimado de reinas"},
-    {fecha:row.fechaPostura||addDays(row.fecha,25),tarea:"Revisar fecundación y postura"},
-    {fecha:addDays(row.fecha,31),tarea:"Segunda revisión de postura si aún no se confirmó"},
+    {fecha:row.fechaDistribucion||addDays(row.fecha,9),tarea:"Proteger y distribuir celdas antes de la emergencia"},
+    {fecha:row.nacimiento||addDays(row.fecha,10),tarea:"Vigilar nacimiento estimado de reinas"},
+    {fecha:row.fechaPostura||addDays(row.fecha,24),tarea:"Revisar fecundación y postura"},
+    {fecha:addDays(row.fecha,30),tarea:"Segunda revisión de postura si aún no se confirmó"},
     {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"}
    ];
    milestones.forEach((m,i)=>{
