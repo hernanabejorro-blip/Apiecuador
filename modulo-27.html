@@ -70,25 +70,39 @@ input,select,textarea{scroll-margin-top:12px}
   try{
    const backup=JSON.parse(await file.text());
    if(!backup||backup.app!=="ApiEcuador"||backup.formatVersion!==1||!backup.data||typeof backup.data!=="object")throw new Error("formato");
-   const planned={};let found=0;
-   Array.from(new Set([...keys,...Object.keys(backup.data).filter(k=>k.startsWith("apiecuador-"))])).forEach(k=>{
-    if(!Object.prototype.hasOwnProperty.call(backup.data,k))return;
+   const planned={};let groups=0,added=0,duplicates=0,unsupported=0,restored=0;
+   const importKeys=Object.keys(backup.data).filter(k=>k.startsWith("apiecuador-"));
+   if(!importKeys.length)throw new Error("sin datos ApiEcuador");
+   importKeys.forEach(k=>{
     const incoming=backup.data[k];
     if(k==="apiecuador-personalizacion-v1"){
-     if(incoming&&typeof incoming==="object"&&!Array.isArray(incoming)){planned[k]=incoming;found++;}
+     if(!incoming||typeof incoming!=="object"||Array.isArray(incoming)){unsupported++;return;}
+     if(read(k)===null){planned[k]=incoming;restored++;groups++;}
+     else{duplicates++;}
      return;
     }
-    if(!Array.isArray(incoming))return;
-    const current=read(k);const merged=Array.isArray(current)?current.slice():[];
-    const seen=new Set(merged.map((r)=>r&&r.id!=null?"id:"+r.id:JSON.stringify(r)));
-    incoming.forEach(r=>{const sig=r&&r.id!=null?"id:"+r.id:JSON.stringify(r);if(!seen.has(sig)){merged.push(r);seen.add(sig);}});
-    planned[k]=merged;found++;
+    const currentRaw=localStorage.getItem(k);
+    if(Array.isArray(incoming)){
+     const current=read(k);const merged=Array.isArray(current)?current.slice():[];
+     const seen=new Set(merged.map(r=>r&&r.id!=null?"id:"+String(r.id):"json:"+JSON.stringify(r)));
+     let changed=0;
+     incoming.forEach(item=>{
+      const sig=item&&item.id!=null?"id:"+String(item.id):"json:"+JSON.stringify(item);
+      if(seen.has(sig)){duplicates++;return;}
+      merged.push(item);seen.add(sig);changed++;
+     });
+     if(changed||currentRaw===null){planned[k]=merged;groups++;added+=changed;}
+     return;
+    }
+    if(currentRaw===null){planned[k]=incoming;groups++;restored++;}
+    else{duplicates++;}
    });
-   if(!found)throw new Error("vacio");
+   if(!groups)throw new Error("sin registros nuevos o grupos recuperables");
    const before={};Object.keys(planned).forEach(k=>{before[k]=localStorage.getItem(k);});
+   if(!confirm("Revisión de la copia:\\n"+groups+" grupo(s) se actualizarán o recuperarán.\\n"+added+" registro(s) nuevo(s) en listas.\\n"+restored+" grupo(s) de configuración/datos se recuperarán.\\n"+duplicates+" elemento(s) repetido(s) o ya existente(s) se conservarán sin sobrescribir.\\n"+unsupported+" elemento(s) con formato no compatible se omitirán.\\n\\n¿Quieres combinar esta copia con los datos actuales?"))return;
    try{Object.keys(planned).forEach(k=>localStorage.setItem(k,JSON.stringify(planned[k])));}
    catch(writeError){Object.keys(planned).forEach(k=>{try{if(before[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,before[k]);}catch(ignore){}});throw writeError;}
-   status.textContent="Importación terminada. Los registros se combinaron sin reemplazar los existentes. Abre cada módulo para comprobarlos.";actualizarResumen();
+   status.textContent="Recuperación terminada: "+added+" registro(s) añadidos, "+restored+" grupo(s) recuperados, "+duplicates+" repetido(s) conservado(s) y "+unsupported+" elemento(s) omitido(s). Los datos actuales no se reemplazaron.";actualizarResumen();
   }catch(e){status.textContent="No se pudo importar: el archivo no parece una copia válida de ApiEcuador o no hay espacio suficiente. Tus datos anteriores se conservaron.";}
  });
 })();
