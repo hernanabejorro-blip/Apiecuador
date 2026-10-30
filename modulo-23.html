@@ -60,7 +60,7 @@ input,select,textarea{scroll-margin-top:12px}
  cargarLotesReina();
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
- let rows=[];try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}
+ let rows=[],rowsStorageValid=true;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows)){rows=[];rowsStorageValid=false;}}catch(e){rows=[];rowsStorageValid=false;}
  function sincronizarDesdeCria(){
   let lots=[];try{lots=JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1")||"[]");if(!Array.isArray(lots))lots=[];}catch(e){lots=[];}
   let saved=[];const savedRaw=localStorage.getItem(key);try{saved=JSON.parse(savedRaw||"[]");if(!Array.isArray(saved))return rows;}catch(e){return rows;}
@@ -94,7 +94,7 @@ input,select,textarea{scroll-margin-top:12px}
   generated.forEach(t=>{const i=merged.findIndex(old=>old.id===t.id);if(i>=0)merged[i]=t;else merged.push(t);});
   try{localStorage.setItem(key,JSON.stringify(merged));return JSON.parse(localStorage.getItem(key)||"[]");}catch(e){return saved;}
  }
- rows=sincronizarDesdeCria();
+ if(rowsStorageValid){rows=sincronizarDesdeCria();}else{status.textContent="⚠️ No pude leer las tareas guardadas. Para protegerlas, desactivé el formulario hasta recuperar una copia JSON.";form.querySelectorAll("input,select,textarea,button").forEach(el=>el.disabled=true);}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){
   list.innerHTML="";
@@ -112,7 +112,7 @@ input,select,textarea{scroll-margin-top:12px}
   });
  }
  form.addEventListener("submit",e=>{
-  e.preventDefault();const editingId=form.dataset.editing;const existing=editingId?rows.find(r=>r.id===editingId):null;const row=existing||{id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+  e.preventDefault();if(!rowsStorageValid){status.textContent="Recupera primero una copia JSON; no guardaré encima de las tareas ilegibles.";return;}const editingId=form.dataset.editing;const existing=editingId?rows.find(r=>r.id===editingId):null;const row=existing||{id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   try{if(!existing)rows.push(row);localStorage.setItem(key,JSON.stringify(rows));form.reset();delete form.dataset.editing;form.querySelector('button[type="submit"]').textContent="Guardar registro";render();status.textContent=existing?"Cambios guardados; fecha y aviso actualizados.":"Registro guardado en este teléfono.";}
   catch(e){if(!existing)rows.pop();status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
