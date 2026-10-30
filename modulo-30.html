@@ -69,7 +69,7 @@ input,select,textarea{scroll-margin-top:12px}
 <label for="notas">Observaciones</label><textarea id="notas" rows="3" maxlength="1200" placeholder="Aceptación, calidad de la celda, clima, comportamiento, patrón de cría..."></textarea>
 <div class="actions"><button class="primary" id="guardar" type="submit">Guardar registro</button><button class="secondary" id="limpiar" type="button">Limpiar</button></div><p class="status" id="estado" role="status" aria-live="polite"></p>
 </form></section>
-<section class="panel"><h2>Historial de lotes y reinas</h2><p id="contador" class="status"></p><div id="resumen-estados" class="grid" aria-live="polite"></div><div id="lista"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar CSV</button><button class="secondary" id="respaldo-reinas-json" type="button">Descargar copia JSON</button><button class="secondary" id="importar-reinas-json" type="button">Importar copia JSON</button><input id="archivo-reinas-json" type="file" accept="application/json,.json" hidden></div><p class="status">La copia JSON incluye todos los registros de este módulo. Importar añade registros nuevos y no reemplaza los que ya existen.</p></section>
+<section class="panel"><h2>Historial de lotes y reinas</h2><p id="contador" class="status"></p><div id="resumen-estados" class="grid" aria-live="polite"></div><section class="panel" style="margin:14px 0;background:#f8faf5"><h3>Rendimiento por colonia madre</h3><p class="status">Comparación orientativa por tandas sincronizadas desde Cría de Reinas. Los porcentajes solo se calculan cuando hay cantidades registradas; no son una evaluación genética definitiva.</p><div id="rendimiento-madres" aria-live="polite"></div></section><div id="lista"></div><div class="actions"><button class="primary" id="sincronizar-cria" type="button">🔄 Traer lotes de Cría de Reinas</button><button class="secondary" id="exportar" type="button">Exportar CSV</button><button class="secondary" id="respaldo-reinas-json" type="button">Descargar copia JSON</button><button class="secondary" id="importar-reinas-json" type="button">Importar copia JSON</button><input id="archivo-reinas-json" type="file" accept="application/json,.json" hidden></div><p class="status">La copia JSON incluye todos los registros de este módulo. Importar añade registros nuevos y no reemplaza los que ya existen.</p></section>
 </main>
 <script>
 (function(){
@@ -78,13 +78,13 @@ input,select,textarea{scroll-margin-top:12px}
  const form=document.getElementById("form"),list=document.getElementById("lista"),status=document.getElementById("estado");
  let rows=[],editing=null;try{const v=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(v))rows=v;}catch(e){}
  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
- function render(){list.innerHTML="";const totalCopas=rows.reduce((n,r)=>n+Math.max(0,Number(r.cantidad)||0),0);const totalAceptadas=rows.reduce((n,r)=>n+Math.max(0,Number(r.aceptadas)||0),0);const lotesConConteo=rows.filter(r=>String(r.cantidad||"").trim()!==""&&Number(r.cantidad)>0&&String(r.aceptadas||"").trim()!=="");const porcentaje=totalCopas>0?Math.round(totalAceptadas/totalCopas*100):null;document.getElementById("contador").textContent=rows.length+" registro(s) · "+totalCopas+" copas/larvas injertadas · "+totalAceptadas+" celdas aceptadas"+(totalAceptadas>totalCopas?" · revisar cantidades: las celdas aceptadas superan el total injertado":(porcentaje!==null?" · aceptación global orientativa: "+porcentaje+"%":""))+". Los totales se calculan solo con los datos registrados; revisa las cantidades si importaste una copia antigua.";const estados=["En desarrollo","Celda aceptada","Reina nacida","En núcleo de fecundación","Fecundación por comprobar","Postura comprobada","No prosperó"];const resumen=document.getElementById("resumen-estados");resumen.innerHTML=estados.map(s=>{const n=rows.filter(r=>String(r["estado-reina"]||"En desarrollo")===s).length;return '<div style="background:#f6f7f1;border:1px solid #e1e6db;border-radius:12px;padding:10px 12px"><div style="font-size:12px;color:#65584b">'+esc(s)+'</div><strong style="font-size:22px">'+n+'</strong></div>';}).join("");
+ function render(){list.innerHTML="";const totalCopas=rows.reduce((n,r)=>n+Math.max(0,Number(r.cantidad)||0),0);const totalAceptadas=rows.reduce((n,r)=>n+Math.max(0,Number(r.aceptadas)||0),0);const lotesConConteo=rows.filter(r=>String(r.cantidad||"").trim()!==""&&Number(r.cantidad)>0&&String(r.aceptadas||"").trim()!=="");const porcentaje=totalCopas>0?Math.round(totalAceptadas/totalCopas*100):null;document.getElementById("contador").textContent=rows.length+" registro(s) · "+totalCopas+" copas/larvas injertadas · "+totalAceptadas+" celdas aceptadas"+(totalAceptadas>totalCopas?" · revisar cantidades: las celdas aceptadas superan el total injertado":(porcentaje!==null?" · aceptación global orientativa: "+porcentaje+"%":""))+". Los totales se calculan solo con los datos registrados; revisa las cantidades si importaste una copia antigua.";const estados=["En desarrollo","Celda aceptada","Reina nacida","En núcleo de fecundación","Fecundación por comprobar","Postura comprobada","No prosperó"];const resumen=document.getElementById("resumen-estados");resumen.innerHTML=estados.map(s=>{const n=rows.filter(r=>String(r["estado-reina"]||"En desarrollo")===s).length;return '<div style="background:#f6f7f1;border:1px solid #e1e6db;border-radius:12px;padding:10px 12px"><div style="font-size:12px;color:#65584b">'+esc(s)+'</div><strong style="font-size:22px">'+n+'</strong></div>';}).join("");renderRendimientoMadres();
  if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay registros de reinas. Puedes comenzar con un lote de traslarve.</p>';return;}
- rows.slice().reverse().forEach(r=>{const card=document.createElement("article");card.className="record";const grafted=Number(r.cantidad),accepted=Number(r.aceptadas);const ratio=String(r.cantidad||"").trim()!==""&&grafted>0&&String(r.aceptadas||"").trim()!==""&&accepted<=grafted?"<p><strong>Aceptación del lote:</strong> "+Math.round(accepted/grafted*100)+"% ("+esc(r.aceptadas)+" de "+esc(r.cantidad)+")</p>":"";const etapas=[["Traslarve",r.fechaTraslarve],["Nacimiento",r.nacimiento],["Introducción en núcleo",r.introduccion],["Postura comprobada",r.postura]];const etapasHtml="<p><strong>Etapas registradas:</strong> "+etapas.map(et=>esc(et[0])+": "+(et[1]?"✓ "+esc(et[1]):"pendiente")).join(" · ")+"</p>";card.innerHTML="<h3>👑 "+esc(r.lote||"Lote sin código")+"</h3>"+etapasHtml+fields.filter(f=>String(r[f[0]]||"").trim()).map(f=>"<p><strong>"+esc(f[1])+":</strong> "+esc(r[f[0]])+"</p>").join("")+ratio+'<div class="actions"><button class="secondary" type="button" data-edit="'+esc(r.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(r.id)+'">Eliminar</button></div>';list.appendChild(card);});
+ rows.slice().reverse().forEach(r=>{const card=document.createElement("article");card.className="record";const grafted=Number(r.cantidad),accepted=Number(r.aceptadas);const ratio=String(r.cantidad||"").trim()!==""&&grafted>0&&String(r.aceptadas||"").trim()!==""&&accepted<=grafted?"<p><strong>Aceptación del lote:</strong> "+Math.round(accepted/grafted*100)+"% ("+esc(r.aceptadas)+" de "+esc(r.cantidad)+")</p>":"";const etapas=[["Traslarve",r.fechaTraslarve],["Nacimiento",r.nacimiento],["Introducción en núcleo",r.introduccion],["Postura comprobada",r.postura]];const etapasHtml="<p><strong>Etapas registradas:</strong> "+etapas.map(et=>esc(et[0])+": "+(et[1]?"✓ "+esc(et[1]):"pendiente")).join(" · ")+"</p>";card.innerHTML="<h3>👑 "+esc(r.lote||"Lote sin código")+"</h3>"+etapasHtml+fields.filter(f=>String(r[f[0]]||"").trim()).map(f=>"<p><strong>"+esc(f[1])+":</strong> "+esc(r[f[0]])+"</p>").join("")+(r.resumenCria?'<p style="white-space:pre-line"><strong>Datos vinculados de Cría de Reinas:</strong> '+esc(r.resumenCria)+'</p>':"")+ratio+'<div class="actions"><button class="secondary" type="button" data-edit="'+esc(r.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(r.id)+'">Eliminar</button></div>';list.appendChild(card);});
  }
  const consejos={"En desarrollo":"Observa la evolución y evita manipulaciones innecesarias; sigue el calendario de tu método.","Celda aceptada":"Cuenta las celdas viables y planifica su manejo según la fecha real y las condiciones de la colonia.","Reina nacida":"Anota la fecha de emergencia y comprueba que la reina esté activa y sin daños visibles.","En núcleo de fecundación":"Vigila alimento, población y condiciones del núcleo; evita revisiones excesivas.","Fecundación por comprobar":"Ten en cuenta el clima y la disponibilidad de vuelos; no concluyas que falló solo por una demora.","Postura comprobada":"Registra huevos y observa el patrón de cría en revisiones posteriores para valorar su calidad.","No prosperó":"Anota lo observado y la causa probable para mejorar la siguiente tanda."};function mostrarConsejo(){const el=document.getElementById("consejo-etapa");if(el)el.textContent=consejos[document.getElementById("estado-reina").value]||"Registra la etapa real observada.";}document.getElementById("estado-reina").addEventListener("change",mostrarConsejo);
  function reset(){form.reset();mostrarConsejo();editing=null;document.getElementById("form-title").textContent="Registrar lote o reina";document.getElementById("guardar").textContent="Guardar registro";}
- form.addEventListener("submit",e=>{e.preventDefault();const cantidadEl=document.getElementById("cantidad"),aceptadasEl=document.getElementById("aceptadas");const injertadas=Number(cantidadEl.value),aceptadas=Number(aceptadasEl.value);if(cantidadEl.value!==""&&aceptadasEl.value!==""&&aceptadas>injertadas){status.textContent="Revisa las cantidades: las celdas aceptadas no pueden superar las copas o larvas injertadas.";aceptadasEl.focus();return;}const fechas=[["fechaTraslarve","Nacimiento observado"],["nacimiento","Fecha de introducción en núcleo"],["introduccion","Postura comprobada"]];for(let i=0;i<fechas.length;i++){const anterior=document.getElementById(fechas[i][0]).value;const siguiente=document.getElementById(i===0?"nacimiento":i===1?"introduccion":"postura").value;if(anterior&&siguiente&&siguiente<anterior){status.textContent="Revisa las fechas: "+fechas[i][1]+" no puede ser anterior a la etapa previa.";document.getElementById(i===0?"nacimiento":i===1?"introduccion":"postura").focus();return;}}const row={id:editing||("r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6))};fields.forEach(f=>row[f[0]]=String(document.getElementById(f[0]).value||"").trim());const idx=editing?rows.findIndex(x=>x.id===editing):-1;const previous=idx>=0?rows[idx]:null;try{if(idx>=0)rows[idx]=row;else rows.push(row);localStorage.setItem(key,JSON.stringify(rows));reset();render();status.textContent="Registro de reina guardado en este teléfono.";}catch(err){if(idx>=0)rows[idx]=previous;else rows.pop();status.textContent="No se pudo guardar. Comprueba el espacio disponible del navegador."; }});
+ form.addEventListener("submit",e=>{e.preventDefault();const cantidadEl=document.getElementById("cantidad"),aceptadasEl=document.getElementById("aceptadas");const injertadas=Number(cantidadEl.value),aceptadas=Number(aceptadasEl.value);if(cantidadEl.value!==""&&aceptadasEl.value!==""&&aceptadas>injertadas){status.textContent="Revisa las cantidades: las celdas aceptadas no pueden superar las copas o larvas injertadas.";aceptadasEl.focus();return;}const fechas=[["fechaTraslarve","Nacimiento observado"],["nacimiento","Fecha de introducción en núcleo"],["introduccion","Postura comprobada"]];for(let i=0;i<fechas.length;i++){const anterior=document.getElementById(fechas[i][0]).value;const siguiente=document.getElementById(i===0?"nacimiento":i===1?"introduccion":"postura").value;if(anterior&&siguiente&&siguiente<anterior){status.textContent="Revisa las fechas: "+fechas[i][1]+" no puede ser anterior a la etapa previa.";document.getElementById(i===0?"nacimiento":i===1?"introduccion":"postura").focus();return;}}const row={id:editing||("r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6))};fields.forEach(f=>row[f[0]]=String(document.getElementById(f[0]).value||"").trim());const idx=editing?rows.findIndex(x=>x.id===editing):-1;const previous=idx>=0?rows[idx]:null;if(previous){row.origenCriaId=previous.origenCriaId;row.resumenCria=previous.resumenCria;}try{if(idx>=0)rows[idx]=row;else rows.push(row);localStorage.setItem(key,JSON.stringify(rows));reset();render();status.textContent="Registro de reina guardado en este teléfono.";}catch(err){if(idx>=0)rows[idx]=previous;else rows.pop();status.textContent="No se pudo guardar. Comprueba el espacio disponible del navegador."; }});
  list.addEventListener("click",e=>{const b=e.target.closest("[data-edit]");if(b){const r=rows.find(x=>x.id===b.dataset.edit);if(!r)return;fields.forEach(f=>document.getElementById(f[0]).value=r[f[0]]||"");editing=r.id;document.getElementById("form-title").textContent="Editar lote o reina";document.getElementById("guardar").textContent="Guardar cambios";status.textContent="Edita los datos y guarda los cambios.";form.scrollIntoView({behavior:"smooth",block:"start"});return;}const d=e.target.closest("[data-delete]");if(!d)return;if(!confirm("¿Eliminar este registro de reina? Esta acción no se puede deshacer."))return;const old=rows;rows=rows.filter(x=>x.id!==d.dataset.delete);try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){rows=old;status.textContent="No se pudo actualizar el almacenamiento."; }});
  document.getElementById("limpiar").addEventListener("click",()=>{reset();status.textContent="Formulario limpio.";});
  document.getElementById("exportar").addEventListener("click",()=>{const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';const csv=[fields.map(f=>cell(f[1])).join(","),...rows.map(r=>fields.map(f=>cell(r[f[0]])).join(","))].join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="apiecuador-seguimiento-reinas.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);status.textContent="Se preparó la descarga del archivo CSV.";});
@@ -104,23 +104,89 @@ input,select,textarea{scroll-margin-top:12px}
    const parsed=JSON.parse(await file.text());
    const incoming=Array.isArray(parsed)?parsed:(parsed&&parsed.format==="apiecuador-seguimiento-reinas"&&Array.isArray(parsed.records)?parsed.records:null);
    if(!incoming)throw new Error("Formato no reconocido");
-   const known=new Set(rows.map(r=>String(r.id||"")).filter(Boolean));
-   let added=0,skipped=0;
+   const knownIds=new Set(rows.map(r=>String(r.id||"")).filter(Boolean));
+   const recordKey=r=>[r.origenCriaId,r.lote,r.fechaTraslarve,r.apiario,r.madreGenetica].map(v=>String(v||"").trim().toLowerCase()).join("|");
+   const knownKeys=new Set(rows.map(recordKey));
+   const candidate=rows.slice();let added=0,skipped=0,invalid=0;
    incoming.forEach(item=>{
-    if(!item||typeof item!=="object"||Array.isArray(item)){skipped++;return;}
-    const row={};
+    if(!item||typeof item!=="object"||Array.isArray(item)){invalid++;return;}
+    const id=String(item.id||"").slice(0,100),signature=recordKey(item);
+    if((id&&knownIds.has(id))||(signature!=="||||"&&knownKeys.has(signature))){skipped++;return;}
+    const row={...item};
     fields.forEach(f=>row[f[0]]=String(item[f[0]]==null?"":item[f[0]]).slice(0,2000));
-    let id=String(item.id||"").slice(0,100);
-    if(id&&known.has(id)){skipped++;return;}
-    if(!id)id="imp"+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-    while(known.has(id))id="imp"+Math.random().toString(36).slice(2,10);
-    row.id=id;known.add(id);rows.push(row);added++;
+    row.id=id||("imp"+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
+    while(knownIds.has(row.id))row.id="imp"+Math.random().toString(36).slice(2,10);
+    knownIds.add(row.id);if(signature!=="||||")knownKeys.add(signature);candidate.push(row);added++;
    });
-   localStorage.setItem(key,JSON.stringify(rows));render();
-   status.textContent="Importación terminada: "+added+" registro(s) añadido(s)"+(skipped?", "+skipped+" omitido(s) por repetición o formato inválido":"")+".";
+   if(!added){status.textContent="No se añadieron registros: "+skipped+" repetido(s) y "+invalid+" inválido(s). Los datos actuales siguen intactos.";return;}
+   if(!confirm("Copia revisada: "+added+" registro(s) nuevo(s), "+skipped+" repetido(s) y "+invalid+" inválido(s). Se conservarán todos los registros actuales y los campos adicionales de la copia. ¿Continuar?"))return;
+   localStorage.setItem(key,JSON.stringify(candidate));rows=candidate;render();
+   status.textContent="Importación segura: "+added+" registro(s) añadidos, "+skipped+" repetido(s) omitido(s) y "+invalid+" inválido(s). Los datos anteriores se conservaron.";
   }catch(err){status.textContent="No se pudo importar el archivo. Comprueba que sea una copia JSON válida de Seguimiento de Reinas.";}
   finally{fileInput.value="";}
  });
+ function renderRendimientoMadres(){
+  const target=document.getElementById("rendimiento-madres");
+  const groups=new Map();
+  rows.forEach(r=>{
+   const mother=String(r.madreGenetica||"").trim();
+   if(!mother)return;
+   if(!groups.has(mother))groups.set(mother,{madre:mother,lotes:0,transferidas:0,aceptadas:0,operculadas:0,distribuidas:0,nacidas:0,postura:0,pares:{aceptacion:{n:0,d:0},emergencia:{n:0,d:0},postura:{n:0,d:0}},datos:{transferidas:0,aceptadas:0,operculadas:0,distribuidas:0,nacidas:0,postura:0}});
+   const g=groups.get(mother);g.lotes++;
+   const num=k=>r["metric_"+k]!==""&&r["metric_"+k]!=null&&Number.isFinite(Number(r["metric_"+k]))&&Number(r["metric_"+k])>=0?Number(r["metric_"+k]):null;
+   const pairAdd=(name,n,d)=>{if(n!==null&&d!==null){g.pares[name].n+=n;g.pares[name].d+=d;}};
+   pairAdd("aceptacion",num("aceptadas"),num("transferidas"));
+   pairAdd("emergencia",num("nacidas"),num("distribuidas"));
+   pairAdd("postura",num("postura"),num("nacidas"));
+   ["transferidas","aceptadas","operculadas","distribuidas","nacidas","postura"].forEach(k=>{
+    const value=r["metric_"+k];
+    if(value!==""&&value!=null&&Number.isFinite(Number(value))&&Number(value)>=0){g[k]+=Number(value);g.datos[k]++;}
+   });
+  });
+  if(!groups.size){target.innerHTML='<p class="status">Aún no hay datos de colonias madre. Pulsa «Traer lotes de Cría de Reinas» para importar los registros.</p>';return;}
+  const pct=(n,d)=>d>0?Math.round(n/d*100)+"%":"Sin datos";
+  target.innerHTML=Array.from(groups.values()).sort((a,b)=>a.madre.localeCompare(b.madre,"es")).map(g=>{
+   const accept=pct(g.pares.aceptacion.n,g.pares.aceptacion.d);
+   const emerge=pct(g.pares.emergencia.n,g.pares.emergencia.d);
+   const laying=pct(g.pares.postura.n,g.pares.postura.d);
+   return '<article class="record" style="margin:8px 0"><h4>🐝 '+esc(g.madre)+'</h4><p><strong>Tandas registradas:</strong> '+g.lotes+'</p><p><strong>Transferidas:</strong> '+(g.datos.transferidas?g.transferidas:"Sin datos")+' · <strong>Aceptadas:</strong> '+(g.datos.aceptadas?g.aceptadas:"Sin datos")+' · <strong>Nacidas:</strong> '+(g.datos.nacidas?g.nacidas:"Sin datos")+' · <strong>En postura:</strong> '+(g.datos.postura?g.postura:"Sin datos")+'</p><p><strong>Aceptación:</strong> '+accept+' · <strong>Nacimiento sobre celdas distribuidas:</strong> '+emerge+' · <strong>Postura sobre reinas nacidas:</strong> '+laying+'</p></article>';
+  }).join("");
+ }
+ function sincronizarDesdeCria(){
+  let lots=[];try{lots=JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1")||"[]");if(!Array.isArray(lots))lots=[];}catch(e){lots=[];}
+  if(!lots.length){status.textContent="No encontré lotes guardados en Cría de Reinas en este teléfono.";return;}
+  let added=0,updated=0;
+  lots.forEach(src=>{
+   if(!src||!src.id||!src.fecha)return;
+   let row=rows.find(x=>x.origenCriaId===src.id)||rows.find(x=>x.lote===src.lote&&x.fechaTraslarve===src.fecha);
+   const summary=[
+    src.madre?"Colonia madre: "+src.madre:"",
+    src.iniciadora?"Colonia criadora: "+src.iniciadora:"",
+    src.cantidad!==""&&src.cantidad!=null?"Celdas transferidas: "+src.cantidad:"",
+    src.aceptadas!==""&&src.aceptadas!=null?"Celdas aceptadas: "+src.aceptadas:"",
+    src.operculadas!==""&&src.operculadas!=null?"Celdas operculadas: "+src.operculadas:"",
+    src.distribuidas!==""&&src.distribuidas!=null?"Celdas distribuidas: "+src.distribuidas:"",
+    src.nacidas!==""&&src.nacidas!=null?"Reinas nacidas registradas: "+src.nacidas:"",
+    src.postura!==""&&src.postura!=null?"Reinas confirmadas en postura: "+src.postura:"",
+    src.fechaDistribucion?"Distribución estimada: "+src.fechaDistribucion:"",
+    src.nacimiento?"Nacimiento estimado: "+src.nacimiento:"",
+    src.fechaPostura?"Revisión estimada de postura: "+src.fechaPostura:""
+   ].filter(Boolean).join("\n");
+   if(!row){
+    row={id:"cria-"+String(src.id).replace(/[^a-zA-Z0-9_-]/g,"").slice(0,80),lote:src.lote||"Lote sin número",apiario:src.apiario||"",fechaTraslarve:src.fecha||"",cantidad:src.cantidad==null?"":String(src.cantidad),aceptadas:src.aceptadas==null?"":String(src.aceptadas),"estado-reina":Number(src.aceptadas)>0?"Celda aceptada":"En desarrollo",nacimiento:"",introduccion:"",postura:"",marca:"",notas:"",origenCriaId:src.id,resumenCria:summary,madreGenetica:String(src.madre||"").trim(),metric_transferidas:src.cantidad==null?"":String(src.cantidad),metric_aceptadas:src.aceptadas==null?"":String(src.aceptadas),metric_operculadas:src.operculadas==null?"":String(src.operculadas),metric_distribuidas:src.distribuidas==null?"":String(src.distribuidas),metric_nacidas:src.nacidas==null?"":String(src.nacidas),metric_postura:src.postura==null?"":String(src.postura)};
+    if(rows.some(x=>x.id===row.id))row.id+="-"+Math.random().toString(36).slice(2,6);
+    rows.push(row);added++;
+   }else{
+    row.origenCriaId=src.id;
+    ["lote","apiario","fechaTraslarve","cantidad","aceptadas"].forEach(k=>{const v=src[k==="fechaTraslarve"?"fecha":k];if((row[k]==null||row[k]==="")&&v!=null)row[k]=String(v);});
+    if((!row["estado-reina"]||row["estado-reina"]==="En desarrollo")&&Number(src.aceptadas)>0)row["estado-reina"]="Celda aceptada";
+    row.resumenCria=summary;row.madreGenetica=String(src.madre||"").trim();row.metric_transferidas=src.cantidad==null?"":String(src.cantidad);row.metric_aceptadas=src.aceptadas==null?"":String(src.aceptadas);row.metric_operculadas=src.operculadas==null?"":String(src.operculadas);row.metric_distribuidas=src.distribuidas==null?"":String(src.distribuidas);row.metric_nacidas=src.nacidas==null?"":String(src.nacidas);row.metric_postura=src.postura==null?"":String(src.postura);updated++;
+   }
+  });
+  try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Sincronización terminada: "+added+" lote(s) añadidos y "+updated+" actualizado(s). Los datos manuales de seguimiento se conservaron; las fechas estimadas se muestran separadas de las observadas.";}
+  catch(e){status.textContent="No se pudo guardar la sincronización. No se modificó el archivo de respaldo original.";}
+ }
+ document.getElementById("sincronizar-cria").addEventListener("click",sincronizarDesdeCria);
  render();
 })();
 </script><script>
