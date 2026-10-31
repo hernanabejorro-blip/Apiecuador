@@ -45,7 +45,7 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <div><label for="density">Continuidad / densidad del bosque</label><select id="density"><option value="">Sin evaluar</option><option>Bosque continuo y denso</option><option>Varias manchas grandes</option><option>Plantación en hileras</option><option>Árboles dispersos</option><option>Por confirmar</option></select></div>
 <div><label for="satellite-cover">Cobertura que muestra el mapa</label><select id="satellite-cover"><option value="">Sin revisar</option><option>Silvicultura / plantación forestal</option><option>Bosque</option><option>Bosque abierto</option><option>Mosaico agropecuario</option><option>Otra cobertura</option></select></div>
 <div><label for="species-evidence">Evidencia de la especie</label><select id="species-evidence"><option>Sin verificar</option><option>Solo apariencia en imagen satelital</option><option>Fuente técnica o registro local</option><option>Confirmada en visita de campo</option></select></div>
-<div><label for="mapbiomas-class">Clase de MapBiomas (si la consultaste)</label><select id="mapbiomas-class"><option value="">Sin consultar</option><option value="9">9 · Silvicultura / plantación forestal</option><option value="3">3 · Bosque</option><option value="4">4 · Bosque abierto</option><option value="21">21 · Mosaico de agricultura y/o pastos</option><option value="14">14 · Agropecuaria y silvicultura (clase agrupada)</option><option value="otra">Otra clase / no identificada</option></select></div>
+<div><label for="mapbiomas-class">Clase de MapBiomas (si la consultaste)</label><select id="mapbiomas-class"><option value="">Sin consultar</option><option value="9">9 · Silvicultura / plantación forestal</option><option value="3">3 · Bosque</option><option value="4">4 · Bosque abierto</option><option value="21">21 · Mosaico de agricultura y/o pastos</option><option value="otra">Otra clase / no identificada</option></select></div>
 <div><label for="mapbiomas-year">Año del mapa consultado</label><input id="mapbiomas-year" type="number" min="1985" max="2025" step="1" placeholder="Ej. 2025"></div>
 <div><label for="mapbiomas-stability">Comportamiento en la serie histórica</label><select id="mapbiomas-stability"><option value="">Sin revisar</option><option>Se mantiene como silvicultura varios años</option><option>Se mantiene como bosque varios años</option><option>Cambió de cobertura</option><option>Mancha reciente</option><option>Sin continuidad clara</option></select></div>
 <div><label for="bloom">Estado de floración</label><select id="bloom"><option value="">Sin comprobar</option><option>Sin flor</option><option>Inicio de floración</option><option>Floración abundante</option><option>Fin de floración</option></select></div>
@@ -69,12 +69,22 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <section class="panel">
 <h2>🧭 Consultar cartografía de Ecuador</h2>
 <p>Estas fuentes ayudan a separar áreas de silvicultura, bosque y otras coberturas. Úsalas para localizar candidatos y después verifica la especie en campo.</p>
-<div class="notice"><strong>Guía rápida de clases:</strong> clase 9 = silvicultura; clase 3 = bosque; clase 4 = bosque abierto; clase 21 = mosaico de usos. La clase 14 es una categoría agrupada. Ninguna de estas clases confirma por sí sola que los árboles sean eucaliptos.</div>
+<div class="notice"><strong>Guía rápida de clases:</strong> clase 9 = silvicultura (plantaciones forestales, que pueden incluir pinos y eucaliptos); clase 3 = bosque; clase 4 = bosque abierto; clase 21 = mosaico de agricultura y/o pastos. La clase 14 agrupa agropecuaria y silvicultura: no la registres como si fuera una especie o una plantación específica. La clase 9 tampoco identifica por sí sola al eucalipto.</div>
 <div class="record">
 <h3>MapBiomas Ecuador · Colección 4.0</h3>
 <p>Mapas anuales 1985–2025 con resolución de 30 metros. Su leyenda distingue, entre otras, silvicultura, bosque y bosque abierto. Es una primera criba para localizar manchas extensas y revisar su estabilidad a lo largo de los años.</p>
 <p class="muted"><strong>Ojo:</strong> una clase de bosque o silvicultura no demuestra por sí sola que sea eucalipto. Un píxel de 30 m representa aproximadamente 0,09 hectáreas; los bordes y manchas pequeñas requieren verificación.</p>
 <div class="actions"><a class="link" href="https://plataforma.ecuador.mapbiomas.org/" target="_blank" rel="noopener">Abrir mapa MapBiomas</a><a class="link secondary" href="https://ecuador.mapbiomas.org/iniciativas-y-productos/cobertura-y-uso-del-suelo/cobertura-30m/" target="_blank" rel="noopener">Ver leyenda y descargas</a><a class="link secondary" href="https://developers.google.com/earth-engine/datasets/catalog/projects_mapbiomas-public_assets_ecuador_lulc_v1" target="_blank" rel="noopener">Ver catálogo técnico de Google</a></div>
+</div>
+<div class="record">
+<h3>Observatorio Forestal · Universidad Técnica del Norte</h3>
+<p>Recurso académico con cartografía, herramientas geoespaciales y un visor de distribución espacial de especies forestales. Úsalo como fuente complementaria para investigar posibles especies y zonas; revisa siempre la metodología, fecha y cobertura geográfica de cada mapa antes de tomar decisiones de trashumancia.</p>
+<div class="actions"><a class="link" href="https://observatorioforestal.utn.edu.ec/" target="_blank" rel="noopener">Abrir Observatorio Forestal UTN</a><a class="link secondary" href="https://observatorioforestal.utn.edu.ec/pages/resources_geo.html" target="_blank" rel="noopener">Ver recursos geoespaciales</a></div>
+</div>
+<div class="record">
+<h3>MAG · Registro de plantaciones forestales</h3>
+<p>El trámite oficial de registro de propietario de plantación solicita coordenadas o un archivo shapefile del predio. Es una vía para buscar información validada por propietarios o gestores, aunque el trámite no equivale a un mapa público nacional descargable de eucaliptales.</p>
+<div class="actions"><a class="link" href="https://gobec-dev02.gobiernoelectronico.gob.ec/mag/tramites/registro-productor-propietario-plantacion-forestal-0" target="_blank" rel="noopener">Consultar trámite y requisitos</a></div>
 </div>
 <div class="record">
 <h3>Sistema Nacional de Monitoreo de Bosques · MAATE</h3>
