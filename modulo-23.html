@@ -79,12 +79,13 @@ input,select,textarea{scroll-margin-top:12px}
     {fecha:row.fechaPostura||addDays(row.fecha,24),tarea:"Revisar fecundación y postura"},
     {fecha:addDays(row.fecha,30),tarea:"Segunda revisión de postura si aún no se confirmó"},
     {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"},
-    {fecha:addDays(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"}
+    {fecha:addDays(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"},
+    {fecha:addDays(row.fecha,-1),tarea:"🐝 PREPARAR COLMENA CRIADORA · huerfanizar y subir cría abierta para reforzar las nodrizas",avisoDias:0}
    ];
    milestones.forEach((m,i)=>{
     if(!m.fecha||m.fecha.length!==10)return;
     const id="reina-"+row.id+"-"+i,previous=saved.find(t=>t.id===id);
-    generated.push({id,origenReina:row.id,fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(notice),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 1): "+row.fecha+". Fechas orientativas: confirma el desarrollo real y adapta el manejo al clima.",completada:previous?!!previous.completada:false});
+    generated.push({id,origenReina:row.id,fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(m.avisoDias==null?notice:m.avisoDias),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 1): "+row.fecha+". Fechas orientativas: confirma el desarrollo real y adapta el manejo al clima.",completada:previous?!!previous.completada:false});
    });
   });
   const ids=new Set(generated.map(t=>t.id));
