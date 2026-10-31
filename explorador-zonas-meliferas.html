@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#245c43">
+<link rel="manifest" href="./manifest.json">
+<title>Explorador de zonas melíferas · ApiEcuador</title>
+<style>
+:root{--green:#245c43;--cream:#fcf9f2;--ink:#242720;--line:#dce4d9;--amber:#b76b13}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5}
+header{background:linear-gradient(130deg,#173f32,#36734c);color:white;padding:22px 18px}header a{color:white;text-decoration:none}
+main{max-width:960px;margin:auto;padding:16px}.panel,.record{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;box-shadow:0 4px 15px #173f3209}
+h1{font-size:clamp(24px,5vw,33px);line-height:1.2;margin:12px 0 7px}h2{font-size:19px;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+label{display:block;font-size:14px;font-weight:700;margin:8px 0 4px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #cfd8cd;border-radius:10px;font:inherit;background:white;color:var(--ink)}
+textarea{min-height:88px;resize:vertical}.notice{background:#fff3dc;border:1px solid #ead1a3;border-radius:12px;padding:12px;margin:12px 0;font-size:14px}
+.muted{font-size:13px;color:#5e655b}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cursor:pointer;background:var(--green);color:white;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px}
+.secondary{background:#eee9df;color:#453b30}.danger{background:#9a352e}.tag{display:inline-block;background:#e8f2e8;color:#245c43;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:700;margin:2px 3px 4px 0}
+#status{min-height:1.4em;color:var(--green)}.record p{margin:6px 0}.record h3{margin:0 0 6px}
+@media(max-width:520px){main{padding:11px}.panel,.record{padding:13px}.actions button,.actions .link{flex:1 1 100%;width:100%}}
+</style>
+</head>
+<body>
+<header><div style="max-width:960px;margin:auto"><a href="./floraciones-ecuador.html">← Volver a Inteligencia de floraciones</a><h1>🛰️ Explorador de zonas melíferas</h1><p>Identifica, documenta y compara grandes superficies con potencial apícola antes de planificar la trashumancia.</p></div></header>
+<main>
+<div class="notice"><strong>Importante:</strong> este primer módulo es una libreta de prospección con GPS y acceso a Google Maps satelital. No identifica automáticamente especies ni mide bosques desde satélite. La especie, superficie y floración deben verificarse con imágenes, fuentes locales y visitas de campo. No uses una zona como destino confirmado sin comprobar permiso, agua, acceso y floración activa.</div>
+<section class="panel">
+<h2>📍 Registrar una zona candidata</h2>
+<form id="zone-form">
+<input id="edit-id" type="hidden">
+<div class="grid">
+<div><label for="name">Nombre de la zona</label><input id="name" maxlength="100" placeholder="Ej. Bosque de eucalipto norte" required></div>
+<div><label for="plant">Especie o flora dominante</label><input id="plant" maxlength="100" placeholder="Ej. Eucalyptus globulus" required></div>
+<div><label for="province">Provincia</label><input id="province" maxlength="70" placeholder="Ej. Pichincha"></div>
+<div><label for="locality">Cantón, parroquia o sector</label><input id="locality" maxlength="120" placeholder="Ej. Tanda, Quito"></div>
+<div><label for="region">Región</label><select id="region"><option value="">Seleccionar</option><option>Sierra</option><option>Costa</option><option>Oriente / Amazonía</option><option>Galápagos</option></select></div>
+<div><label for="area">Superficie estimada (hectáreas)</label><input id="area" type="number" min="0" step="0.1" placeholder="Ej. 250"></div>
+<div><label for="lat">Latitud GPS</label><input id="lat" inputmode="decimal" placeholder="-0.123456"></div>
+<div><label for="lon">Longitud GPS</label><input id="lon" inputmode="decimal" placeholder="-78.123456"></div>
+<div><label for="altitude">Altitud (metros)</label><input id="altitude" type="number" min="0" max="7000" placeholder="Ej. 2800"></div>
+<div><label for="density">Continuidad / densidad del bosque</label><select id="density"><option value="">Sin evaluar</option><option>Bosque continuo y denso</option><option>Varias manchas grandes</option><option>Plantación en hileras</option><option>Árboles dispersos</option><option>Por confirmar</option></select></div>
+<div><label for="bloom">Estado de floración</label><select id="bloom"><option value="">Sin comprobar</option><option>Sin flor</option><option>Inicio de floración</option><option>Floración abundante</option><option>Fin de floración</option></select></div>
+<div><label for="bee-activity">Actividad de abejas</label><select id="bee-activity"><option value="">Sin comprobar</option><option>Alta</option><option>Media</option><option>Baja</option><option>No observada</option></select></div>
+<div><label for="water">Disponibilidad de agua</label><select id="water"><option value="">Sin comprobar</option><option>Agua cercana</option><option>Agua en el sitio</option><option>Sin agua conocida</option></select></div>
+<div><label for="access">Acceso para camión</label><select id="access"><option value="">Sin comprobar</option><option>Acceso comprobado</option><option>Acceso limitado</option><option>Sin acceso adecuado</option></select></div>
+<div><label for="permission">Permiso del propietario</label><select id="permission"><option value="">Pendiente</option><option>Confirmado</option><option>Denegado</option><option>Por consultar</option></select></div>
+<div><label for="confidence">Nivel de verificación</label><select id="confidence"><option>Por investigar</option><option>Vista en mapa</option><option>Confirmada en campo</option><option>Visitada y evaluada</option></select></div>
+<div><label for="checked">Fecha de última revisión</label><input id="checked" type="date"></div>
+</div>
+<label for="notes">Notas de campo y fuente de información</label>
+<textarea id="notes" maxlength="1500" placeholder="Tamaño aproximado, continuidad del bosque, propietario, caminos, observaciones, enlace o fuente consultada…"></textarea>
+<div class="actions">
+<button type="button" class="secondary" id="gps">📍 Obtener GPS del teléfono</button>
+<button type="submit" id="save">Guardar zona</button>
+<button type="button" class="secondary" id="cancel" hidden>Cancelar edición</button>
+</div>
+<p id="status" role="status" aria-live="polite"></p>
+</form>
+</section>
+<section class="panel">
+<h2>🗺️ Abrir mapa satelital</h2>
+<p class="muted">Introduce las coordenadas de una zona guardada o selecciona una de la lista. Google Maps se abrirá en vista satelital cuando admita esa vista en el lugar.</p>
+<div class="grid"><div><label for="map-lat">Latitud</label><input id="map-lat" inputmode="decimal" placeholder="-0.123456"></div><div><label for="map-lon">Longitud</label><input id="map-lon" inputmode="decimal" placeholder="-78.123456"></div></div>
+<div class="actions"><button type="button" id="open-map">Abrir Google Maps satelital</button><button type="button" class="secondary" id="copy-coords">Copiar coordenadas</button></div>
+</section>
+<section class="panel">
+<h2>🌳 Zonas registradas</h2>
+<div class="grid"><div><label for="search">Buscar por zona, especie o localidad</label><input id="search" placeholder="Ej. eucalipto, Tanda…"></div><div><label for="filter-region">Filtrar región</label><select id="filter-region"><option value="">Todas las regiones</option><option>Sierra</option><option>Costa</option><option>Oriente / Amazonía</option><option>Galápagos</option></select></div></div>
+<p id="summary" class="muted"></p><div id="records"></div>
+<div class="actions"><button type="button" class="secondary" id="export">Descargar copia JSON</button><button type="button" class="secondary" id="import">Importar copia JSON</button><input id="file" type="file" accept=".json,application/json" hidden></div>
+<p class="muted">Los registros se guardan en este navegador y dispositivo. Esta primera versión no los sincroniza con la nube. Exporta una copia JSON periódicamente y guárdala junto a tus respaldos de ApiEcuador.</p>
+</section>
+</main>
+<script>
+(function(){
+'use strict';
+const KEY='apiecuador-zonas-meliferas-v1';
+const fields=['name','plant','province','locality','region','area','lat','lon','altitude','density','bloom','bee-activity','water','access','permission','confidence','checked','notes'];
+const $=id=>document.getElementById(id);
+let rows=[];try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(v))rows=v;}catch(e){}
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const coord=(v,min,max)=>{const n=Number(String(v).trim().replace(',','.'));return Number.isFinite(n)&&n>=min&&n<=max?n:null;};
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(rows));return true;}catch(e){$('status').textContent='No se pudo guardar. Exporta una copia y revisa el espacio disponible del navegador.';return false;}}
+function mapUrl(r){return 'https://www.google.com/maps/@'+r.lat+','+r.lon+',15000m/data=!3m1!1e3';}
+function render(){
+ const q=$('search').value.trim().toLocaleLowerCase('es'),region=$('filter-region').value;
+ const shown=rows.filter(r=>(!region||r.region===region)&&fields.some(k=>String(r[k]??'').toLocaleLowerCase('es').includes(q))).sort((a,b)=>String(a.name).localeCompare(String(b.name),'es'));
+ $('summary').textContent='Zonas guardadas: '+rows.length+' · Mostrando: '+shown.length;
+ $('records').innerHTML=shown.length?shown.map(r=>'<article class="record"><h3>'+esc(r.name)+'</h3><span class="tag">'+esc(r.region||'Región no indicada')+'</span><span class="tag">'+esc(r.confidence||'Por investigar')+'</span><p><strong>Flora:</strong> '+esc(r.plant)+' · <strong>Superficie:</strong> '+(r.area?esc(r.area)+' ha':'sin estimar')+'</p><p><strong>Ubicación:</strong> '+esc([r.locality,r.province].filter(Boolean).join(', ')||'No indicada')+' · <strong>Altitud:</strong> '+(r.altitude?esc(r.altitude)+' m':'sin dato')+'</p><p><strong>GPS:</strong> '+(r.lat&&r.lon?esc(r.lat)+', '+esc(r.lon):'sin coordenadas')+'</p><p><strong>Bosque:</strong> '+esc(r.density||'sin evaluar')+' · <strong>Floración:</strong> '+esc(r.bloom||'sin comprobar')+' · <strong>Abejas:</strong> '+esc(r['bee-activity']||'sin comprobar')+'</p><p><strong>Agua:</strong> '+esc(r.water||'sin comprobar')+' · <strong>Acceso:</strong> '+esc(r.access||'sin comprobar')+' · <strong>Permiso:</strong> '+esc(r.permission||'pendiente')+'</p><p class="muted">Revisión: '+esc(r.checked||'sin fecha')+' · '+esc(r.notes||'Sin notas')+'</p><div class="actions">'+(r.lat&&r.lon?'<a class="link" target="_blank" rel="noopener" href="'+mapUrl(r)+'">🛰️ Ver en satélite</a>':'')+'<button type="button" class="secondary" data-edit="'+esc(r.id)+'">Editar</button><button type="button" class="danger" data-delete="'+esc(r.id)+'">Eliminar</button></div></article>').join(''):'<p class="muted">Todavía no hay zonas registradas. Puedes comenzar con una zona que conozcas y marcarla como “Por investigar”.</p>';
+}
+function reset(){ $('zone-form').reset();$('edit-id').value='';$('save').textContent='Guardar zona';$('cancel').hidden=true;}
+$('zone-form').addEventListener('submit',e=>{
+ e.preventDefault();
+ const id=$('edit-id').value;
+ const lat=$('lat').value.trim(),lon=$('lon').value.trim();
+ if((lat&&!lon)||(!lat&&lon)){ $('status').textContent='Completa latitud y longitud juntas, o deja ambas vacías.';return;}
+ if(lat&&(coord(lat,-90,90)===null||coord(lon,-180,180)===null)){ $('status').textContent='Las coordenadas no son válidas. Revisa latitud y longitud.';return;}
+ const item={id:id||('zona-'+Date.now()+'-'+Math.random().toString(36).slice(2,7))};
+ fields.forEach(k=>item[k]=$(k).value.trim());
+ if(item.lat)item.lat=String(coord(item.lat,-90,90));
+ if(item.lon)item.lon=String(coord(item.lon,-180,180));
+ if(id){const ix=rows.findIndex(r=>r.id===id);if(ix>=0)rows[ix]=item;else rows.push(item);}else rows.push(item);
+ if(!persist())return;
+ $('status').textContent='Zona guardada correctamente. Tus observaciones florales existentes no se han modificado.';
+ reset();render();
+});
+$('records').addEventListener('click',e=>{
+ const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');
+ if(edit){const r=rows.find(x=>x.id===edit.dataset.edit);if(!r)return;fields.forEach(k=>$(k).value=r[k]??'');$('edit-id').value=r.id;$('save').textContent='Guardar cambios';$('cancel').hidden=false;$('zone-form').scrollIntoView({behavior:'smooth'});}
+ if(del){const r=rows.find(x=>x.id===del.dataset.delete);if(!r||!confirm('¿Eliminar la zona «'+r.name+'»? Esta acción no se puede deshacer.'))return;rows=rows.filter(x=>x.id!==r.id);if(persist())render();}
+});
+$('cancel').addEventListener('click',reset);
+$('search').addEventListener('input',render);$('filter-region').addEventListener('change',render);
+$('gps').addEventListener('click',()=>{
+ if(!navigator.geolocation){$('status').textContent='Este navegador no ofrece GPS.';return;}
+ $('status').textContent='Solicitando ubicación al teléfono…';
+ navigator.geolocation.getCurrentPosition(pos=>{$('lat').value=pos.coords.latitude.toFixed(6);$('lon').value=pos.coords.longitude.toFixed(6);$('status').textContent='GPS obtenido. Recuerda que marca tu posición actual, no necesariamente el centro de todo el bosque.';},err=>{$('status').textContent='No se pudo obtener GPS. Revisa el permiso de ubicación del navegador y vuelve a intentarlo.';},{enableHighAccuracy:true,timeout:15000,maximumAge:60000});
+});
+$('open-map').addEventListener('click',()=>{const lat=coord($('map-lat').value,-90,90),lon=coord($('map-lon').value,-180,180);if(lat===null||lon===null){$('status').textContent='Introduce una latitud y longitud válidas en el mapa.';return;}window.open('https://www.google.com/maps/@'+lat+','+lon+',15000m/data=!3m1!1e3','_blank','noopener');});
+$('copy-coords').addEventListener('click',()=>{const a=$('map-lat').value.trim(),b=$('map-lon').value.trim();if(!a||!b){$('status').textContent='Primero introduce las dos coordenadas.';return;}const value=a+', '+b;if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(value).then(()=>$('status').textContent='Coordenadas copiadas.').catch(()=>$('status').textContent=value);else $('status').textContent=value;});
+$('export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({format:'apiecuador-zonas-meliferas-v1',exportedAt:new Date().toISOString(),records:rows},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='apiecuador-zonas-meliferas-respaldo.json';a.click();URL.revokeObjectURL(a.href);});
+$('import').addEventListener('click',()=>$('file').click());
+$('file').addEventListener('change',async e=>{const file=e.target.files&&e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());const incoming=Array.isArray(data)?data:data.records;if(!Array.isArray(incoming)||!incoming.every(r=>r&&typeof r==='object'&&fields.every(k=>k in r))){throw new Error('Formato no reconocido');}if(!confirm('La importación reemplazará las zonas melíferas guardadas en este dispositivo. No modifica otros módulos. ¿Continuar?'))return;rows=incoming.map((r,i)=>({...r,id:String(r.id||'importada-'+Date.now()+'-'+i)}));if(persist()){$('status').textContent='Copia importada correctamente.';render();}}catch(err){$('status').textContent='No se pudo importar: '+err.message;}finally{$('file').value='';}});
+render();
+})();
+</script>
+</body>
+</html>
