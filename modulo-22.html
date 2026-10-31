@@ -217,7 +217,7 @@ input,select,textarea{scroll-margin-top:12px}
  }
  list.addEventListener("click",e=>{const archive=e.target.closest("[data-archive]");if(archive){const row=rows.find(r=>r.id===archive.dataset.archive);if(!row)return;const closing=!row.cerrado;if(closing&&!confirm("Cerrar y archivar "+(row.lote||"este lote")+"? El registro no se borrará y los avisos de Google Calendar permanecerán intactos."))return;row.cerrado=closing;try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent=closing?(row.lote||"El lote")+" quedó cerrado y archivado. Sus datos y avisos se conservaron.":"Se reabrió "+(row.lote||"el lote")+". Sus datos y avisos se conservaron.";}catch(err){status.textContent="No se pudo guardar el estado del lote.";}return;}const reminder=e.target.closest("[data-reminder]");if(reminder){const row=rows.find(r=>r.id===reminder.dataset.reminder);if(row)crearCalendario(row);return;} 
   const edit=e.target.closest("[data-edit]");
-  if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{form.elements[f.id].value=row[f.id]||"";});document.getElementById("lote").value=row.lote||"Lote";editingId=row.id;document.getElementById("registro-id").value=row.id;document.getElementById("form-title").textContent="Editar registro de cría de reinas";document.getElementById("guardar").textContent="Guardar cambios";document.getElementById("cancelar-edicion").hidden=false;status.textContent="Edita los datos y pulsa Guardar cambios.";window.scrollTo({top:0,behavior:"smooth"});return;}
+  if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{form.elements[f.id].value=row[f.id]||"";});revisarEdadLarva();document.getElementById("lote").value=row.lote||"Lote";editingId=row.id;document.getElementById("registro-id").value=row.id;document.getElementById("form-title").textContent="Editar registro de cría de reinas";document.getElementById("guardar").textContent="Guardar cambios";document.getElementById("cancelar-edicion").hidden=false;status.textContent="Edita los datos y pulsa Guardar cambios.";window.scrollTo({top:0,behavior:"smooth"});return;}
   const b=e.target.closest("[data-delete]");if(!b)return;
   if(!confirm("¿Eliminar este registro de cría de reinas?"))return;
   rows=rows.filter(r=>r.id!==b.dataset.delete);
@@ -228,7 +228,7 @@ input,select,textarea{scroll-margin-top:12px}
  const larvaAlert=document.getElementById("alerta-larva");
  function revisarEdadLarva(){
   const texto=String(larvaInput.value||"").toLowerCase();
-  const palabras=["grande","grandes","mediana","medianas","desarrollada","desarrolladas","mayor de 24"];
+  const palabras=["grande","grandes","desarrollada","desarrolladas","mayor de 24","mas de 24","más de 24","36 horas","48 horas"];
   larvaAlert.hidden=!palabras.some(p=>texto.includes(p));
  }
  larvaInput.addEventListener("input",revisarEdadLarva);
