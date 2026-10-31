@@ -172,6 +172,62 @@ footer{padding-top:24px;padding-bottom:28px}
 .grupo-herramientas>p{margin:8px 0 12px;color:#65584b;font-size:14px}
 .grupo-herramientas .grid{margin-top:8px}
 .grupo-herramientas .card{min-height:112px}
+
+/* Portada visual ApiEcuador inspirada en el diseño aprobado por el apicultor. */
+:root{--miel:#ffbd08;--verde-profundo:#073d28;--crema-portada:#fff8e5}
+body{background:linear-gradient(180deg,#fff8e5,#fffdf7 48%,#f8f4e8)}
+.portada-header{padding:13px 18px 16px;background:linear-gradient(110deg,#ffbf08,#ffd84b 58%,#f4a900);color:#18351f;border-bottom:4px solid #e69b00}
+.portada-header .wrap{max-width:1100px}
+.portada-header .brand{gap:14px}
+.portada-header .bee{width:62px;height:62px;flex-basis:62px;border-radius:50%;background:#fff9e6;border:3px solid #fff;font-size:38px;box-shadow:0 3px 10px #79500025}
+.portada-header h1{font-size:clamp(30px,6vw,46px);font-weight:900;letter-spacing:-1.2px;color:#123c28}
+.portada-header .marca-sub{font-size:clamp(12px,2.8vw,17px);font-weight:650;color:#4e3710}
+.portada-header p{margin:7px 0 0;color:#274322;font-weight:700}
+.portada-hero{max-width:1100px;min-height:230px;margin:0 auto 18px;position:relative;display:flex;align-items:center;overflow:hidden;background:linear-gradient(90deg,#062b1ddd 0%,#062b1d9c 45%,#062b1d12 100%),url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85') center 48%/cover;border-radius:0 0 24px 24px}
+.hero-copy{padding:25px clamp(20px,5vw,58px);color:white;max-width:620px;text-shadow:0 2px 8px #0008}
+.hero-copy>span{font-size:12px;letter-spacing:2px;font-weight:800;color:#ffe38b}
+.hero-copy h2{font-size:clamp(30px,6vw,50px);line-height:1.04;margin:9px 0;font-weight:900}
+.hero-copy p{font-size:15px;margin:0;max-width:380px}
+.portada-herramientas{max-width:1100px;margin:18px auto 22px;padding:0 18px}
+.portada-titulo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding:12px 15px;border-radius:18px;background:#fff8df;border:1px solid #f0d68e;box-shadow:0 4px 12px #6e4d1010}
+.portada-titulo h2{font-size:clamp(18px,3.5vw,25px);margin:0;color:#573b0c}
+.portada-titulo>span{padding:9px 13px;border-radius:22px;background:#ffc20c;color:#503400;font-weight:800;font-size:13px;white-space:nowrap}
+.portada-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.portada-card{min-height:160px;position:relative;display:flex;align-items:flex-end;gap:12px;padding:16px;color:#fff;text-decoration:none;isolation:isolate;overflow:hidden;border-radius:22px;border:1px solid #ffffffa8;box-shadow:0 5px 15px #263b251f;background-color:#244b31;background-size:cover;background-position:center}
+.portada-card:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#061b0c05 8%,#061b0c40 48%,#061b0ce8 100%)}
+.portada-card:focus-visible{outline:4px solid #e9a900;outline-offset:3px}
+.portada-card:hover{transform:translateY(-2px);box-shadow:0 9px 22px #263b2538}
+.portada-icono{display:grid;place-items:center;flex:0 0 58px;width:58px;height:58px;border-radius:50%;border:2px solid #fff;background:#122c24a8;font-size:30px}
+.portada-texto{display:flex;flex-direction:column;gap:3px;min-width:0;text-shadow:0 2px 5px #000}
+.portada-texto strong{font-size:clamp(15px,2.5vw,20px);line-height:1.15}
+.portada-texto small{font-size:13px;color:#fff8df;line-height:1.25}
+.portada-flecha{margin-left:auto;font-size:38px;line-height:1;color:#fff}
+.foto-apiarios{background-image:url('https://images.unsplash.com/photo-1473973266408-ed4e27abdd47?auto=format&fit=crop&w=900&q=85')}
+.foto-reinas{background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=85')}
+.foto-sanidad{background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85')}
+.foto-flora{background-image:url('https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=85')}
+.foto-calendario{background-image:url('https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=900&q=85')}
+.foto-produccion{background-image:url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=900&q=85')}
+.foto-trashumancia{background-image:url('https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=85')}
+.foto-backup{background-image:url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=900&q=85')}
+.portada-franja{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;padding:14px 8px;border:1px solid #eadba9;border-radius:18px;background:#fffdf4;text-align:center;color:#264c2c;font-weight:800;font-size:13px}
+.cuenta-panel{max-width:1060px}
+@media(max-width:560px){
+ .portada-hero{min-height:210px;border-radius:0 0 20px 20px}
+ .portada-header{padding:10px 14px 13px}
+ .portada-header .bee{width:52px;height:52px;flex-basis:52px;font-size:31px}
+ .portada-grid{gap:9px}
+ .portada-card{min-height:145px;padding:11px;gap:8px;border-radius:17px}
+ .portada-icono{width:42px;height:42px;flex-basis:42px;font-size:23px}
+ .portada-texto strong{font-size:14px}
+ .portada-texto small{font-size:11px}
+ .portada-flecha{font-size:28px}
+ .portada-titulo{align-items:flex-start;flex-direction:column}
+ .portada-titulo>span{font-size:12px;padding:7px 10px}
+ .portada-franja{grid-template-columns:repeat(2,1fr);font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.portada-card{transition:none}}
+
 </style>
 <style id="apiecuador-lectura-accesible">
 /* ApiEcuador: lectura cómoda en teléfono y bajo luz exterior. Solo tipografía y contraste. */
@@ -197,8 +253,10 @@ input,select,textarea{scroll-margin-top:12px}
 @media(max-width:520px){button,input[type="button"],input[type="submit"]{min-height:46px}}
 </style>
 </head><body>
-<header><div class="wrap"><div class="brand"><span class="bee">🐝</span><div><h1>ApiEcuador</h1><div>Gestión apícola · Panel de módulos</div></div></div>
-<p>Herramientas de campo para cosecha, floración, sanidad y trashumancia.</p></div></header>
+<header class="portada-header"><div class="wrap"><div class="brand"><span class="bee">🐝</span><div><h1>ApiEcuador</h1><div class="marca-sub">Gestión apícola al alcance de tu mano</div></div></div><p>🐝 Abejas fuertes, Naturaleza viva · Ecuador</p></div></header>
+<section class="portada-hero" aria-label="ApiEcuador, apicultura y naturaleza">
+  <div class="hero-copy"><span>🇪🇨 ECUADOR APÍCOLA</span><h2>Abejas fuertes,<br> naturaleza viva</h2><p>Conocimiento, organización y producción en un solo lugar.</p></div>
+</section>
 <section class="cuenta-panel" aria-labelledby="cuenta-titulo">
   <h2 id="cuenta-titulo">🔐 Mi cuenta ApiEcuador</h2>
   <p>Entra con Google para confirmar tu identidad. Esta etapa no sincroniza ni modifica los registros de tus colmenas.</p>
@@ -208,14 +266,19 @@ input,select,textarea{scroll-margin-top:12px}
   </div>
   <p id="cuenta-estado" role="status" aria-live="polite">Comprobando conexión segura…</p>
 </section>
-<section class="accesos-rapidos" aria-label="Accesos rápidos">
-  <h2>Accesos rápidos</h2>
-  <div class="accesos-rapidos-lista">
-    <a class="acceso-rapido" href="modulo-21.html"><span aria-hidden="true">🔍</span><span>Inspección de colmenas</span></a>
-    <a class="acceso-rapido" href="modulo-22.html"><span aria-hidden="true">👑</span><span>Cría y seguimiento de reinas</span></a>
-    <a class="acceso-rapido" href="modulo-23.html"><span aria-hidden="true">📅</span><span>Calendario y tareas</span></a>
-    <a class="acceso-rapido" href="modulo-29.html"><span aria-hidden="true">📍</span><span>Mis apiarios</span></a>
-    </div>
+<section class="accesos-rapidos portada-herramientas" aria-label="Herramientas principales">
+  <div class="portada-titulo"><h2>🚀 Herramientas principales</h2><span>⭐ Todo en un solo lugar</span></div>
+  <div class="portada-grid">
+    <a class="portada-card foto-apiarios" href="modulo-29.html"><span class="portada-icono">🐝</span><span class="portada-texto"><strong>Mis Apiarios</strong><small>Gestiona tus colmenas</small></span><span class="portada-flecha">›</span></a>
+    <a class="portada-card foto-reinas" href="modulo-22.html"><span class="portada-icono">👑</span><span class="portada-texto"><strong>Cría de Reinas</strong><small>Planifica y controla</small></span><span class="portada-flecha">›</span></a>
+    <a class="portada-card foto-sanidad" href="modulo-03.html"><span class="portada-icono">🛡️</span><span class="portada-texto"><strong>Sanidad y Varroa</strong><small>Cuida tus colmenas</small></span><span class="portada-flecha">›</span></a>
+    <a class="portada-card foto-flora" href="modulo-31.html"><span class="portada-icono">🌼</span><span class="portada-texto"><strong>Atlas Floral y Bosques Melíferos</strong><small>Conoce y planifica</small></span><span class="portada-flecha">›</span></a>
+    <a class="portada-card foto-calendario" href="modulo-23.html"><span class="portada-icono">📅</span><span class="portada-texto"><strong>Calendario Apícola</strong><small>Recibe tus avisos</small></span><span class="portada-flecha">›</span></a>
+    <a class="portada-card foto-produccion" href="modulo-04.html"><span class="portada-icono">🍯</span><span class="portada-texto"><strong>Producción y Cosecha</strong><small>Organiza tu miel</small></span><span class="portada-flecha">›</span></a>
+    <a class="portada-card foto-trashumancia" href="modulo-06.html"><span class="portada-icono">🚚</span><span class="portada-texto"><strong>Trashumancia</strong><small>Rutas y movimientos</small></span><span class="portada-flecha">›</span></a>
+    <a class="portada-card foto-backup" href="modulo-27.html"><span class="portada-icono">📦</span><span class="portada-texto"><strong>Copia de Seguridad</strong><small>Protege tu información</small></span><span class="portada-flecha">›</span></a>
+  </div>
+  <div class="portada-franja"><span>🍯 Colmenas fuertes</span><span>🛡️ Sanidad controlada</span><span>👑 Reinas jóvenes</span><span>🐝 Más miel</span></div>
 </section>
 <aside class="aviso-campo" role="note">
   <strong>🐝 Consejo de campo</strong>
