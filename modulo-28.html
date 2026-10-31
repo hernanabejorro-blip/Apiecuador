@@ -22,7 +22,8 @@ function render(){
   const add=(field,title,kind)=>{const d=parseDate(r[field]);if(d)events.push({date:d,title:lot+" · "+title,apiario:r.apiario||"Apiario sin indicar",detail:base.concat(kind?[kind]:[]).join(" · "),source:"Cría de reinas"});};
   add("revision","Revisión de aceptación","Fecha planificada");
   add("fechaOperculacion","Operculación de celdas","Fecha registrada");
-  add("fechaDistribucion","Distribución de celdas","Fecha planificada");
+  add("fechaProteccion","Protección / enjaulado de celdas","Hito de manejo; comprobar en el apiario");
+  add("fechaDistribucion","Traslado / distribución de realeras","Referencia habitual: días 10–11 después del traslarve");
   add("nacimiento","Nacimiento estimado","Estimación; confirmar en el apiario");
   add("fechaNacimientoReal","Nacimiento observado","Hecho registrado");
   add("fechaPostura","Comprobación de postura","Fecha prevista; confirmar postura");
