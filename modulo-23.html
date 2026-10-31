@@ -78,7 +78,8 @@ input,select,textarea{scroll-margin-top:12px}
     {fecha:row.nacimiento||addDays(row.fecha,10),tarea:"Vigilar nacimiento estimado de reinas"},
     {fecha:row.fechaPostura||addDays(row.fecha,24),tarea:"Revisar fecundación y postura"},
     {fecha:addDays(row.fecha,30),tarea:"Segunda revisión de postura si aún no se confirmó"},
-    {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"}
+    {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"},
+    {fecha:addDays(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"}
    ];
    milestones.forEach((m,i)=>{
     if(!m.fecha||m.fecha.length!==10)return;
