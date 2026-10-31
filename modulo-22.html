@@ -51,7 +51,7 @@ input,select,textarea{scroll-margin-top:12px}
 <section class="panel" aria-label="Continuar seguimiento"><h2>🔄 Después del traslarve</h2><p>Cuando revises la aceptación, anota las celdas aceptadas aquí y continúa el control del lote hasta la emergencia y la postura.</p><p><a href="./modulo-30.html" style="display:inline-block;background:#245c43;color:#fff;text-decoration:none;padding:11px 14px;border-radius:10px;font-weight:650">👑 Abrir Seguimiento de Reinas →</a></p></section>
 <section class="panel" id="google-calendar-panel">
 <h2>📅 Programar avisos directamente en Google Calendar</h2>
-<p>Conecta tu cuenta de Google y ApiEcuador intentará guardar en tu calendario las siete tareas de esta tanda, incluido el inicio del traslarve (Día 1). Si ya existe un aviso de esta tanda, lo actualizará en lugar de duplicarlo.</p>
+<p>Conecta tu cuenta de Google y ApiEcuador intentará guardar en tu calendario las ocho tareas de esta tanda, incluido el inicio del traslarve (Día 1). Si ya existe un aviso de esta tanda, lo actualizará en lugar de duplicarlo.</p>
 <p class="muted">La primera vez, Google te pedirá permiso para gestionar eventos del calendario. El acceso se usa solo cuando pulsas el botón. Si el servicio de Calendar aún no está habilitado en el proyecto de Google, aparecerá un mensaje indicándolo; mientras tanto, puedes seguir usando «Crear recordatorios».</p>
 <div class="actions"><button class="primary" id="programar-google" type="button">🔐 Autorizar y programar avisos</button></div>
 <p class="status" id="estado-google-calendar" role="status" aria-live="polite"></p>
@@ -108,16 +108,17 @@ input,select,textarea{scroll-margin-top:12px}
 <label for="nacidas">Reinas nacidas</label><input id="nacidas" name="nacidas" type="number" min="0" step="1" placeholder="Completar después de la emergencia">
 <label for="postura">Reinas confirmadas en postura</label><input id="postura" name="postura" type="number" min="0" step="1" placeholder="Completar al confirmar postura">
 <label for="fechaPostura">Fecha de revisión de postura</label><input id="fechaPostura" name="fechaPostura" type="date">
-<label for="larvas">Edad aproximada de larvas / método</label><input id="larvas" name="larvas" type="text">
+<label for="larvas">Edad aproximada y aspecto de las larvas / método</label><input id="larvas" name="larvas" type="text" placeholder="Ej.: muy pequeñas, recién eclosionadas"><p class="muted">Elige larvas muy pequeñas y jóvenes. Si observas larvas grandes o desarrolladas, detente y vuelve a seleccionar antes de hacer el traslarve.</p><p id="alerta-larva" role="alert" hidden style="padding:11px 13px;border:1px solid #d58a76;border-radius:10px;background:#fff0ed;color:#8b2f22;font-weight:650">⚠️ Atención: anotaste larvas grandes o desarrolladas. Pueden ser demasiado maduras para un traslarve correcto. Busca larvas recién eclosionadas, muy pequeñas y curvadas; no continúes solo por cumplir la fecha.</p>
 <label for="revision">Fecha estimada de revisión de aceptación</label><input id="revision" name="revision" type="date">
-<label for="fechaDistribucion">Fecha estimada para proteger / distribuir las celdas</label><input id="fechaDistribucion" name="fechaDistribucion" type="date">
-<label for="nacimiento">Fecha estimada de nacimiento de las reinas</label><input id="nacimiento" name="nacimiento" type="date"><label for="avisoDias">¿Cuántos días antes quieres el aviso?</label><input id="avisoDias" name="avisoDias" type="number" min="0" max="365" step="1" value="1" required><p class="muted">1 = el día anterior; 3 = tres días antes; 0 = el mismo día. Al crear el calendario se aplicará a cada revisión de esta tanda.</p><div class="actions"><button class="secondary" id="calcular-fechas" type="button">📅 Calcular fechas orientativas</button></div><p class="muted"><strong>Regla de fechas de ApiEcuador:</strong> el día del traslarve cuenta como Día 1. Por eso, el Día 10 cae 9 días después (por ejemplo, traslarve el 27 de octubre → proteger/distribuir celdas el 5 de noviembre). Las fechas son orientativas y debes confirmarlas según el desarrollo real y tu método.</p>
+<label for="fechaProteccion">Fecha estimada para revisar y proteger celdas (Día 9)</label><input id="fechaProteccion" name="fechaProteccion" type="date">
+<label for="fechaDistribucion">Fecha para retirar / distribuir las celdas reales (Día 10)</label><input id="fechaDistribucion" name="fechaDistribucion" type="date">
+<label for="nacimiento">Fecha de seguimiento y nacimiento estimado (Día 11)</label><input id="nacimiento" name="nacimiento" type="date"><label for="avisoDias">¿Cuántos días antes quieres el aviso?</label><input id="avisoDias" name="avisoDias" type="number" min="0" max="365" step="1" value="1" required><p class="muted">1 = el día anterior; 3 = tres días antes; 0 = el mismo día. Al crear el calendario se aplicará a cada revisión de esta tanda.</p><div class="actions"><button class="secondary" id="calcular-fechas" type="button">📅 Calcular fechas orientativas</button></div><p class="muted"><strong>Regla de fechas de ApiEcuador:</strong> el día del traslarve cuenta como Día 1. Día 9: revisar y proteger celdas; Día 10: aviso principal para retirar/distribuir las celdas reales; Día 11: seguimiento del nacimiento. Ejemplo: traslarve el 27 de octubre → Día 9 el 4 de noviembre, Día 10 el 5 y Día 11 el 6. Confirma siempre el desarrollo real y tu método.</p>
 <label for="resultado">Resultado y observaciones</label><textarea id="resultado" name="resultado" rows="3"></textarea><div class="actions"><button class="primary" id="guardar" type="submit">Guardar registro</button><button class="secondary" id="cancelar-edicion" type="button" hidden>Cancelar edición</button><button class="secondary" id="limpiar" type="button">Limpiar formulario</button></div><p class="status" id="estado" role="status" aria-live="polite"></p></form></section>
 <section class="panel"><h2>Registros guardados</h2><p class="muted">Consejo: guarda también una copia JSON; sirve para recuperar los registros de esta tanda en otro navegador.</p><div id="registros" class="record-grid"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar CSV</button><button class="secondary" id="exportar-json" type="button">Descargar respaldo JSON</button><button class="secondary" id="importar-json" type="button">Importar respaldo JSON</button><input id="archivo-json" type="file" accept=".json,application/json" hidden></div></section></main>
 <script>
 (function(){
  const key="apiecuador-modulo-22-v1";
- const fields=[{"id":"lote","label":"Número de lote"},{"id":"fecha","label":"Fecha del traslarve"},{"id":"apiario","label":"Apiario / ubicación"},{"id":"madre","label":"Colonia madre (línea genética)"},{"id":"iniciadora","label":"Colonia iniciadora o criadora"},{"id":"cantidad","label":"Celdas transferidas"},{"id":"aceptadas","label":"Celdas aceptadas"},{"id":"operculadas","label":"Celdas operculadas"},{"id":"distribuidas","label":"Celdas distribuidas a núcleos"},{"id":"nacidas","label":"Reinas nacidas"},{"id":"postura","label":"Reinas confirmadas en postura"},{"id":"larvas","label":"Edad aproximada de larvas / método"},{"id":"revision","label":"Fecha estimada de revisión de aceptación"},{"id":"fechaDistribucion","label":"Fecha estimada para proteger/distribuir celdas"},{"id":"nacimiento","label":"Fecha estimada de nacimiento"},{"id":"avisoDias","label":"Aviso con días de anticipación"},{"id":"fechaPostura","label":"Fecha estimada para revisar postura"},{"id":"resultado","label":"Resultado y observaciones"}];
+ const fields=[{"id":"lote","label":"Número de lote"},{"id":"fecha","label":"Fecha del traslarve"},{"id":"apiario","label":"Apiario / ubicación"},{"id":"madre","label":"Colonia madre (línea genética)"},{"id":"iniciadora","label":"Colonia iniciadora o criadora"},{"id":"cantidad","label":"Celdas transferidas"},{"id":"aceptadas","label":"Celdas aceptadas"},{"id":"operculadas","label":"Celdas operculadas"},{"id":"distribuidas","label":"Celdas distribuidas a núcleos"},{"id":"nacidas","label":"Reinas nacidas"},{"id":"postura","label":"Reinas confirmadas en postura"},{"id":"larvas","label":"Edad aproximada de larvas / método"},{"id":"revision","label":"Fecha estimada de revisión de aceptación"},{"id":"fechaProteccion","label":"Fecha estimada para revisar/proteger celdas (Día 9)"},{"id":"fechaDistribucion","label":"Fecha para retirar/distribuir celdas reales (Día 10)"},{"id":"nacimiento","label":"Fecha estimada de nacimiento"},{"id":"avisoDias","label":"Aviso con días de anticipación"},{"id":"fechaPostura","label":"Fecha estimada para revisar postura"},{"id":"resultado","label":"Resultado y observaciones"}];
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
@@ -156,6 +157,7 @@ input,select,textarea{scroll-margin-top:12px}
  rows.forEach(r=>{
   if(!r.fecha||!/^\d{4}-\d{2}-\d{2}$/.test(r.fecha))return;
   if(r.revision===datePlus(r.fecha,2))r.revision=datePlus(r.fecha,1);
+  if(!r.fechaProteccion)r.fechaProteccion=datePlus(r.fecha,8);
   if(r.fechaDistribucion===datePlus(r.fecha,10))r.fechaDistribucion=datePlus(r.fecha,9);
   if(r.nacimiento===datePlus(r.fecha,11))r.nacimiento=datePlus(r.fecha,10);
   if(r.fechaPostura===datePlus(r.fecha,25))r.fechaPostura=datePlus(r.fecha,24);
@@ -171,11 +173,12 @@ input,select,textarea{scroll-margin-top:12px}
    const milestones=[
     {fecha:row.revision||datePlus(row.fecha,1),tarea:"Revisar aceptación de celdas"},
     {fecha:datePlus(row.fecha,5),tarea:"Revisar cría abierta y buscar celdas espontáneas"},
-    {fecha:row.fechaDistribucion||datePlus(row.fecha,9),tarea:"Proteger y distribuir celdas antes de la emergencia"},
-    {fecha:row.nacimiento||datePlus(row.fecha,10),tarea:"Vigilar nacimiento estimado de reinas"},
+    {fecha:row.fechaDistribucion||datePlus(row.fecha,9),tarea:"DÍA 10 · Retirar y distribuir las celdas reales"},
+    {fecha:row.nacimiento||datePlus(row.fecha,10),tarea:"DÍA 11 · Seguimiento del nacimiento y estado de las reinas"},
     {fecha:row.fechaPostura||datePlus(row.fecha,24),tarea:"Revisar fecundación y postura"},
     {fecha:datePlus(row.fecha,30),tarea:"Segunda revisión de postura si aún no se confirmó"},
-    {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"}
+    {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"},
+    {fecha:row.fechaProteccion||datePlus(row.fecha,8),tarea:"DÍA 9 · Revisar y proteger las celdas reales"}
    ];
    milestones.forEach((m,i)=>{
     if(!/^\d{4}-\d{2}-\d{2}$/.test(m.fecha))return;
@@ -197,11 +200,12 @@ input,select,textarea{scroll-margin-top:12px}
   const tareas=[
    {fecha:row.revision||datePlus(row.fecha,1),titulo:"ApiEcuador: revisar aceptación · "+nombre,detalle:"Comprueba con cuidado la aceptación de las celdas y registra cuántas fueron aceptadas. Fecha orientativa: alrededor del Día 2–3, contando el traslarve como Día 1."},
    {fecha:datePlus(row.fecha,5),titulo:"ApiEcuador: revisar cría abierta y celdas espontáneas · "+nombre,detalle:"Revisa la cría abierta y busca celdas reales construidas espontáneamente. Actúa solo tras confirmar el estado de la colonia y según tu método; no elimines celdas útiles ni actúes sin localizar la reina."},
-   {fecha:row.fechaDistribucion||datePlus(row.fecha,9),titulo:"ApiEcuador: proteger y distribuir celdas · "+nombre,detalle:"Comprueba el desarrollo real, protege las celdas y prepara los núcleos antes de la emergencia. Fecha orientativa: Día 10 contando la fecha del traslarve como Día 1."},
-   {fecha:row.nacimiento||datePlus(row.fecha,10),titulo:"ApiEcuador: vigilar nacimiento de reinas · "+nombre,detalle:"Fecha estimada de emergencia. Comprueba el desarrollo real y evita manipular las celdas innecesariamente."},
+   {fecha:row.fechaDistribucion||datePlus(row.fecha,9),titulo:"DÍA 10 · RETIRAR CELDAS REALES · "+nombre,detalle:"Aviso principal: retira las celdas reales y distribúyelas/protégelas según tu método y el estado real. El traslarve cuenta como Día 1."},
+   {fecha:row.nacimiento||datePlus(row.fecha,10),titulo:"DÍA 11 · SEGUIMIENTO DEL NACIMIENTO · "+nombre,detalle:"Seguimiento posterior a la retirada: comprueba el estado de las celdas y vigila la emergencia estimada. Evita manipulaciones innecesarias."},
    {fecha:row.fechaPostura||datePlus(row.fecha,24),titulo:"ApiEcuador: revisar fecundación y postura · "+nombre,detalle:"Revisa con cuidado si hay huevos/postura. Mal tiempo o falta de zánganos pueden retrasarlo; no declares fallida una reina solo por la fecha."},
    {fecha:datePlus(row.fecha,30),titulo:"ApiEcuador: segunda revisión de postura · "+nombre,detalle:"Si aún no se confirmó postura, revisa evolución y condiciones. Ajusta la fecha según clima y manejo."},
-   {fecha:row.fecha,titulo:"🐝 INICIO DEL TRASLARVE · "+nombre,detalle:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."}
+   {fecha:row.fecha,titulo:"🐝 INICIO DEL TRASLARVE · "+nombre,detalle:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."},
+   {fecha:row.fechaProteccion||datePlus(row.fecha,8),titulo:"DÍA 9 · REVISAR Y PROTEGER CELDAS · "+nombre,detalle:"Revisa el desarrollo y protege las celdas reales. Deja preparado el trabajo del Día 10. Confirma siempre el estado real y tu método."}
   ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.fecha));
   const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z");
   const diasAviso=Math.max(0,Math.min(365,parseInt(row.avisoDias==null||row.avisoDias===""?"1":row.avisoDias,10)||0));const events=tareas.map((t,i)=>"BEGIN:VEVENT\r\nUID:apiecuador-"+String(row.id||"lote")+"-"+i+"@apiecuador\r\nDTSTAMP:"+stamp+"\r\nSUMMARY:"+icsEscape(t.titulo)+"\r\nDESCRIPTION:"+icsEscape(t.detalle+" Aviso configurado con "+diasAviso+" día(s) de anticipación.")+"\r\nDTSTART;VALUE=DATE:"+icsDate(t.fecha)+"\r\nDTEND;VALUE=DATE:"+icsDate(datePlus(t.fecha,1))+"\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:"+icsEscape("Recordatorio: "+t.titulo)+"\r\nTRIGGER:-P"+diasAviso+"D\r\nEND:VALARM\r\nEND:VEVENT").join("\r\n");
@@ -213,22 +217,31 @@ input,select,textarea{scroll-margin-top:12px}
  }
  list.addEventListener("click",e=>{const archive=e.target.closest("[data-archive]");if(archive){const row=rows.find(r=>r.id===archive.dataset.archive);if(!row)return;const closing=!row.cerrado;if(closing&&!confirm("Cerrar y archivar "+(row.lote||"este lote")+"? El registro no se borrará y los avisos de Google Calendar permanecerán intactos."))return;row.cerrado=closing;try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent=closing?(row.lote||"El lote")+" quedó cerrado y archivado. Sus datos y avisos se conservaron.":"Se reabrió "+(row.lote||"el lote")+". Sus datos y avisos se conservaron.";}catch(err){status.textContent="No se pudo guardar el estado del lote.";}return;}const reminder=e.target.closest("[data-reminder]");if(reminder){const row=rows.find(r=>r.id===reminder.dataset.reminder);if(row)crearCalendario(row);return;} 
   const edit=e.target.closest("[data-edit]");
-  if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{form.elements[f.id].value=row[f.id]||"";});document.getElementById("lote").value=row.lote||"Lote";editingId=row.id;document.getElementById("registro-id").value=row.id;document.getElementById("form-title").textContent="Editar registro de cría de reinas";document.getElementById("guardar").textContent="Guardar cambios";document.getElementById("cancelar-edicion").hidden=false;status.textContent="Edita los datos y pulsa Guardar cambios.";window.scrollTo({top:0,behavior:"smooth"});return;}
+  if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{form.elements[f.id].value=row[f.id]||"";});revisarEdadLarva();document.getElementById("lote").value=row.lote||"Lote";editingId=row.id;document.getElementById("registro-id").value=row.id;document.getElementById("form-title").textContent="Editar registro de cría de reinas";document.getElementById("guardar").textContent="Guardar cambios";document.getElementById("cancelar-edicion").hidden=false;status.textContent="Edita los datos y pulsa Guardar cambios.";window.scrollTo({top:0,behavior:"smooth"});return;}
   const b=e.target.closest("[data-delete]");if(!b)return;
   if(!confirm("¿Eliminar este registro de cría de reinas?"))return;
   rows=rows.filter(r=>r.id!==b.dataset.delete);
   try{localStorage.setItem(key,JSON.stringify(rows));const synced=sincronizarTareasCalendario();render();status.textContent=synced>=0?"Registro eliminado. Las tareas de otros lotes se conservaron; se sincronizaron "+synced+" revisiones.":"Registro eliminado, pero no se pudo sincronizar el calendario.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
  });
  function cancelEdit(){editingId=null;form.reset();document.getElementById("lote").value=nextLotNumber();document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;status.textContent="Edición cancelada.";}
+ const larvaInput=document.getElementById("larvas");
+ const larvaAlert=document.getElementById("alerta-larva");
+ function revisarEdadLarva(){
+  const texto=String(larvaInput.value||"").toLowerCase();
+  const palabras=["grande","grandes","desarrollada","desarrolladas","mayor de 24","mas de 24","más de 24","36 horas","48 horas"];
+  larvaAlert.hidden=!palabras.some(p=>texto.includes(p));
+ }
+ larvaInput.addEventListener("input",revisarEdadLarva);
  function calcularFechasTraslarve(){
    const graft=document.getElementById("fecha").value;
    if(!graft){status.textContent="Primero selecciona la fecha del traslarve.";return;}
    const addDays=(date,days)=>{const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+days);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
    document.getElementById("revision").value=addDays(graft,1);
+   document.getElementById("fechaProteccion").value=addDays(graft,8);
    document.getElementById("fechaDistribucion").value=addDays(graft,9);
    document.getElementById("nacimiento").value=addDays(graft,10);
    document.getElementById("fechaPostura").value=addDays(graft,24);
-   status.textContent="Fechas estimadas calculadas automáticamente contando el traslarve como Día 1: aceptación (Día 2–3), proteger/distribuir celdas (Día 10), nacimiento aproximado (Día 11) y revisar postura (Día 25). Puedes ajustar cualquier fecha según tu método y el desarrollo real.";
+   status.textContent="Fechas calculadas contando el traslarve como Día 1: Día 9 revisar/proteger; Día 10 retirar y distribuir celdas reales; Día 11 seguimiento del nacimiento; Día 25 revisar postura. Ajusta según el desarrollo real y tu método.";
   }
  document.getElementById("fecha").addEventListener("change",calcularFechasTraslarve);
  document.getElementById("calcular-fechas").addEventListener("click",calcularFechasTraslarve);
@@ -339,12 +352,13 @@ function makeTasks(row) {
   return [
     {date:row.revision || addDays(row.fecha,1),title:"ApiEcuador: revisar aceptación · "+name,detail:"Comprueba con cuidado la aceptación y registra cuántas celdas fueron aceptadas. Fecha orientativa; confirma el desarrollo real."},
     {date:addDays(row.fecha,5),title:"ApiEcuador: revisar cría abierta y celdas espontáneas · "+name,detail:"Revisa la cría abierta y busca celdas reales espontáneas. Confirma el estado de la colonia y tu método antes de actuar; no elimines celdas útiles ni actúes sin localizar la reina."},
-    {date:row.fechaDistribucion || addDays(row.fecha,9),title:"ApiEcuador: proteger y distribuir celdas · "+name,detail:"En el Día 10 contando el día del traslarve como Día 1, comprueba el desarrollo real, protege las celdas si corresponde y prepara los núcleos antes de la emergencia."},
-    {date:row.nacimiento || addDays(row.fecha,10),title:"ApiEcuador: vigilar nacimiento de reinas · "+name,detail:"Fecha estimada de emergencia. Comprueba el desarrollo real y evita manipular las celdas innecesariamente."},
+    {date:row.fechaDistribucion || addDays(row.fecha,9),title:"DÍA 10 · RETIRAR CELDAS REALES · "+name,detail:"Aviso principal: retira las celdas reales y distribúyelas/protégelas según tu método y el estado real. El traslarve cuenta como Día 1."},
+    {date:row.nacimiento || addDays(row.fecha,10),title:"DÍA 11 · SEGUIMIENTO DEL NACIMIENTO · "+name,detail:"Seguimiento posterior a la retirada: comprueba el estado de las celdas y vigila la emergencia estimada. Evita manipulaciones innecesarias."},
     {date:row.fechaPostura || addDays(row.fecha,24),title:"ApiEcuador: revisar fecundación y postura · "+name,detail:"Revisa si hay huevos/postura. El mal tiempo o la falta de zánganos pueden retrasarlo; no declares fallida una reina solo por la fecha."},
     {date:addDays(row.fecha,30),title:"ApiEcuador: segunda revisión de postura · "+name,detail:"Si aún no se confirmó postura, revisa la evolución y las condiciones. Ajusta la fecha según clima y manejo."},
-    {date:row.fecha,title:"🐝 INICIO DEL TRASLARVE · "+name,detail:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."}
-  ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.date)).map((t,i)=>({...t,index:i}));
+    {date:row.fecha,title:"🐝 INICIO DEL TRASLARVE · "+name,detail:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."},
+    {date:row.fechaProteccion || addDays(row.fecha,8),title:"DÍA 9 · REVISAR Y PROTEGER CELDAS · "+name,detail:"Revisa el desarrollo y protege las celdas reales. Deja preparado el trabajo del Día 10. Confirma siempre el estado real y tu método."}
+  ].filter(t=>typeof t.date==="string"&&t.date.length===10&&t.date[4]==="-"&&t.date[7]==="-").map((t,i)=>({...t,index:i}));
 }
 async function createOrUpdateEvent(token, row, task, noticeDays) {
   const uniqueKey = String(row.id || "lote") + "-" + task.index;
@@ -403,9 +417,11 @@ async function createOrUpdateEvent(token, row, task, noticeDays) {
 }
 async function programLotEvents(row, token) {
   if (!row || !row.fecha) throw new Error("El lote no tiene fecha de traslarve guardada.");
+  const protection = row.fechaProteccion || addDays(row.fecha,8);
   const distribution = row.fechaDistribucion || addDays(row.fecha,9);
   const birth = row.nacimiento || addDays(row.fecha,10);
-  if (distribution && birth && birth <= distribution) throw new Error("Fechas incoherentes en " + (row.lote || "este lote") + ": el nacimiento estimado debe ser posterior a proteger/distribuir las celdas. Corrige la fecha de nacimiento y vuelve a programar; no se modificó Google Calendar.");
+  if (protection && distribution && protection >= distribution) throw new Error("Fechas incoherentes en " + (row.lote || "este lote") + ": la revisión/protección del Día 9 debe ser anterior a retirar las celdas el Día 10. No se modificó Google Calendar.");
+  if (distribution && birth && birth <= distribution) throw new Error("Fechas incoherentes en " + (row.lote || "este lote") + ": el seguimiento/nacimiento del Día 11 debe ser posterior a retirar las celdas el Día 10. No se modificó Google Calendar.");
   const tasks = makeTasks(row);
   const noticeDays = Math.max(0, Math.min(365, parseInt(row.avisoDias == null || row.avisoDias === "" ? "1" : row.avisoDias,10) || 0));
   let created = 0, updated = 0;

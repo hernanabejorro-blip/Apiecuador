@@ -74,11 +74,12 @@ input,select,textarea{scroll-margin-top:12px}
    const milestones=[
     {fecha:row.revision||addDays(row.fecha,1),tarea:"Revisar aceptación de celdas"},
     {fecha:addDays(row.fecha,5),tarea:"Revisar cría abierta y buscar celdas espontáneas"},
-    {fecha:row.fechaDistribucion||addDays(row.fecha,9),tarea:"Proteger y distribuir celdas antes de la emergencia"},
-    {fecha:row.nacimiento||addDays(row.fecha,10),tarea:"Vigilar nacimiento estimado de reinas"},
+    {fecha:row.fechaDistribucion||addDays(row.fecha,9),tarea:"DÍA 10 · Retirar y distribuir las celdas reales"},
+    {fecha:row.nacimiento||addDays(row.fecha,10),tarea:"DÍA 11 · Seguimiento del nacimiento y estado de las reinas"},
     {fecha:row.fechaPostura||addDays(row.fecha,24),tarea:"Revisar fecundación y postura"},
     {fecha:addDays(row.fecha,30),tarea:"Segunda revisión de postura si aún no se confirmó"},
-    {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"}
+    {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"},
+    {fecha:row.fechaProteccion||addDays(row.fecha,8),tarea:"DÍA 9 · Revisar y proteger las celdas reales"}
    ];
    milestones.forEach((m,i)=>{
     if(!m.fecha||m.fecha.length!==10)return;
