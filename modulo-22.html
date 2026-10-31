@@ -343,7 +343,8 @@ function makeTasks(row) {
     {date:row.nacimiento || addDays(row.fecha,10),title:"ApiEcuador: vigilar nacimiento de reinas · "+name,detail:"Fecha estimada de emergencia. Comprueba el desarrollo real y evita manipular las celdas innecesariamente."},
     {date:row.fechaPostura || addDays(row.fecha,24),title:"ApiEcuador: revisar fecundación y postura · "+name,detail:"Revisa si hay huevos/postura. El mal tiempo o la falta de zánganos pueden retrasarlo; no declares fallida una reina solo por la fecha."},
     {date:addDays(row.fecha,30),title:"ApiEcuador: segunda revisión de postura · "+name,detail:"Si aún no se confirmó postura, revisa la evolución y las condiciones. Ajusta la fecha según clima y manejo."},
-    {date:row.fecha,title:"🐝 INICIO DEL TRASLARVE · "+name,detail:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."}
+    {date:row.fecha,title:"🐝 INICIO DEL TRASLARVE · "+name,detail:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."},
+    {date:addDays(row.fecha,8),title:"ApiEcuador: preparar núcleos y material para las celdas · "+name,detail:"Día 9 contando el día del traslarve como Día 1. Prepara con anticipación núcleos receptores, alimento, identificaciones y material de protección. Comprueba que estén listos y fuertes; no manipules ni retires celdas antes de tiempo. La decisión de proteger o distribuir se confirma en el Día 10 según el desarrollo real."}
   ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.date)).map((t,i)=>({...t,index:i}));
 }
 async function createOrUpdateEvent(token, row, task, noticeDays) {
