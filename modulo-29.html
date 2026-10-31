@@ -124,7 +124,7 @@ input,select,textarea{scroll-margin-top:12px}
    card.innerHTML="<h3>📍 "+esc(r.nombre||"Apiario sin nombre")+"</h3>"+
     fields.filter(f=>String(r[f[0]]||"").trim()).map(f=>"<p><strong>"+esc(f[1])+":</strong> "+esc(r[f[0]])+"</p>").join("")+
     (hasCoords?'<p><a class="map-record-link" href="'+mapUrl+'" target="_blank" rel="noopener noreferrer">🗺️ Abrir ubicación en Google Maps ↗</a></p>':'<p class="map-help">📍 Este apiario todavía no tiene coordenadas guardadas. Edítalo para marcarlo en el mapa o usar el GPS.</p>')+
-    '<div class="actions"><a class="route-link" href="'+routeUrl+'">🚚 Planificar traslado hacia aquí</a><a class="route-link" href="./modulo-31.html?apiario='+encodeURIComponent(String(r.nombre||"").trim())+'">🌼 Registrar observación floral</a><button class="secondary" type="button" data-edit="'+esc(r.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(r.id)+'">Eliminar</button></div>';
+    '<div class="actions"><a class="route-link" href="./modulo-21.html?apiario='+encodeURIComponent(String(r.nombre||"").trim())+'">🔎 Registrar inspección</a><a class="route-link" href="./modulo-03.html?apiario='+encodeURIComponent(String(r.nombre||"").trim())+'">🩺 Control sanitario</a><a class="route-link" href="'+routeUrl+'">🚚 Planificar traslado hacia aquí</a><a class="route-link" href="./modulo-31.html?apiario='+encodeURIComponent(String(r.nombre||"").trim())+'">🌼 Registrar observación floral</a><button class="secondary" type="button" data-edit="'+esc(r.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(r.id)+'">Eliminar</button></div>';
    list.appendChild(card);
   });
  }
