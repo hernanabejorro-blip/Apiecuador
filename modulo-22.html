@@ -178,7 +178,7 @@ input,select,textarea{scroll-margin-top:12px}
     {fecha:row.fechaPostura||datePlus(row.fecha,24),tarea:"Revisar fecundación y postura"},
     {fecha:datePlus(row.fecha,30),tarea:"Segunda revisión de postura si aún no se confirmó"},
     {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"},
-    {fecha:datePlus(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"}
+    {fecha:datePlus(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"},
     {fecha:datePlus(row.fecha,-1),tarea:"🐝 PREPARAR COLMENA CRIADORA · huerfanizar y subir cría abierta para reforzar las nodrizas"}
    ];
    milestones.forEach((m,i)=>{
@@ -206,7 +206,7 @@ input,select,textarea{scroll-margin-top:12px}
    {fecha:row.fechaPostura||datePlus(row.fecha,24),titulo:"ApiEcuador: revisar fecundación y postura · "+nombre,detalle:"Revisa con cuidado si hay huevos/postura. Mal tiempo o falta de zánganos pueden retrasarlo; no declares fallida una reina solo por la fecha."},
    {fecha:datePlus(row.fecha,30),titulo:"ApiEcuador: segunda revisión de postura · "+nombre,detalle:"Si aún no se confirmó postura, revisa evolución y condiciones. Ajusta la fecha según clima y manejo."},
    {fecha:row.fecha,titulo:"🐝 INICIO DEL TRASLARVE · "+nombre,detalle:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."},
-   {fecha:datePlus(row.fecha,8),titulo:"ApiEcuador: preparar núcleos y material para las celdas · "+nombre,detalle:"Día 9 contando el traslarve como Día 1. Prepara núcleos, alimento, identificaciones y material. No retires las celdas antes del Día 10; confirma su desarrollo real."}
+   {fecha:datePlus(row.fecha,8),titulo:"ApiEcuador: preparar núcleos y material para las celdas · "+nombre,detalle:"Día 9 contando el traslarve como Día 1. Prepara núcleos, alimento, identificaciones y material. No retires las celdas antes del Día 10; confirma su desarrollo real."},
    {fecha:datePlus(row.fecha,-1),titulo:"🐝 PREPARAR COLMENA CRIADORA · "+nombre,detalle:"DÍA ANTERIOR AL TRASLARVE (no cuenta en los 10 días): huerfanizar la colmena criadora y subir un cuadro de cría abierta para reforzar la presencia de nodrizas, según el método de cría utilizado. Confirmar que la reina fue retirada y que la cría queda bien atendida."}
   ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.fecha));
   const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z");
@@ -350,7 +350,7 @@ function makeTasks(row) {
     {date:row.fechaPostura || addDays(row.fecha,24),title:"ApiEcuador: revisar fecundación y postura · "+name,detail:"Revisa si hay huevos/postura. El mal tiempo o la falta de zánganos pueden retrasarlo; no declares fallida una reina solo por la fecha."},
     {date:addDays(row.fecha,30),title:"ApiEcuador: segunda revisión de postura · "+name,detail:"Si aún no se confirmó postura, revisa la evolución y las condiciones. Ajusta la fecha según clima y manejo."},
     {date:row.fecha,title:"🐝 INICIO DEL TRASLARVE · "+name,detail:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."},
-    {date:addDays(row.fecha,8),title:"ApiEcuador: preparar núcleos y material para las celdas · "+name,detail:"Día 9 contando el día del traslarve como Día 1. Prepara con anticipación núcleos receptores, alimento, identificaciones y material de protección. Comprueba que estén listos y fuertes; no manipules ni retires celdas antes de tiempo. La decisión de proteger o distribuir se confirma en el Día 10 según el desarrollo real."}
+    {date:addDays(row.fecha,8),title:"ApiEcuador: preparar núcleos y material para las celdas · "+name,detail:"Día 9 contando el día del traslarve como Día 1. Prepara con anticipación núcleos receptores, alimento, identificaciones y material de protección. Comprueba que estén listos y fuertes; no manipules ni retires celdas antes de tiempo. La decisión de proteger o distribuir se confirma en el Día 10 según el desarrollo real."},
     {date:addDays(row.fecha,-1),title:"🐝 PREPARAR COLMENA CRIADORA · "+name,detail:"DÍA ANTERIOR AL TRASLARVE (no cuenta en los 10 días): huerfanizar la colmena criadora y subir un cuadro de cría abierta para reforzar la presencia de nodrizas, según el método de cría utilizado. Confirmar que la reina fue retirada y que la cría queda bien atendida."}
   ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.date)).map((t,i)=>({...t,index:i}));
 }
