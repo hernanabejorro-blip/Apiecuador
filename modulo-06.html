@@ -184,17 +184,20 @@ $('maps').addEventListener('click',()=>{const origin=$('origin').value.trim(),de
 /* Recibe datos de una observación floral elegida; no sobrescribe campos ya escritos. */
 try{
  const params=new URLSearchParams(window.location.search);
- const incoming={flora:params.get('flora'),destination:params.get('destination')};
- let appliedFlora=false,appliedDestination=false;
+ const incoming={flora:params.get('flora'),destination:params.get('destination'),colonies:params.get('destinationColonies')};
+ let appliedFlora=false,appliedDestination=false,appliedColonies=false;
  Object.keys(incoming).forEach(id=>{
   const value=incoming[id],field=$(id);
   if(value&&field&&!field.value){
    field.value=value;
    if(id==='flora')appliedFlora=true;
    if(id==='destination')appliedDestination=true;
+   if(id==='colonies')appliedColonies=true;
   }
  });
- if(appliedFlora&&appliedDestination){
+ if(appliedDestination&&appliedColonies){
+  $('status').textContent='Destino y número de colmenas cargados desde Mis Apiarios. Completa el origen y las fechas; confirma los datos antes de guardar.';
+ }else if(appliedFlora&&appliedDestination){
   $('status').textContent='Floración y destino cargados desde el Calendario Floral o Mis Apiarios. Completa el origen, las fechas y el número de colmenas antes de guardar.';
  }else if(appliedFlora){
   $('status').textContent='Floración cargada desde el Calendario Floral. Comprueba localidad y fechas reales antes de guardar la ruta.';
