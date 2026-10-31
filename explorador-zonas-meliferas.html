@@ -338,6 +338,30 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <div class="grid"><div><label for="map-lat">Latitud</label><input id="map-lat" inputmode="decimal" placeholder="-0.123456"></div><div><label for="map-lon">Longitud</label><input id="map-lon" inputmode="decimal" placeholder="-78.123456"></div></div>
 <div class="actions"><button type="button" id="open-map">Abrir Google Maps satelital</button><button type="button" class="secondary" id="copy-coords">Copiar coordenadas</button></div>
 </section>
+<section class="panel" id="fuentes-especies-forestales">
+<h2>🧬 Mapas y registros oficiales de especies forestales</h2>
+<p>Incorporamos dos fuentes distintas para no mezclar la distribución de árboles nativos con las plantaciones comerciales. Una ayuda a explorar dónde se distribuyen especies forestales; la otra contiene registros de la Evaluación Nacional Forestal.</p>
+<div class="record">
+<h3>🗺️ UTN · Dashboard de distribución espacial de especies forestales</h3>
+<span class="tag">Mapa interactivo nacional</span>
+<p>La Universidad Técnica del Norte ofrece un tablero geográfico que muestra distribución espacial actual y potencial, densidad, tipos de especies y estado de conservación. Lo usaremos para explorar especies y regiones candidatas y después contrastarlas con la cobertura forestal y las visitas de campo.</p>
+<div class="notice"><strong>Límite importante:</strong> el tablero no está descrito como catastro de plantaciones comerciales ni como inventario de hectáreas continuas de eucalipto. No usaremos sus mapas como prueba de superficie plantada ni como cálculo de colmenas.</div>
+<div class="actions"><a class="link" href="https://www.arcgis.com/apps/dashboards/1098e8966b4d46d9afc35c7a063b2c70" target="_blank" rel="noopener">Abrir mapa de especies forestales UTN</a><a class="link secondary" href="https://observatorioforestal.utn.edu.ec/" target="_blank" rel="noopener">Ver Observatorio Forestal UTN</a></div>
+</div>
+<div class="record">
+<h3>🌿 MAATE · Segunda Evaluación Nacional Forestal (ENF II)</h3>
+<span class="tag">Datos de campo · Ecuador continental</span>
+<p>El conjunto publicado por el MAATE en GBIF reúne 2.280 registros biológicos y documenta 2.283 especies de árboles en nueve estratos de bosque. Sus datos corresponden a campañas de campo de 2022–2023 y sirven para investigar composición de bosques nativos y especies presentes por contexto ecológico.</p>
+<div class="notice"><strong>Límite importante:</strong> son registros de evaluación e inventario, no polígonos completos de plantaciones ni hectáreas de eucalipto. La cobertura geográfica descrita es Ecuador continental; Galápagos debe tratarse con fuentes específicas.</div>
+<div class="actions"><a class="link" href="https://patrimonio.ambiente.gob.ec/iptmae/resource?r=2f55edb3-5db3-4a9e-8ef7-1f5f1ddce3d6" target="_blank" rel="noopener">Consultar y descargar datos ENF II</a><a class="link secondary" href="https://enf.ambiente.gob.ec/web_enf/?page_id=1444" target="_blank" rel="noopener">Biblioteca y métodos de campo ENF</a></div>
+</div>
+<div class="record">
+<h3>📩 Próxima vía oficial · pedir cifras agregadas al MAGP</h3>
+<p>El registro forestal solicita a los propietarios un mapa vectorial de la plantación con atributos en WGS84 zona 17 Sur y un inventario forestal. Eso indica que la administración recibe información geográfica y por especie. La petición que interesa a ApiEcuador es un resumen público, sin nombres, cédulas, teléfonos ni datos privados: provincia, cantón, especie, hectáreas registradas, año de actualización y, si es posible, polígonos generalizados o cuadrículas.</p>
+<div class="actions"><a class="link secondary" href="https://spf.agricultura.gob.ec/" target="_blank" rel="noopener">Portal oficial SiPF / Producción Forestal</a><a class="link secondary" href="https://www.agricultura.gob.ec/inscripcion-en-el-registro-forestal/" target="_blank" rel="noopener">Requisitos del Registro Forestal</a></div>
+<p class="muted">No se ha enviado ninguna solicitud. Primero dejamos definido qué información pública necesitamos y evitamos pedir datos personales de propietarios.</p>
+</div>
+</section>
 <section class="panel">
 <h2>🌳 Zonas registradas</h2>
 <div class="grid"><div><label for="search">Buscar por zona, especie o localidad</label><input id="search" placeholder="Ej. eucalipto, Tanda…"></div><div><label for="filter-region">Filtrar región</label><select id="filter-region"><option value="">Todas las regiones</option><option>Sierra</option><option>Costa</option><option>Oriente / Amazonía</option><option>Galápagos</option></select></div></div>
