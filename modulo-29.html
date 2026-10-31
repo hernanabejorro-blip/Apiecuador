@@ -120,7 +120,7 @@ input,select,textarea{scroll-margin-top:12px}
    const card=document.createElement("article");card.className="record";
    const hasCoords=validCoords(String(r.latitud||""),String(r.longitud||""));
    const mapUrl=hasCoords?"https://www.google.com/maps?q="+encodeURIComponent(r.latitud+","+r.longitud):"";
-   const routeUrl="./modulo-06.html?destination="+encodeURIComponent(String(r.nombre||r.ubicacion||"").trim());
+   const routeUrl="./modulo-06.html?destination="+encodeURIComponent(String(r.nombre||r.ubicacion||"").trim())+"&destinationColonies="+encodeURIComponent(String(r.colmenas||"").trim());
    card.innerHTML="<h3>📍 "+esc(r.nombre||"Apiario sin nombre")+"</h3>"+
     fields.filter(f=>String(r[f[0]]||"").trim()).map(f=>"<p><strong>"+esc(f[1])+":</strong> "+esc(r[f[0]])+"</p>").join("")+
     (hasCoords?'<p><a class="map-record-link" href="'+mapUrl+'" target="_blank" rel="noopener noreferrer">🗺️ Abrir ubicación en Google Maps ↗</a></p>':'<p class="map-help">📍 Este apiario todavía no tiene coordenadas guardadas. Edítalo para marcarlo en el mapa o usar el GPS.</p>')+
