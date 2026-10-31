@@ -39,7 +39,7 @@ input,select,textarea{scroll-margin-top:12px}
 <div class="notice"><strong>Importante:</strong> este módulo registra lo que observas y aplicas; no diagnostica ni prescribe dosis. Usa únicamente productos autorizados para abejas, siguiendo la etiqueta y las indicaciones veterinarias. No prepares tiras caseras ni cambies concentraciones por cuenta propia. Respeta los tiempos de retiro antes de cosechar miel.</div>
 <section class="panel"><h2>Registrar revisión o tratamiento</h2><form id="form"><input id="editId" type="hidden"><div class="grid">
 <div><label for="date">Fecha de revisión</label><input id="date" type="date" required></div>
-<div><label for="apiary">Apiario</label><input id="apiary" maxlength="80" placeholder="Nombre de tu apiario" required></div>
+<div><label for="apiary">Apiario</label><input id="apiary" list="apiarios-sanitarios" maxlength="80" placeholder="Elige o escribe el nombre de tu apiario" required><datalist id="apiarios-sanitarios"></datalist><small class="muted">Puedes elegir un apiario registrado en “Mis apiarios” o escribir otro nombre.</small></div>
 <div><label for="hives">Colmenas revisadas</label><input id="hives" maxlength="80" placeholder="Ej. A01–A10"></div>
 <div><label for="method">Tipo de registro</label><select id="method"><option>Monitoreo de Varroa</option><option>Tratamiento aplicado</option><option>Revisión posterior</option><option>Otra observación sanitaria</option></select></div>
 <div><label for="product">Producto o método utilizado</label><input id="product" maxlength="120" placeholder="Nombre exacto de la etiqueta"></div>
@@ -65,6 +65,18 @@ $('cancel').addEventListener('click',()=>{reset();$('status').textContent='Edici
 $('filter').addEventListener('input',render);
 $('records').addEventListener('click',e=>{const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');if(edit){const r=rows.find(x=>x.id===edit.dataset.edit);if(!r)return;$('editId').value=r.id;fields.forEach(k=>$(k).value=r[k]||'');$('save').textContent='Guardar cambios';$('cancel').hidden=false;window.scrollTo({top:0,behavior:'smooth'})}if(del){const r=rows.find(x=>x.id===del.dataset.delete);if(r&&confirm('¿Eliminar este registro sanitario?')){rows=rows.filter(x=>x.id!==r.id);persist();render();$('status').textContent='Registro eliminado.'}}});
 $('export').addEventListener('click',()=>{if(!rows.length){$('status').textContent='No hay registros para exportar.';return}const cols=['date','apiary','hives','method','product','batch','before','after','next','notes'];const csv=[cols.join(','),...rows.map(r=>cols.map(k=>'"'+String(r[k]||'').replace(/"/g,'""')+'"').join(','))].join('\r\n');const url=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));const a=document.createElement('a');a.href=url;a.download='apiecuador-control-sanitario.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);$('status').textContent='Archivo CSV preparado. Si el teléfono pregunta, guarda el archivo y revisa Descargas.'});
+// Sugerencias de apiarios registrados; no modifica ni importa historiales.
+try{
+ const apiaries=JSON.parse(localStorage.getItem('apiecuador-apiarios-v1')||'[]');
+ const datalist=$('apiarios-sanitarios');
+ if(Array.isArray(apiaries))apiaries.forEach(a=>{
+  const name=String(a&&a.nombre||'').trim();if(!name)return;
+  const option=document.createElement('option');option.value=name;
+  if(a.ubicacion)option.label=String(a.ubicacion);datalist.appendChild(option);
+ });
+ const selected=new URLSearchParams(window.location.search).get('apiario');
+ if(selected){$('apiary').value=selected;$('status').textContent='Apiario seleccionado desde Mis apiarios. Completa el control sanitario y guarda cuando termines.';}
+}catch(e){}
 render();
 })();
 </script></body></html>
