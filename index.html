@@ -164,6 +164,14 @@ footer{padding-top:24px;padding-bottom:28px}
 @media(max-width:520px){.grid .card{min-height:150px;padding:17px;background-position:center 45%}.grid .card .name{max-width:34ch}}
 }
 
+
+/* Catálogo agrupado: menos entradas visibles, sin borrar herramientas ni datos. */
+.grupos-herramientas{display:grid;gap:10px}
+.grupo-herramientas{border:1px solid #dce5d8;border-radius:14px;background:#fff;padding:13px 15px}
+.grupo-herramientas>summary{cursor:pointer;color:#245c43;font-weight:750;line-height:1.4;padding:3px 0}
+.grupo-herramientas>p{margin:8px 0 12px;color:#65584b;font-size:14px}
+.grupo-herramientas .grid{margin-top:8px}
+.grupo-herramientas .card{min-height:112px}
 </style>
 <style id="apiecuador-lectura-accesible">
 /* ApiEcuador: lectura cómoda en teléfono y bajo luz exterior. Solo tipografía y contraste. */
@@ -205,14 +213,9 @@ input,select,textarea{scroll-margin-top:12px}
   <div class="accesos-rapidos-lista">
     <a class="acceso-rapido" href="modulo-21.html"><span aria-hidden="true">🔍</span><span>Inspección de colmenas</span></a>
     <a class="acceso-rapido" href="modulo-22.html"><span aria-hidden="true">👑</span><span>Cría y seguimiento de reinas</span></a>
-    <a class="acceso-rapido" href="modulo-03.html"><span aria-hidden="true">🛡️</span><span>Sanidad y Varroa</span></a>
-    <a class="acceso-rapido" href="modulo-23.html"><span aria-hidden="true">📅</span><span>Calendario apícola</span></a>
+    <a class="acceso-rapido" href="modulo-23.html"><span aria-hidden="true">📅</span><span>Calendario y tareas</span></a>
     <a class="acceso-rapido" href="modulo-29.html"><span aria-hidden="true">📍</span><span>Mis apiarios</span></a>
-    <a class="acceso-rapido" href="modulo-31.html"><span aria-hidden="true">🌼</span><span>Atlas Floral y Bosques Melíferos</span></a>
-    <a class="acceso-rapido" href="modulo-27.html"><span aria-hidden="true">📦</span><span>Copia de seguridad</span></a>
-    <a class="acceso-rapido" href="documentos-trashumancia.html"><span aria-hidden="true">🚚</span><span>Documentos para trashumancia</span></a>
-    
-  </div>
+    </div>
 </section>
 <aside class="aviso-campo" role="note">
   <strong>🐝 Consejo de campo</strong>
@@ -255,67 +258,46 @@ input,select,textarea{scroll-margin-top:12px}
 <details id="herramientas-complementarias" style="margin-top:22px;border:1px solid #dce5d8;border-radius:16px;background:#fff;padding:14px 16px">
 <summary style="font-weight:750;color:#245c43;cursor:pointer;font-size:17px">Catálogo completo de herramientas (15)</summary>
 <p style="margin:10px 0 14px;color:#65584b;line-height:1.5">Aquí están las herramientas de uso ocasional y las funciones más específicas. Los accesos rápidos de arriba llevan a las tareas habituales; este catálogo conserva el acceso a todas las demás páginas sin llenar la portada.</p>
-<div class="grid"><a class="card" href="modulo-02.html">
-      <span class="dot">●</span><span class="name">Curvas de Floración</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-04.html">
-      <span class="dot">●</span><span class="name">Cosecha &amp; Lotes de Miel</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-05.html">
-      <span class="dot">●</span><span class="name">Planificador de Lotes de Traslarve</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-07.html">
-      <span class="dot">●</span><span class="name">Panel de Apiario · Estado y alertas</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-08.html">
-      <span class="dot">●</span><span class="name">Cuadrilla de Extracción · Jornadas y operarios</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-09.html">
-      <span class="dot">●</span><span class="name">Inventario &amp; Ciclo de Cera</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-10.html">
-      <span class="dot">●</span><span class="name">Resumen de Apiarios Registrados</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-11.html">
-      <span class="dot">●</span><span class="name">Mapa de Apiarios · Viento y Entorno</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-12.html">
-      <span class="dot">●</span><span class="name">Mapa de Apiarios · Flora y Recursos</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-23.html">
-      <span class="dot">●</span><span class="name">Calendario Apícola y Tareas</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-24.html">
-      <span class="dot">●</span><span class="name">Alimentación y Tratamientos</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-28.html">
-      <span class="dot">●</span><span class="name">Calendario Apícola Inteligente · Agenda y Reinas</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-30.html">
-      <span class="dot">●</span><span class="name">Seguimiento de Reinas · Lotes de Traslarve</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-27.html">
-      <span class="dot">●</span><span class="name">Copias de Seguridad · Exportar e Importar</span>
-      <span class="go">Abrir módulo →</span>
-    </a>
-<a class="card" href="modulo-26.html">
-      <span class="dot">●</span><span class="name">Biblioteca Sanitaria · Varroa y Métodos Tradicionales</span>
-      <span class="go">Abrir módulo →</span>
-    </a></div>
-</details>
+<div class="grupos-herramientas">
+<details class="grupo-herramientas"><summary>🐝 Colmenas y apiarios</summary><p>Inspecciones, estado de las colmenas, registro de apiarios y evaluación de nuevos sitios.</p><div class="grid">
+<a class="card" href="modulo-21.html"><span class="dot">●</span><span class="name">Inspección de colmenas</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="modulo-07.html"><span class="dot">●</span><span class="name">Panel de Apiario · Estado y alertas</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="modulo-29.html"><span class="dot">●</span><span class="name">Mis apiarios y ubicación GPS</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="modulo-10.html"><span class="dot">●</span><span class="name">Resumen de apiarios registrados</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="modulo-11.html"><span class="dot">●</span><span class="name">Registro complementario de apiarios</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="modulo-12.html"><span class="dot">●</span><span class="name">Evaluación de nuevos sitios</span><span class="go">Abrir herramienta →</span></a>
+</div></details>
+<details class="grupo-herramientas"><summary>🛡️ Sanidad, alimentación y tratamientos</summary><p>Control sanitario, Varroa, alimentación y consulta de métodos de manejo.</p><div class="grid">
+<a class="card" href="modulo-03.html"><span class="dot">●</span><span class="name">Control sanitario y Varroa</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="modulo-24.html"><span class="dot">●</span><span class="name">Alimentación y tratamientos</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="modulo-26.html"><span class="dot">●</span><span class="name">Biblioteca sanitaria · Varroa</span><span class="go">Abrir herramienta →</span></a>
+</div></details>
+<details class="grupo-herramientas"><summary>👑 Cría y seguimiento de reinas</summary><p>Planificación de traslarves, lotes, nacimientos, fecundación y seguimiento de reinas.</p><div class="grid">
+<a class="card" href="modulo-22.html"><span class="dot">●</span><span class="name">Cría de reinas · Traslarve</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="modulo-30.html"><span class="dot">●</span><span class="name">Seguimiento de reinas y lotes</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="modulo-05.html"><span class="dot">●</span><span class="name">Planificador complementario de traslarve</span><span class="go">Abrir herramienta →</span></a>
+</div></details>
+<details class="grupo-herramientas"><summary>🌼 Floraciones, plantas y bosques melíferos</summary><p>Un solo espacio de consulta para floraciones, observaciones de campo, bosques y zonas productivas.</p><div class="grid">
+<a class="card" href="modulo-31.html"><span class="dot">●</span><span class="name">Atlas Floral y Bosques Melíferos de Ecuador</span><span class="go">Abrir herramienta principal →</span></a>
+<a class="card" href="modulo-02.html"><span class="dot">●</span><span class="name">Curvas y registros de floración</span><span class="go">Abrir herramienta complementaria →</span></a>
+</div></details>
+<details class="grupo-herramientas"><summary>📅 Calendario y organización del trabajo</summary><p>Tareas, avisos, agenda y planificación apícola conectada con las floraciones y la cría de reinas.</p><div class="grid">
+<a class="card" href="modulo-23.html"><span class="dot">●</span><span class="name">Calendario apícola y tareas</span><span class="go">Abrir herramienta principal →</span></a>
+<a class="card" href="modulo-28.html"><span class="dot">●</span><span class="name">Agenda inteligente y próximos trabajos</span><span class="go">Abrir herramienta complementaria →</span></a>
+</div></details>
+<details class="grupo-herramientas"><summary>🍯 Producción, cosecha y materiales</summary><p>Cosechas y lotes de miel, jornadas de extracción e inventario de cera.</p><div class="grid">
+<a class="card" href="modulo-04.html"><span class="dot">●</span><span class="name">Cosecha y lotes de miel</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="modulo-08.html"><span class="dot">●</span><span class="name">Jornadas y cuadrilla de extracción</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="modulo-09.html"><span class="dot">●</span><span class="name">Inventario y ciclo de cera</span><span class="go">Abrir herramienta →</span></a>
+</div></details>
+<details class="grupo-herramientas"><summary>🚚 Trashumancia y documentos</summary><p>Planificación de traslados, destinos y documentación necesaria para movilizar colmenas.</p><div class="grid">
+<a class="card" href="modulo-06.html"><span class="dot">●</span><span class="name">Planificador de trashumancia</span><span class="go">Abrir herramienta →</span></a>
+<a class="card" href="documentos-trashumancia.html"><span class="dot">●</span><span class="name">Documentos para trashumancia</span><span class="go">Abrir herramienta →</span></a>
+</div></details>
+<details class="grupo-herramientas"><summary>📦 Copias de seguridad</summary><p>Exportar e importar tus registros para proteger la información de trabajo.</p><div class="grid">
+<a class="card" href="modulo-27.html"><span class="dot">●</span><span class="name">Copias de seguridad · Exportar e importar</span><span class="go">Abrir herramienta →</span></a>
+</div></details>
+</div></details>
 </main><footer class="wrap">Versión inicial creada a partir de la exportación de Stitch. Conserva el ZIP original como copia de seguridad.</footer>
 <script>
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
@@ -360,6 +342,9 @@ buscador.addEventListener("input", function () {
 
   if (complementarias) {
     complementarias.open = texto.length > 0 && coincideEnComplementarias;
+    complementarias.querySelectorAll(".grupo-herramientas").forEach(grupo => {
+      grupo.open = texto.length > 0 && Array.from(grupo.querySelectorAll(".card")).some(t => t.style.display !== "none");
+    });
   }
   aviso.hidden = visibles > 0;
 });
