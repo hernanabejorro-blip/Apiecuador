@@ -179,13 +179,13 @@ input,select,textarea{scroll-margin-top:12px}
     {fecha:datePlus(row.fecha,30),tarea:"Segunda revisión de postura si aún no se confirmó"},
     {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"},
     {fecha:datePlus(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"},
-    {fecha:datePlus(row.fecha,-1),tarea:"🐝 PREPARAR COLMENA CRIADORA · huerfanizar y subir cría abierta para reforzar las nodrizas"}
+    {fecha:datePlus(row.fecha,-1),tarea:"🐝 PREPARAR COLMENA CRIADORA · huerfanizar y subir cría abierta para reforzar las nodrizas",avisoDias:0}
    ];
    milestones.forEach((m,i)=>{
     if(!/^\d{4}-\d{2}-\d{2}$/.test(m.fecha))return;
     const id="reina-"+row.id+"-"+i;
     const previous=tasks.find(t=>t.id===id);
-    generated.push({id,origenReina:row.id,fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(notice),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 1): "+row.fecha+". Las fechas son orientativas; confirma el desarrollo real de las celdas y adapta el manejo al clima.",completada:previous?!!previous.completada:false});
+    generated.push({id,origenReina:row.id,fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(m.avisoDias==null?notice:m.avisoDias),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 1): "+row.fecha+". Las fechas son orientativas; confirma el desarrollo real de las celdas y adapta el manejo al clima.",completada:previous?!!previous.completada:false});
    });
   });
   const ids=new Set(generated.map(t=>t.id));
@@ -207,10 +207,10 @@ input,select,textarea{scroll-margin-top:12px}
    {fecha:datePlus(row.fecha,30),titulo:"ApiEcuador: segunda revisión de postura · "+nombre,detalle:"Si aún no se confirmó postura, revisa evolución y condiciones. Ajusta la fecha según clima y manejo."},
    {fecha:row.fecha,titulo:"🐝 INICIO DEL TRASLARVE · "+nombre,detalle:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."},
    {fecha:datePlus(row.fecha,8),titulo:"ApiEcuador: preparar núcleos y material para las celdas · "+nombre,detalle:"Día 9 contando el traslarve como Día 1. Prepara núcleos, alimento, identificaciones y material. No retires las celdas antes del Día 10; confirma su desarrollo real."},
-   {fecha:datePlus(row.fecha,-1),titulo:"🐝 PREPARAR COLMENA CRIADORA · "+nombre,detalle:"DÍA ANTERIOR AL TRASLARVE (no cuenta en los 10 días): huerfanizar la colmena criadora y subir un cuadro de cría abierta para reforzar la presencia de nodrizas, según el método de cría utilizado. Confirmar que la reina fue retirada y que la cría queda bien atendida."}
+   {fecha:datePlus(row.fecha,-1),titulo:"🐝 PREPARAR COLMENA CRIADORA · "+nombre,detalle:"DÍA ANTERIOR AL TRASLARVE (no cuenta en los 10 días): huerfanizar la colmena criadora y subir un cuadro de cría abierta para reforzar la presencia de nodrizas, según el método de cría utilizado. Confirmar que la reina fue retirada y que la cría queda bien atendida.",avisoDias:0}
   ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.fecha));
   const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z");
-  const diasAviso=Math.max(0,Math.min(365,parseInt(row.avisoDias==null||row.avisoDias===""?"1":row.avisoDias,10)||0));const events=tareas.map((t,i)=>"BEGIN:VEVENT\r\nUID:apiecuador-"+String(row.id||"lote")+"-"+i+"@apiecuador\r\nDTSTAMP:"+stamp+"\r\nSUMMARY:"+icsEscape(t.titulo)+"\r\nDESCRIPTION:"+icsEscape(t.detalle+" Aviso configurado con "+diasAviso+" día(s) de anticipación.")+"\r\nDTSTART;VALUE=DATE:"+icsDate(t.fecha)+"\r\nDTEND;VALUE=DATE:"+icsDate(datePlus(t.fecha,1))+"\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:"+icsEscape("Recordatorio: "+t.titulo)+"\r\nTRIGGER:-P"+diasAviso+"D\r\nEND:VALARM\r\nEND:VEVENT").join("\r\n");
+  const diasAviso=Math.max(0,Math.min(365,parseInt(row.avisoDias==null||row.avisoDias===""?"1":row.avisoDias,10)||0));const events=tareas.map((t,i)=>"BEGIN:VEVENT\r\nUID:apiecuador-"+String(row.id||"lote")+"-"+i+"@apiecuador\r\nDTSTAMP:"+stamp+"\r\nSUMMARY:"+icsEscape(t.titulo)+"\r\nDESCRIPTION:"+icsEscape(t.detalle+" Aviso configurado con "+diasAviso+" día(s) de anticipación.")+"\r\nDTSTART;VALUE=DATE:"+icsDate(t.fecha)+"\r\nDTEND;VALUE=DATE:"+icsDate(datePlus(t.fecha,1))+"\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:"+icsEscape("Recordatorio: "+t.titulo)+"\r\nTRIGGER:-P"+(t.avisoDias==null?diasAviso:t.avisoDias)+"D\r\nEND:VALARM\r\nEND:VEVENT").join("\r\n");
   const calendar="BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//ApiEcuador//Recordatorios de cria de reinas//ES\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n"+events+"\r\nEND:VCALENDAR\r\n";
   const blob=new Blob([calendar],{type:"text/calendar;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=url;a.download="apiecuador-recordatorios-reinas.ics";
@@ -351,7 +351,7 @@ function makeTasks(row) {
     {date:addDays(row.fecha,30),title:"ApiEcuador: segunda revisión de postura · "+name,detail:"Si aún no se confirmó postura, revisa la evolución y las condiciones. Ajusta la fecha según clima y manejo."},
     {date:row.fecha,title:"🐝 INICIO DEL TRASLARVE · "+name,detail:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."},
     {date:addDays(row.fecha,8),title:"ApiEcuador: preparar núcleos y material para las celdas · "+name,detail:"Día 9 contando el día del traslarve como Día 1. Prepara con anticipación núcleos receptores, alimento, identificaciones y material de protección. Comprueba que estén listos y fuertes; no manipules ni retires celdas antes de tiempo. La decisión de proteger o distribuir se confirma en el Día 10 según el desarrollo real."},
-    {date:addDays(row.fecha,-1),title:"🐝 PREPARAR COLMENA CRIADORA · "+name,detail:"DÍA ANTERIOR AL TRASLARVE (no cuenta en los 10 días): huerfanizar la colmena criadora y subir un cuadro de cría abierta para reforzar la presencia de nodrizas, según el método de cría utilizado. Confirmar que la reina fue retirada y que la cría queda bien atendida."}
+    {date:addDays(row.fecha,-1),title:"🐝 PREPARAR COLMENA CRIADORA · "+name,detail:"DÍA ANTERIOR AL TRASLARVE (no cuenta en los 10 días): huerfanizar la colmena criadora y subir un cuadro de cría abierta para reforzar la presencia de nodrizas, según el método de cría utilizado. Confirmar que la reina fue retirada y que la cría queda bien atendida.",noticeDays:0}
   ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.date)).map((t,i)=>({...t,index:i}));
 }
 async function createOrUpdateEvent(token, row, task, noticeDays) {
@@ -418,7 +418,7 @@ async function programLotEvents(row, token) {
   const noticeDays = Math.max(0, Math.min(365, parseInt(row.avisoDias == null || row.avisoDias === "" ? "1" : row.avisoDias,10) || 0));
   let created = 0, updated = 0;
   for (const task of tasks) {
-    const outcome = await createOrUpdateEvent(token,row,task,noticeDays);
+    const outcome = await createOrUpdateEvent(token,row,task,task.noticeDays == null ? noticeDays : task.noticeDays);
     if (outcome === "creado") created++; else updated++;
   }
   calendarStatus.textContent = "Listo: " + created + " avisos nuevos y " + updated + " actualizados en el calendario principal de Google. Todos quedan a las 8:00 a. m.; revisa que las notificaciones estén activadas.";
