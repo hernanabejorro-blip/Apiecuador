@@ -1,4 +1,4 @@
-const CACHE_NAME = "apiecuador-v24";
+const CACHE_NAME = "apiecuador-v25";
 
 // Archivos principales para abrir ApiEcuador y sus módulos recientes sin conexión.
 // Las fotografías externas y los enlaces oficiales siguen necesitando Internet.
@@ -12,6 +12,7 @@ const ASSETS = [
   "./documentos-trashumancia.html",
   "./floraciones-ecuador.html",
   "./explorador-zonas-meliferas.html",
+  "./atlas-superficies-forestales.html",
   "./modulo-01.html",
   "./modulo-02.html",
   "./modulo-03.html",
