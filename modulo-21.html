@@ -110,5 +110,10 @@ input,select,textarea{scroll-margin-top:12px}
  } catch(e) {
   // El formulario sigue funcionando aunque no haya apiarios registrados.
  }
+ // Si se llega desde Mis apiarios, dejar seleccionado el apiario sin modificar registros.
+ try {
+  const selected=new URLSearchParams(window.location.search).get("apiario");
+  if(selected){const field=document.getElementById("apiario");if(field){field.value=selected;status.textContent="Apiario seleccionado desde Mis apiarios. Completa la inspección y guarda cuando termines.";}}
+ } catch(e) {}
 })();
 </script></body></html>
