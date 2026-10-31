@@ -227,8 +227,9 @@ input,select,textarea{scroll-margin-top:12px}
  const larvaInput=document.getElementById("larvas");
  const larvaAlert=document.getElementById("alerta-larva");
  function revisarEdadLarva(){
-  const texto=String(larvaInput.value||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase();
-  larvaAlert.hidden=!/(\\bgrande\\b|\\bgrandes\\b|\\bmediana\\b|\\bmedianas\\b|\\bdesarrollada\\b|\\bdesarrolladas\\b|\\bmayor de 24\\b)/.test(texto);
+  const texto=String(larvaInput.value||"").toLowerCase();
+  const palabras=["grande","grandes","mediana","medianas","desarrollada","desarrolladas","mayor de 24"];
+  larvaAlert.hidden=!palabras.some(p=>texto.includes(p));
  }
  larvaInput.addEventListener("input",revisarEdadLarva);
  function calcularFechasTraslarve(){
