@@ -352,12 +352,13 @@ function makeTasks(row) {
   return [
     {date:row.revision || addDays(row.fecha,1),title:"ApiEcuador: revisar aceptación · "+name,detail:"Comprueba con cuidado la aceptación y registra cuántas celdas fueron aceptadas. Fecha orientativa; confirma el desarrollo real."},
     {date:addDays(row.fecha,5),title:"ApiEcuador: revisar cría abierta y celdas espontáneas · "+name,detail:"Revisa la cría abierta y busca celdas reales espontáneas. Confirma el estado de la colonia y tu método antes de actuar; no elimines celdas útiles ni actúes sin localizar la reina."},
-    {date:row.fechaDistribucion || addDays(row.fecha,9),title:"ApiEcuador: proteger y distribuir celdas · "+name,detail:"En el Día 10 contando el día del traslarve como Día 1, comprueba el desarrollo real, protege las celdas si corresponde y prepara los núcleos antes de la emergencia."},
-    {date:row.nacimiento || addDays(row.fecha,10),title:"ApiEcuador: vigilar nacimiento de reinas · "+name,detail:"Fecha estimada de emergencia. Comprueba el desarrollo real y evita manipular las celdas innecesariamente."},
+    {date:row.fechaDistribucion || addDays(row.fecha,9),title:"DÍA 10 · RETIRAR CELDAS REALES · "+name,detail:"Aviso principal: retira las celdas reales y distribúyelas/protégelas según tu método y el estado real. El traslarve cuenta como Día 1."},
+    {date:row.nacimiento || addDays(row.fecha,10),title:"DÍA 11 · SEGUIMIENTO DEL NACIMIENTO · "+name,detail:"Seguimiento posterior a la retirada: comprueba el estado de las celdas y vigila la emergencia estimada. Evita manipulaciones innecesarias."},
     {date:row.fechaPostura || addDays(row.fecha,24),title:"ApiEcuador: revisar fecundación y postura · "+name,detail:"Revisa si hay huevos/postura. El mal tiempo o la falta de zánganos pueden retrasarlo; no declares fallida una reina solo por la fecha."},
     {date:addDays(row.fecha,30),title:"ApiEcuador: segunda revisión de postura · "+name,detail:"Si aún no se confirmó postura, revisa la evolución y las condiciones. Ajusta la fecha según clima y manejo."},
-    {date:row.fecha,title:"🐝 INICIO DEL TRASLARVE · "+name,detail:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."}
-  ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.date)).map((t,i)=>({...t,index:i}));
+    {date:row.fecha,title:"🐝 INICIO DEL TRASLARVE · "+name,detail:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."},
+    {date:row.fechaProteccion || addDays(row.fecha,8),title:"DÍA 9 · REVISAR Y PROTEGER CELDAS · "+name,detail:"Revisa el desarrollo y protege las celdas reales. Deja preparado el trabajo del Día 10. Confirma siempre el estado real y tu método."}
+  ].filter(t=>/^\\d{4}-\\d{2}-\\d{2}$/.test(t.date)).map((t,i)=>({...t,index:i}));
 }
 async function createOrUpdateEvent(token, row, task, noticeDays) {
   const uniqueKey = String(row.id || "lote") + "-" + task.index;
