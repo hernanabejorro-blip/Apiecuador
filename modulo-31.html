@@ -60,6 +60,14 @@ input,select,textarea{scroll-margin-top:12px}
 }
 </style>
 
+
+<style id="atlas-herramientas-integradas">
+#atlas-herramientas-integradas .atlas-embedded-tool{border:1px solid #dce4d9;border-radius:13px;padding:12px 14px;margin:12px 0;background:#fff}
+#atlas-herramientas-integradas .atlas-embedded-tool>summary{font-weight:750;color:#245c43;cursor:pointer;padding:7px 0}
+#atlas-herramientas-integradas iframe{display:block;width:100%;height:900px;border:1px solid #dce4d9;border-radius:10px;background:#fcf9f2;margin:12px 0}
+#atlas-herramientas-integradas a{color:#245c43;font-weight:650}
+@media(max-width:600px){#atlas-herramientas-integradas .atlas-embedded-tool{padding:10px}#atlas-herramientas-integradas iframe{height:1050px}}
+</style>
 </head>
 <body>
 <header><div style="max-width:920px;margin:auto"><a href="./index.html">← Volver a ApiEcuador</a><h1>🌼 Atlas Floral y Bosques Melíferos</h1><p>Un solo lugar para registrar floraciones, explorar bosques melíferos de Ecuador y planificar apiarios y trashumancia.</p></div></header>
@@ -80,6 +88,34 @@ input,select,textarea{scroll-margin-top:12px}
 <article class="record"><h3>🚚 Llevarlo a la trashumancia</h3><p>Usa la floración objetivo para preparar una ruta y verificar el destino antes de mover colmenas.</p><a class="button-link" href="./modulo-06.html">Planificar traslado</a></article>
 </div>
 <p class="muted">Importante: una superficie forestal no equivale automáticamente a hectáreas de floración útil. Confirma especie, floración, acceso, agua, permisos y competencia en el terreno antes de estimar la carga de colmenas.</p>
+</section>
+<section class="panel" id="atlas-herramientas-integradas">
+<h2>🧰 Herramientas del Atlas en un solo lugar</h2>
+<p>Abre solo la sección que necesitas. Las herramientas antiguas se muestran aquí dentro para que no tengas que salir del Atlas. Conservan sus formularios y sus registros originales.</p>
+<details class="atlas-embedded-tool" data-src="./modulo-02.html">
+<summary>📈 Curvas de floración y observaciones por planta</summary>
+<p class="muted">Consulta curvas y fichas de floración. Sus registros anteriores se mantienen en su almacenamiento original.</p>
+<iframe title="Curvas de floración de ApiEcuador" loading="lazy" referrerpolicy="same-origin"></iframe>
+<p><a href="./modulo-02.html">Abrir esta herramienta en una página independiente si lo prefieres</a></p>
+</details>
+<details class="atlas-embedded-tool" data-src="./floraciones-ecuador.html">
+<summary>📊 Inteligencia de floraciones por región y año</summary>
+<p class="muted">Compara temporadas y consulta referencias regionales.</p>
+<iframe title="Inteligencia de floraciones de Ecuador" loading="lazy" referrerpolicy="same-origin"></iframe>
+<p><a href="./floraciones-ecuador.html">Abrir esta herramienta en una página independiente</a></p>
+</details>
+<details class="atlas-embedded-tool" data-src="./explorador-zonas-meliferas.html">
+<summary>🛰️ Explorador nacional de bosques y zonas melíferas</summary>
+<p class="muted">Investiga paisajes forestales, especies, fuentes cartográficas y zonas candidatas. Las superficies requieren verificación de campo antes de calcular colmenas.</p>
+<iframe title="Explorador de zonas melíferas de Ecuador" loading="lazy" referrerpolicy="same-origin"></iframe>
+<p><a href="./explorador-zonas-meliferas.html">Abrir el explorador en una página independiente</a></p>
+</details>
+<details class="atlas-embedded-tool" data-src="./atlas-superficies-forestales.html">
+<summary>🇪🇨 Superficies forestales y estadísticas por provincia</summary>
+<p class="muted">Consulta o importa estadísticas provinciales y fuentes oficiales.</p>
+<iframe title="Atlas de superficies forestales por provincia" loading="lazy" referrerpolicy="same-origin"></iframe>
+<p><a href="./atlas-superficies-forestales.html">Abrir el atlas de superficies en una página independiente</a></p>
+</details>
 </section>
 <section class="panel">
 <h2 id="form-title">Añadir observación de floración</h2>
@@ -321,6 +357,46 @@ const mesesPorFicha=["","1,6,7,8,11,12","1,2,7,8,9,12","1,4,5,6,7,10,11,12","1,5
 guiaCards.forEach((card,i)=>card.dataset.months=mesesPorFicha[i]||"");
 ["region-guia","recurso-guia","mes-guia"].forEach(id=>document.getElementById(id).addEventListener("change",filtrarGuia));
 filtrarGuia();
+})();
+</script>
+
+<script id="atlas-embedded-tools-loader">
+(function(){
+ const tools=Array.from(document.querySelectorAll(".atlas-embedded-tool"));
+ tools.forEach(details=>{
+  details.addEventListener("toggle",()=>{
+   if(!details.open)return;
+   const frame=details.querySelector("iframe");
+   if(!frame||frame.dataset.loaded==="1")return;
+   frame.src=details.dataset.src;
+   frame.dataset.loaded="1";
+   frame.addEventListener("load",()=>{
+    try{
+     const doc=frame.contentDocument;
+     if(!doc)return;
+     const fit=()=>{const h=Math.max(doc.documentElement.scrollHeight,doc.body?doc.body.scrollHeight:0);if(h>300)frame.style.height=Math.min(h+24,18000)+"px";};
+     fit();
+     if(typeof ResizeObserver!=="undefined"){
+      const observer=new ResizeObserver(fit);
+      observer.observe(doc.documentElement);
+      if(doc.body)observer.observe(doc.body);
+     }
+     doc.addEventListener("click",event=>{
+      const link=event.target.closest&&event.target.closest("a[href]");
+      if(!link)return;
+      try{
+       const target=new URL(link.href,location.href);
+       if(target.pathname.endsWith("/modulo-31.html")||target.pathname.endsWith("modulo-31.html")){
+        event.preventDefault();
+        details.open=false;
+        document.getElementById("atlas-navegacion").scrollIntoView({behavior:"smooth",block:"start"});
+       }
+      }catch(e){}
+     },true);
+    }catch(e){}
+   },{once:true});
+  });
+ });
 })();
 </script>
 </body>
