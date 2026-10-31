@@ -100,7 +100,11 @@ input,select,textarea{scroll-margin-top:12px}
 </section>
 <section class="panel"><h2 id="form-title">Nuevo registro</h2><form id="registro-form"><input id="registro-id" type="hidden"><label for="lote">Número identificador del lote</label><input id="lote" name="lote" type="text" readonly placeholder="Se asigna al guardar"><p class="muted">Cada tanda tendrá su número propio (Lote 001, Lote 002…). El número se conserva aunque edites el registro.</p><label for="fecha">Fecha del traslarve</label><input id="fecha" name="fecha" type="date" required>
 <label for="apiario">Apiario / ubicación</label><input id="apiario" name="apiario" type="text" required>
-<label for="madre">Colonia madre (línea genética)</label><input id="madre" name="madre" type="text" required>
+<label for="madre">Línea genética / raza de la reina madre</label><input id="madre" name="madre" type="text" required placeholder="Ej.: Buckfast, italiana, local...">
+<label for="madreId">Identificación individual de la reina madre</label><input id="madreId" name="madreId" type="text" placeholder="Ej.: RM-001 o nombre de la reina"><p class="muted">Usa siempre el mismo código para la misma reina madre. Así podremos reunir sus tandas y comparar sus resultados.</p>
+<label for="madreEdad">Edad de la reina madre</label><input id="madreEdad" name="madreEdad" type="text" placeholder="Ej.: 1 año, nacida en 2025, desconocida">
+<label for="madreOrigen">Origen / procedencia de la reina madre</label><input id="madreOrigen" name="madreOrigen" type="text" placeholder="Ej.: criada en Tanda, comprada, hija de RM-...">
+<label for="madreNotas">Características de la madre</label><textarea id="madreNotas" name="madreNotas" rows="2" placeholder="Docilidad, producción, sanidad, comportamiento y observaciones..."></textarea>
 <label for="iniciadora">Colonia iniciadora o criadora</label><input id="iniciadora" name="iniciadora" type="text">
 <label for="cantidad">Celdas transferidas</label><input id="cantidad" name="cantidad" type="number" step="1" min="1" required>
 <label for="aceptadas">Celdas aceptadas (revisión)</label><input id="aceptadas" name="aceptadas" type="number" min="0" step="1" placeholder="Completar al revisar"><p class="muted">Anota cuántas fueron aceptadas para calcular el porcentaje de aceptación de la tanda.</p>
@@ -114,11 +118,12 @@ input,select,textarea{scroll-margin-top:12px}
 <label for="fechaDistribucion">Fecha estimada para proteger / distribuir las celdas</label><input id="fechaDistribucion" name="fechaDistribucion" type="date">
 <label for="nacimiento">Fecha estimada de nacimiento de las reinas</label><input id="nacimiento" name="nacimiento" type="date"><label for="avisoDias">¿Cuántos días antes quieres el aviso?</label><input id="avisoDias" name="avisoDias" type="number" min="0" max="365" step="1" value="1" required><p class="muted">1 = el día anterior; 3 = tres días antes; 0 = el mismo día. Al crear el calendario se aplicará a cada revisión de esta tanda.</p><div class="actions"><button class="secondary" id="calcular-fechas" type="button">📅 Calcular fechas orientativas</button></div><p class="muted"><strong>Regla de fechas de ApiEcuador:</strong> el día anterior se reserva para preparar la criadora (huerfanizar y subir cría abierta) y NO cuenta en el ciclo. El día del traslarve cuenta como Día 1. Por eso, el Día 10 cae 9 días después (por ejemplo, traslarve el 27 de octubre → proteger/distribuir celdas el 5 de noviembre). Las fechas son orientativas y debes confirmarlas según el desarrollo real y tu método.</p>
 <label for="resultado">Resultado y observaciones</label><textarea id="resultado" name="resultado" rows="3"></textarea><div class="actions"><button class="primary" id="guardar" type="submit">Guardar registro</button><button class="secondary" id="cancelar-edicion" type="button" hidden>Cancelar edición</button><button class="secondary" id="limpiar" type="button">Limpiar formulario</button></div><p class="status" id="estado" role="status" aria-live="polite"></p></form></section>
+<section class="panel" id="historial-madres"><h2>👑 Historial de reinas madres</h2><p class="muted">Agrupa las tandas por el código individual de cada reina madre. Los registros antiguos sin código se agrupan provisionalmente por su línea genética.</p><div id="resumen-madres" class="record-grid"><p class="empty">El historial aparecerá cuando haya registros.</p></div></section>
 <section class="panel"><h2>Registros guardados</h2><p class="muted">Consejo: guarda también una copia JSON; sirve para recuperar los registros de esta tanda en otro navegador.</p><div id="registros" class="record-grid"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar CSV</button><button class="secondary" id="exportar-json" type="button">Descargar respaldo JSON</button><button class="secondary" id="importar-json" type="button">Importar respaldo JSON</button><input id="archivo-json" type="file" accept=".json,application/json" hidden></div></section></main>
 <script>
 (function(){
  const key="apiecuador-modulo-22-v1";
- const fields=[{"id":"lote","label":"Número de lote"},{"id":"fecha","label":"Fecha del traslarve"},{"id":"apiario","label":"Apiario / ubicación"},{"id":"madre","label":"Colonia madre (línea genética)"},{"id":"iniciadora","label":"Colonia iniciadora o criadora"},{"id":"cantidad","label":"Celdas transferidas"},{"id":"aceptadas","label":"Celdas aceptadas"},{"id":"operculadas","label":"Celdas operculadas"},{"id":"distribuidas","label":"Celdas distribuidas a núcleos"},{"id":"nacidas","label":"Reinas nacidas"},{"id":"postura","label":"Reinas confirmadas en postura"},{"id":"larvas","label":"Edad aproximada de larvas / método"},{"id":"revision","label":"Fecha estimada de revisión de aceptación"},{"id":"fechaDistribucion","label":"Fecha estimada para proteger/distribuir celdas"},{"id":"nacimiento","label":"Fecha estimada de nacimiento"},{"id":"avisoDias","label":"Aviso con días de anticipación"},{"id":"fechaPostura","label":"Fecha estimada para revisar postura"},{"id":"resultado","label":"Resultado y observaciones"}];
+ const fields=[{"id":"lote","label":"Número de lote"},{"id":"fecha","label":"Fecha del traslarve"},{"id":"apiario","label":"Apiario / ubicación"},{"id":"madre","label":"Línea genética / raza de la reina madre"},{"id":"madreId","label":"Identificación de reina madre"},{"id":"madreEdad","label":"Edad de reina madre"},{"id":"madreOrigen","label":"Origen de reina madre"},{"id":"madreNotas","label":"Características de reina madre"},{"id":"iniciadora","label":"Colonia iniciadora o criadora"},{"id":"cantidad","label":"Celdas transferidas"},{"id":"aceptadas","label":"Celdas aceptadas"},{"id":"operculadas","label":"Celdas operculadas"},{"id":"distribuidas","label":"Celdas distribuidas a núcleos"},{"id":"nacidas","label":"Reinas nacidas"},{"id":"postura","label":"Reinas confirmadas en postura"},{"id":"larvas","label":"Edad aproximada de larvas / método"},{"id":"revision","label":"Fecha estimada de revisión de aceptación"},{"id":"fechaDistribucion","label":"Fecha estimada para proteger/distribuir celdas"},{"id":"nacimiento","label":"Fecha estimada de nacimiento"},{"id":"avisoDias","label":"Aviso con días de anticipación"},{"id":"fechaPostura","label":"Fecha estimada para revisar postura"},{"id":"resultado","label":"Resultado y observaciones"}];
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
@@ -128,8 +133,28 @@ input,select,textarea{scroll-margin-top:12px}
  rows.forEach((r,i)=>{if(!r.lote)r.lote=lotNumber(i+1);});try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function firstRecorded(...values){return values.find(v=>v!==""&&v!=null);}
+ function renderMotherHistory(){
+  const target=document.getElementById("resumen-madres");if(!target)return;
+  const groups=new Map();
+  rows.forEach(row=>{
+   const line=String(row.madre||"Sin línea genética").trim()||"Sin línea genética";
+   const code=String(row.madreId||"").trim();
+   const key=code?"id:"+code.toLocaleLowerCase():"linea:"+line.toLocaleLowerCase();
+   if(!groups.has(key))groups.set(key,{code,line,age:row.madreEdad||"",origin:row.madreOrigen||"",notes:row.madreNotas||"",batches:0,transferred:0,accepted:0,hatched:0,laying:0,hasAccepted:false});
+   const g=groups.get(key);g.batches++;
+   g.transferred+=Math.max(0,Number(row.cantidad)||0);
+   if(row.aceptadas!==""&&row.aceptadas!=null){g.accepted+=Math.max(0,Number(row.aceptadas)||0);g.hasAccepted=true;}
+   g.hatched+=Math.max(0,Number(row.nacidas)||0);g.laying+=Math.max(0,Number(row.postura)||0);
+   if(!g.age&&row.madreEdad)g.age=row.madreEdad;if(!g.origin&&row.madreOrigen)g.origin=row.madreOrigen;if(!g.notes&&row.madreNotas)g.notes=row.madreNotas;
+  });
+  if(!groups.size){target.innerHTML='<p class="empty">Todavía no hay datos de reinas madres. Al registrar una tanda podrás identificar su madre.</p>';return;}
+  target.innerHTML=Array.from(groups.values()).sort((a,b)=>b.laying-a.laying||b.transferred-a.transferred).map(g=>{
+   const rate=g.hasAccepted&&g.transferred?(g.accepted/g.transferred*100).toFixed(1)+"%":"Pendiente";
+   return '<article class="record"><h3>'+esc(g.code||"Sin código: "+g.line)+'</h3><p><strong>Línea genética:</strong> '+esc(g.line)+'</p>'+(g.age?'<p><strong>Edad:</strong> '+esc(g.age)+'</p>':"")+(g.origin?'<p><strong>Procedencia:</strong> '+esc(g.origin)+'</p>':"")+(g.notes?'<p><strong>Características:</strong> '+esc(g.notes)+'</p>':"")+'<p><strong>Tandas:</strong> '+g.batches+'</p><p><strong>Celdas transferidas:</strong> '+g.transferred+' · <strong>Aceptadas:</strong> '+g.accepted+' ('+rate+')</p><p><strong>Reinas nacidas:</strong> '+g.hatched+' · <strong>En postura:</strong> '+g.laying+'</p></article>';
+  }).join("");
+ }
  function render(){
-  list.innerHTML="";
+  renderMotherHistory();list.innerHTML="";
   if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay registros. Completa el formulario para comenzar.</p>';return;}
   rows.slice().reverse().sort((a,b)=>Number(!!a.cerrado)-Number(!!b.cerrado)).forEach(row=>{
    const card=document.createElement("article");card.className="record";
