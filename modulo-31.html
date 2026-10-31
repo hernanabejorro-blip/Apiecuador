@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#245c43">
 <link rel="manifest" href="./manifest.json">
-<title>Calendario Floral de Ecuador · ApiEcuador</title>
+<title>Atlas Floral y Bosques Melíferos · ApiEcuador</title>
 <style>
 :root{--green:#245c43;--cream:#fcf9f2;--ink:#242720;--line:#dce4d9;--amber:#b76b13}
 *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.45}
@@ -62,13 +62,24 @@ input,select,textarea{scroll-margin-top:12px}
 
 </head>
 <body>
-<header><div style="max-width:920px;margin:auto"><a href="./index.html">← Volver a ApiEcuador</a><h1>🌼 Calendario Floral de Ecuador</h1><p>Registra la floración real de tus plantas melíferas por año, localidad y altitud. Tus observaciones ayudan a planificar apiarios y trashumancia.</p></div></header>
+<header><div style="max-width:920px;margin:auto"><a href="./index.html">← Volver a ApiEcuador</a><h1>🌼 Atlas Floral y Bosques Melíferos</h1><p>Un solo lugar para registrar floraciones, explorar bosques melíferos de Ecuador y planificar apiarios y trashumancia.</p></div></header>
 <main>
 <div class="notice"><strong>Importante:</strong> las fechas son observaciones de campo, no una predicción oficial. La floración cambia con la lluvia, la temperatura, la altitud y la zona. Los datos se guardan en este navegador y teléfono; exporta un CSV como respaldo. No se sincronizan automáticamente con otros dispositivos.</div>
 <section class="intro">
 <h2>🌿 Cómo aprovecharlo</h2>
 <p>Registra cuándo viste los primeros botones o flores, el momento de mayor floración y cuándo terminó. Anota si las abejas visitan la planta y qué tan intensa fue la floración. Con varios años de registros podrás comparar temporadas y tomar mejores decisiones de manejo.</p>
 <div class="actions"><a class="button-link" href="./floraciones-ecuador.html">📈 Comparar floraciones por región y año</a><a class="button-link" href="./modulo-06.html">🚚 Usar observaciones para planificar trashumancia</a></div>
+</section>
+<section class="panel" id="atlas-navegacion">
+<h2>🧭 Explorar el Atlas por tarea</h2>
+<p>Empieza por aquí y entra solo en la herramienta que necesitas. Tus observaciones de floración siguen guardándose en este teléfono; las zonas forestales y los datos provinciales tienen sus propios registros.</p>
+<div class="grid">
+<article class="record"><h3>🌼 Floraciones y temporadas</h3><p>Registra lo que ves en el campo, filtra por región y compara años.</p><a class="button-link" href="./floraciones-ecuador.html">Abrir inteligencia de floraciones</a></article>
+<article class="record"><h3>🌳 Bosques y zonas melíferas</h3><p>Investiga grandes masas forestales, especies dominantes, agua, accesos y evidencia apícola.</p><a class="button-link" href="./explorador-zonas-meliferas.html">Explorar zonas melíferas</a></article>
+<article class="record"><h3>🇪🇨 Superficies por provincia</h3><p>Consulta y registra hectáreas de bosque, silvicultura y manglar con sus fuentes.</p><a class="button-link" href="./atlas-superficies-forestales.html">Abrir atlas de superficies</a></article>
+<article class="record"><h3>🚚 Llevarlo a la trashumancia</h3><p>Usa la floración objetivo para preparar una ruta y verificar el destino antes de mover colmenas.</p><a class="button-link" href="./modulo-06.html">Planificar traslado</a></article>
+</div>
+<p class="muted">Importante: una superficie forestal no equivale automáticamente a hectáreas de floración útil. Confirma especie, floración, acceso, agua, permisos y competencia en el terreno antes de estimar la carga de colmenas.</p>
 </section>
 <section class="panel">
 <h2 id="form-title">Añadir observación de floración</h2>
