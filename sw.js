@@ -1,4 +1,4 @@
-const CACHE_NAME = "apiecuador-v38";
+const CACHE_NAME = "apiecuador-v39";
 
 // Archivos principales para abrir ApiEcuador y sus módulos recientes sin conexión.
 // Las fotografías externas y los enlaces oficiales siguen necesitando Internet.
