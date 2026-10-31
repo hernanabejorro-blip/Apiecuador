@@ -79,7 +79,8 @@ input,select,textarea{scroll-margin-top:12px}
     {fecha:row.fechaPostura||addDays(row.fecha,24),tarea:"Revisar fecundación y postura"},
     {fecha:addDays(row.fecha,30),tarea:"Segunda revisión de postura si aún no se confirmó"},
     {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"},
-    {fecha:addDays(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"}
+    {fecha:addDays(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"},
+    {fecha:addDays(row.fecha,-1),tarea:"🐝 PREPARAR COLMENA CRIADORA · huerfanizar y subir cría abierta para reforzar las nodrizas",avisoDias:0}
    ];
    milestones.forEach((m,i)=>{
     if(!m.fecha||m.fecha.length!==10)return;
