@@ -274,8 +274,8 @@ input,select,textarea{scroll-margin-top:12px}
     copy.id=id;known.add(id);rows.push(copy);added++;
    });
    if(!added){status.textContent="El archivo no contiene registros válidos de cría de reinas.";return;}
-   localStorage.setItem(key,JSON.stringify(rows));render();
-   status.textContent="Importación terminada: "+added+" registro(s) añadidos. Los registros anteriores se conservaron.";
+   localStorage.setItem(key,JSON.stringify(rows));const synced=sincronizarTareasCalendario();render();
+   status.textContent="Importación terminada: "+added+" registro(s) añadidos. "+(synced>=0?synced+" revisiones sincronizadas con Calendario Apícola.":"No se pudo sincronizar el Calendario Apícola; vuelve a abrir Cría de Reinas para reintentar.")+" Los registros anteriores se conservaron.";
   }catch(e){status.textContent="No se pudo importar. Selecciona un respaldo JSON válido de ApiEcuador.";}
   finally{fileInput.value="";}
  });
