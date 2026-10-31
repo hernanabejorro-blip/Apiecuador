@@ -140,17 +140,17 @@ input,select,textarea{scroll-margin-top:12px}
    const line=String(row.madre||"Sin línea genética").trim()||"Sin línea genética";
    const code=String(row.madreId||"").trim();
    const key=code?"id:"+code.toLocaleLowerCase():"linea:"+line.toLocaleLowerCase();
-   if(!groups.has(key))groups.set(key,{code,line,age:row.madreEdad||"",origin:row.madreOrigen||"",notes:row.madreNotas||"",batches:0,transferred:0,accepted:0,hatched:0,laying:0,hasAccepted:false});
+   if(!groups.has(key))groups.set(key,{code,line,age:row.madreEdad||"",origin:row.madreOrigen||"",notes:row.madreNotas||"",batches:0,transferred:0,accepted:0,acceptedBase:0,hatched:0,laying:0,hasAccepted:false});
    const g=groups.get(key);g.batches++;
    g.transferred+=Math.max(0,Number(row.cantidad)||0);
-   if(row.aceptadas!==""&&row.aceptadas!=null){g.accepted+=Math.max(0,Number(row.aceptadas)||0);g.hasAccepted=true;}
+   if(row.aceptadas!==""&&row.aceptadas!=null){g.accepted+=Math.max(0,Number(row.aceptadas)||0);g.acceptedBase+=Math.max(0,Number(row.cantidad)||0);g.hasAccepted=true;}
    g.hatched+=Math.max(0,Number(row.nacidas)||0);g.laying+=Math.max(0,Number(row.postura)||0);
    if(!g.age&&row.madreEdad)g.age=row.madreEdad;if(!g.origin&&row.madreOrigen)g.origin=row.madreOrigen;if(!g.notes&&row.madreNotas)g.notes=row.madreNotas;
   });
   if(!groups.size){target.innerHTML='<p class="empty">Todavía no hay datos de reinas madres. Al registrar una tanda podrás identificar su madre.</p>';return;}
   target.innerHTML=Array.from(groups.values()).sort((a,b)=>b.laying-a.laying||b.transferred-a.transferred).map(g=>{
-   const rate=g.hasAccepted&&g.transferred?(g.accepted/g.transferred*100).toFixed(1)+"%":"Pendiente";
-   return '<article class="record"><h3>'+esc(g.code||"Sin código: "+g.line)+'</h3><p><strong>Línea genética:</strong> '+esc(g.line)+'</p>'+(g.age?'<p><strong>Edad:</strong> '+esc(g.age)+'</p>':"")+(g.origin?'<p><strong>Procedencia:</strong> '+esc(g.origin)+'</p>':"")+(g.notes?'<p><strong>Características:</strong> '+esc(g.notes)+'</p>':"")+'<p><strong>Tandas:</strong> '+g.batches+'</p><p><strong>Celdas transferidas:</strong> '+g.transferred+' · <strong>Aceptadas:</strong> '+g.accepted+' ('+rate+')</p><p><strong>Reinas nacidas:</strong> '+g.hatched+' · <strong>En postura:</strong> '+g.laying+'</p></article>';
+   const rate=g.hasAccepted&&g.acceptedBase?(g.accepted/g.acceptedBase*100).toFixed(1)+"%":"Pendiente";
+   return '<article class="record"><h3>'+esc(g.code||"Sin código: "+g.line)+'</h3><p><strong>Línea genética:</strong> '+esc(g.line)+'</p>'+(g.age?'<p><strong>Edad:</strong> '+esc(g.age)+'</p>':"")+(g.origin?'<p><strong>Procedencia:</strong> '+esc(g.origin)+'</p>':"")+(g.notes?'<p><strong>Características:</strong> '+esc(g.notes)+'</p>':"")+'<p><strong>Tandas:</strong> '+g.batches+'</p><p><strong>Celdas transferidas:</strong> '+g.transferred+' · <strong>Aceptadas en tandas revisadas:</strong> '+g.accepted+' de '+g.acceptedBase+' ('+rate+')</p><p><strong>Reinas nacidas:</strong> '+g.hatched+' · <strong>En postura:</strong> '+g.laying+'</p></article>';
   }).join("");
  }
  function render(){
