@@ -57,7 +57,7 @@
   const row={...(previous>=0?rows[previous]:{}),id:editingId||Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   if(previous<0&&!row.lote){
-   const used=rows.map(r=>{const m=String(r.lote||"").match(/^Lote\\s+(\\d+)$/i);return m?Number(m[1]):0;});
+   const used=rows.map(r=>{const m=String(r.lote||"").match(/^Lote\s+(\d+)$/i);return m?Number(m[1]):0;});
    let next=Math.max(0,...used)+1;let candidate="Lote "+String(next).padStart(3,"0");
    while(rows.some(r=>String(r.lote||"").toLowerCase()===candidate.toLowerCase())){next++;candidate="Lote "+String(next).padStart(3,"0");}
    row.lote=candidate;
