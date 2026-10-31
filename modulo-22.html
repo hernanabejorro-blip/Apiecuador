@@ -223,7 +223,7 @@ input,select,textarea{scroll-margin-top:12px}
   rows=rows.filter(r=>r.id!==b.dataset.delete);
   try{localStorage.setItem(key,JSON.stringify(rows));const synced=sincronizarTareasCalendario();render();status.textContent=synced>=0?"Registro eliminado. Las tareas de otros lotes se conservaron; se sincronizaron "+synced+" revisiones.":"Registro eliminado, pero no se pudo sincronizar el calendario.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
  });
- function cancelEdit(){editingId=null;form.reset();document.getElementById("lote").value=nextLotNumber();document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;status.textContent="Edición cancelada.";}
+ function cancelEdit(){editingId=null;form.reset();actualizarAvisoLarva();document.getElementById("lote").value=nextLotNumber();document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;status.textContent="Edición cancelada.";}
  function calcularFechasTraslarve(){
    const graft=document.getElementById("fecha").value;
    if(!graft){status.textContent="Primero selecciona la fecha del traslarve.";return;}
