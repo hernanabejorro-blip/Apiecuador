@@ -67,6 +67,25 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px 7px;b
 <div class="actions"><button type="button" class="secondary" id="export">Exportar respaldo JSON</button><button type="button" class="secondary" id="export-csv">Exportar tabla CSV</button><button type="button" class="danger" id="delete-all" style="background:#9a352e">Borrar todos los datos de este atlas</button></div>
 <p class="muted">Los datos se guardan solo en este navegador y dispositivo. Este atlas usa una clave local independiente y no modifica las zonas ya registradas en el Explorador.</p>
 </section>
+<section class="panel" id="metodo-manchas-grandes">
+<h2>🛰️ Método para localizar grandes manchas continuas</h2>
+<p>El objetivo no es sumar todos los árboles de una provincia: queremos encontrar <strong>polígonos grandes, conectados y con la misma cobertura</strong>, y después comprobar qué especie los forma.</p>
+<div class="warn"><strong>Resolución del mapa:</strong> cada píxel de MapBiomas mide 30 × 30 m, aproximadamente 0,09 ha. Un grupo de píxeles vecinos permite reconocer una mancha; sumar hectáreas de toda una provincia no demuestra que formen un solo bosque continuo.</div>
+<ol>
+<li><strong>Primero, filtrar por provincia y año:</strong> empezar por la Colección 4.0 (1985–2025) y revisar varios años recientes, no una sola imagen.</li>
+<li><strong>Buscar plantaciones:</strong> revisar la clase 9 (silvicultura) para localizar posibles plantaciones forestales. Esta clase no distingue eucalipto, pino, teca, balsa ni otras especies.</li>
+<li><strong>Revisar permanencia:</strong> en la plataforma, consultar “Áreas estables”, “Número de cambios” y “Transiciones”. Una mancha que se mantiene varios años merece prioridad frente a una cobertura que cambia continuamente.</li>
+<li><strong>Examinar bosques naturales:</strong> las clases 3 (bosque) y 4 (bosque abierto) pueden contener flora melífera, pero la clasificación no identifica las especies ni garantiza néctar para las abejas.</li>
+<li><strong>Confirmar la especie:</strong> comparar imagen satelital de alta resolución, registros forestales y visita de campo. Anotar especie, edad o estado de la plantación, continuidad y hectáreas realmente ocupadas.</li>
+<li><strong>Validar el destino apícola:</strong> comprobar meses y duración de floración, actividad de abejas, agua, acceso de camión, colmenas vecinas y permiso del propietario.</li>
+</ol>
+<div class="actions">
+<a class="btn" href="https://plataforma.ecuador.mapbiomas.org/" target="_blank" rel="noopener">Abrir MapBiomas y revisar áreas estables</a>
+<a class="btn secondary" href="https://ecuador.mapbiomas.org/iniciativas-y-productos/cobertura-y-uso-del-suelo/cobertura-30m/" target="_blank" rel="noopener">Consultar leyenda oficial de clases</a>
+<a class="btn secondary" href="https://ecuador.mapbiomas.org/descargas/" target="_blank" rel="noopener">Descargar mapas y estadísticas</a>
+</div>
+<p class="muted">El Atlas provincial sirve para priorizar la búsqueda. La identificación de manchas conectadas requiere analizar el mapa ráster o sus polígonos; no se debe presentar una suma provincial como superficie continua ni como eucaliptal confirmado.</p>
+</section>
 <section class="panel">
 <h2>Fuentes de trabajo</h2>
 <ul>
