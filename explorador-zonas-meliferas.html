@@ -174,10 +174,22 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <h2>🛰️ Método nacional para localizar grandes masas forestales</h2>
 <p><strong>Objetivo:</strong> encontrar polígonos extensos y conectados con potencial de flora melífera en las cuatro regiones del Ecuador. Este método usa cartografía oficial y evidencia apícola por separado; el mapa satelital no identifica por sí solo especies de árboles ni floración.</p>
 <div class="record">
-<h3>1. Empezar con la cobertura más reciente</h3>
-<p>Usar MapBiomas Ecuador, Colección 4.0, año 2025. Su mapa nacional tiene resolución de 30 m: cada píxel representa aproximadamente 0,09 hectáreas. Revisar las clases de formación forestal, vegetación natural no forestal, manglar, bosque inundable, vegetación secundaria y silvicultura, según la leyenda oficial.</p>
-<p><strong>No mezclar categorías:</strong> una plantación forestal, un bosque natural y un matorral son coberturas diferentes. La vegetación natural no forestal también puede contener recursos apícolas, pero debe evaluarse por separado.</p>
-<p><a class="link" href="https://plataforma.ecuador.mapbiomas.org/" target="_blank" rel="noopener">Abrir plataforma nacional MapBiomas</a> · <a class="link secondary" href="https://ecuador.mapbiomas.org/iniciativas-y-productos/cobertura-y-uso-del-suelo/cobertura-30m/" target="_blank" rel="noopener">Consultar leyenda y descargas Colección 4</a></p>
+<h3>1. Cartografía oficial de detalle: MAGP 2024–2025</h3>
+<p>Tomar como primera referencia el Mapa de Uso y Cobertura de la Tierra Agropecuaria y Forestal 2024–2025 presentado por el MAGP en febrero de 2026, a escala 1:25.000. La actualización combina sensores remotos, levantamiento de campo y análisis SIG. Es una base de mayor detalle cartográfico que debe consultarse para distinguir usos agropecuarios, forestales y coberturas de conservación en el Ecuador continental.</p>
+<p><strong>Precaución:</strong> escala 1:25.000 no significa píxel de 25 metros. Antes de calcular hectáreas o identificar una especie concreta hay que descargar/consultar la capa, revisar su leyenda, fecha, sistema de coordenadas y metadatos. El mapa de cobertura no demuestra por sí solo que un polígono sea eucaliptal, que esté floreciendo o que sea accesible.</p>
+<p><a class="link" href="https://www.agricultura.gob.ec/magp-presenta-el-mapa-de-uso-y-cobertura-de-la-tierra-agropecuaria-y-forestal-para-mejorar-la-planificacion-agroproductiva/" target="_blank" rel="noopener">Consultar presentación oficial del MAGP</a> · <a class="link secondary" href="https://iedg.presidencia.gob.ec/servicios/geoservicios/" target="_blank" rel="noopener">Consultar catálogo nacional de geoservicios</a></p>
+</div>
+<div class="record">
+<h3>2. Capas oficiales consultables: geoportal MAGP</h3>
+<p>El catálogo nacional de geoservicios registra la capa de <strong>Cobertura y Uso de la Tierra a escala 1:25.000</strong> del MAGP y publica servicios OGC WMS (visualización) y WFS (consulta de entidades y atributos). Esta es la vía técnica para pasar de una referencia nacional a polígonos que puedan revisarse por provincia, cantón y parroquia en un sistema SIG.</p>
+<p><strong>Estado de integración:</strong> la existencia de los servicios está documentada en el catálogo oficial; la conexión, nombres de capas, campos disponibles, permisos y estabilidad del endpoint deben probarse antes de incorporarlos como mapa interactivo dentro de ApiEcuador. No se debe asumir que un servicio listado está siempre operativo.</p>
+<p><a class="link" href="https://iedg.presidencia.gob.ec/servicios/geoservicios/" target="_blank" rel="noopener">Abrir catálogo oficial de geoservicios y buscar MAGP 1:25.000</a> · <a class="link secondary" href="https://geoportal.agricultura.gob.ec/" target="_blank" rel="noopener">Abrir Geoportal del MAGP</a></p>
+</div>
+<div class="record">
+<h3>3. Serie histórica y continuidad: MapBiomas Ecuador</h3>
+<p>Complementar el mapa de detalle con MapBiomas: mapas anuales de cobertura desde 1985, con resolución de 30 m (cada píxel equivale aproximadamente a 0,09 ha). Usar sus clases de bosque natural, manglar, bosque inundado, silvicultura, vegetación secundaria y formaciones naturales no boscosas para analizar continuidad, fragmentación y cambios recientes.</p>
+<p><strong>No mezclar categorías:</strong> una plantación forestal, un bosque natural y un matorral son coberturas diferentes. MapBiomas ayuda a estudiar la evolución temporal; no sustituye la verificación de especies melíferas en el terreno.</p>
+<p><a class="link" href="https://plataforma.ecuador.mapbiomas.org/" target="_blank" rel="noopener">Abrir plataforma nacional MapBiomas</a> · <a class="link secondary" href="https://ecuador.mapbiomas.org/iniciativas-y-productos/cobertura-y-uso-del-suelo/cobertura-30m/" target="_blank" rel="noopener">Consultar leyenda y productos de cobertura</a></p>
 </div>
 <div class="record">
 <h3>2. Medir superficies por provincia y territorio</h3>
@@ -185,12 +197,12 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <p><a class="link" href="https://ecuador.mapbiomas.org/descargas/" target="_blank" rel="noopener">Abrir centro oficial de descargas y estadísticas</a></p>
 </div>
 <div class="record">
-<h3>3. Comprobar continuidad y estabilidad histórica</h3>
+<h3>4. Comprobar continuidad y estabilidad histórica</h3>
 <p>Comparar el mapa 2025 con los años anteriores. MapBiomas ofrece productos de áreas estables, número de cambios y transiciones. Priorizar masas que se mantienen como cobertura natural durante varios años; revisar con cautela las zonas fragmentadas o con pérdida reciente de vegetación.</p>
 <p><a class="link" href="https://ecuador.mapbiomas.org/iniciativas-y-productos/cobertura-y-uso-del-suelo/cobertura-30m/" target="_blank" rel="noopener">Ver productos de estabilidad y transiciones</a></p>
 </div>
 <div class="record">
-<h3>4. Convertir el bosque cartográfico en candidato apícola</h3>
+<h3>5. Convertir el bosque cartográfico en candidato apícola</h3>
 <ul>
 <li><strong>Superficie total:</strong> hectáreas de la cobertura mapeada.</li>
 <li><strong>Superficie de flora objetivo:</strong> hectáreas donde se confirme la especie melífera, no toda la cobertura forestal.</li>
@@ -202,11 +214,38 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 </ul>
 </div>
 <div class="notice"><strong>Regla de medición:</strong> 1 píxel de 30 × 30 m equivale a 0,09 ha. Para estimar hectáreas se debe usar una proyección métrica adecuada y la geometría de los polígonos. No multiplicar píxeles de clases distintas ni contar fragmentos separados como un solo bosque. Las cifras de estadísticas provinciales son un primer filtro, no el área melífera disponible.</div>
+<div class="record">
+<h3>5. Área de pecoreo y verificación normativa</h3>
+<p>Como referencia específica para <strong>certificación apícola orgánica</strong>, el instructivo de AGROCALIDAD consultado describe un radio de 3 km con fuentes suficientes de néctar, polen y agua, y exige verificar la calidad y abundancia florística y las condiciones ambientales. Este radio sirve para revisar el entorno de un apiario orgánico; <strong>no es una fórmula de capacidad de carga ni una distancia universal para toda apicultura</strong>. Antes de usarlo para una certificación, comprobar con AGROCALIDAD que el texto y sus requisitos continúan vigentes.</p>
+<p><a class="link" href="https://www.agrocalidad.gob.ec/wp-content/uploads/2020/05/by3.pdf" target="_blank" rel="noopener">Consultar instructivo de producción orgánica de AGROCALIDAD (art. 51)</a></p>
+</div>
 <div class="notice"><strong>Prioridad territorial:</strong> ejecutar el mismo análisis en Costa, Sierra, Amazonía y Galápagos. En Galápagos, cualquier posible uso apícola requiere evaluación de bioseguridad, conservación y normativa local antes de considerarse viable.</div>
+</section>
+<section class="panel" id="contexto-superficie-forestal">
+<h2>📊 Referencias nacionales de superficie forestal</h2>
+<p>Estas cifras ayudan a dimensionar el trabajo de búsqueda, pero <strong>no representan hectáreas melíferas ni superficie disponible para instalar apiarios</strong>. Son categorías nacionales que deben desglosarse por especie, ubicación, continuidad, floración, conservación y acceso legal.</p>
+<div class="record">
+<h3>Bosque nativo continental</h3>
+<p><strong>12.191.125 ha</strong> (MAATE, 2024; cifra oficial citada por MapBiomas Ecuador). Es una referencia de cobertura nacional, no un inventario de especies visitadas por abejas.</p>
+</div>
+<div class="record">
+<h3>Manglar continental</h3>
+<p><strong>157.801,90 ha</strong> (MAATE, 2024). El manglar es un ecosistema frágil y sujeto a régimen de conservación y manejo; su superficie no debe convertirse en una recomendación de ubicación de colmenas. Primero se deben revisar acuerdos de uso, áreas protegidas y autorizaciones locales.</p>
+</div>
+<div class="record">
+<h3>Plantaciones forestales comerciales</h3>
+<p><strong>Alrededor de 172.000 ha</strong> a escala nacional, según el MAGP (dato institucional difundido en 2026). Incluyen distintas especies —entre ellas teca, balsa, melina, eucalipto, pino, laurel y pachaco—, por lo que no se pueden atribuir todas al eucalipto ni considerarlas melíferas automáticamente.</p>
+</div>
+<p><a class="link" href="https://certificacionpuntoverde.ambiente.gob.ec/libraries/EAlfresco.php/?doc=674e3cfd-a3c5-497b-8919-32a2791d51ab" target="_blank" rel="noopener">Consultar Plan Nacional de Mitigación (datos MAATE 2024)</a> · <a class="link secondary" href="https://www.agricultura.gob.ec/gobierno-nacional-impulsa-la-produccion-forestal-sostenible-y-las-exportaciones-con-asistencia-tecnica-e-incentivos/" target="_blank" rel="noopener">Consultar cifra institucional de plantaciones comerciales</a></p>
 </section>
 <section class="panel" id="catalogo-especies-meliferas">
 <h2>🌼 Catálogo apícola inicial: especies con evidencia en Ecuador</h2>
 <p>Esta primera selección reúne registros de investigaciones ecuatorianas. No es todavía el inventario completo del país. Los meses y altitudes se muestran únicamente cuando la fuente los documenta; no deben extrapolarse automáticamente a otras provincias o años.</p>
+<div class="record">
+<h3>🧪 Evidencia polínica reciente · tres regiones del Ecuador (2025)</h3>
+<p>Un estudio publicado en enero de 2025 analizó miel de apiarios de La Concordia, Muyuna y Guamote. Identificó 13 especies en La Concordia, 16 en Muyuna y 17 en Guamote. En la muestra de Guamote, el polen de <strong>Eucalyptus globulus</strong> representó el 26,87%; en La Concordia destacaron, entre otras, <em>Chamaecrista calycioides</em> (21,27%), <em>Tridax procumbens</em> (15,69%) y <em>Cordia alliodora</em> (13,43%). Las tres mieles fueron clasificadas como multiflorales; por tanto, el resultado respalda la visita y aporte de polen de eucalipto en ese sitio, pero no prueba que cualquier plantación de eucalipto produzca miel monofloral ni permite extrapolar porcentajes a otras provincias.</p>
+<p><a class="link" href="https://investigacion.utc.edu.ec/index.php/dateh/en/article/view/1042" target="_blank" rel="noopener">Consultar estudio melisopalinológico de 2025</a></p>
+</div>
 <div class="record">
 <h3>🌵 Costa · bosque seco tropical de Quimis, Jipijapa (Manabí)</h3>
 <p><strong>Ventana observada:</strong> mayor floración general en junio, julio y agosto. <strong>Prosopis pallida</strong> floreció siete meses durante el año de estudio.</p>
