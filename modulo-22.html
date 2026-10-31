@@ -4,7 +4,7 @@
 :root{color-scheme:light;--green:#245c43;--cream:#fcf9f2;--ink:#1c1c18}*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.45}header{background:linear-gradient(125deg,#173f32,#36734c);color:#fff;padding:23px 18px}header .wrap,main{max-width:850px;margin:auto}.back{display:inline-block;color:#fff;text-decoration:none;margin-bottom:13px;font-size:14px}h1{font-size:clamp(24px,5vw,34px);line-height:1.15;margin:0 0 8px}header p{margin:0;max-width:680px;color:#eaf3e8}main{padding:20px 16px 35px}.notice{background:#fff3dc;border:1px solid #e9d2a8;padding:12px 14px;border-radius:12px;font-size:13px;margin-bottom:16px}.panel,.record{background:#fff;border:1px solid #e1e6db;border-radius:16px;padding:17px;margin-bottom:14px;box-shadow:0 4px 14px #173f3208}h2{font-size:19px;margin:0 0 12px}label{display:block;font-weight:650;font-size:14px;margin:13px 0 5px}input,select,textarea{display:block;width:100%;font:16px system-ui;padding:11px 12px;border:1px solid #d2dccc;border-radius:10px;background:#fff;color:#1c1c18}input:focus,select:focus,textarea:focus{outline:2px solid #36734c;outline-offset:1px}button{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-ui;cursor:pointer}.primary{background:var(--green);color:white}.secondary{background:#f3eee3;color:#594b3b}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.record h3{font-size:16px;margin:0 0 8px}.record p{margin:5px 0;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}.record small{color:#6b7469}.empty{color:#65584b;font-size:14px;padding:10px 2px}.delete{background:#fae8e5;color:#8b2f22}.status{font-size:13px;color:#28613f;min-height:1.4em}.record-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:10px}@media(max-width:520px){header{padding:20px 16px}main{padding:16px 12px 28px}.panel,.record{padding:14px}}
 </style></head><body>
 <header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🐝 Cría de Reinas · Traslarve</h1><p>Organiza tus tandas de traslarve. Para empezar, puedes planificar de 10 a 20 celdas por tanda y registrar lo que realmente ocurrió.</p></div></header>
-<main><div class="notice"><strong>Importante:</strong> esta versión guarda los registros en este navegador y teléfono. No se sincronizan con otros dispositivos; exporta o anota la información importante como respaldo.</div>
+<main><div class="notice"><strong>Importante:</strong> registra por separado las fechas previstas y los hechos observados. El nacimiento y la postura no se consideran confirmados hasta que los compruebes en el apiario. Los datos siguen guardándose en este navegador y teléfono.</div>
 <section class="panel"><h2>Nuevo registro</h2><form id="registro-form"><label for="fecha">Fecha del traslarve</label><input id="fecha" name="fecha" type="date" required>
 <label for="apiario">Apiario / ubicación</label><input id="apiario" name="apiario" type="text" required>
 <label for="madre">Colonia madre (línea genética)</label><input id="madre" name="madre" type="text" required>
@@ -13,13 +13,23 @@
 <label for="aceptadas">Celdas aceptadas (revisión)</label><input id="aceptadas" name="aceptadas" type="number" min="0" step="1" placeholder="Completar al revisar"><p class="muted">Anota cuántas fueron aceptadas para calcular el porcentaje de aceptación de la tanda.</p>
 <label for="larvas">Edad aproximada de larvas / método</label><input id="larvas" name="larvas" type="text">
 <label for="revision">Fecha de revisión de aceptación</label><input id="revision" name="revision" type="date">
+<label for="fechaOperculacion">Fecha de operculación (si se conoce)</label><input id="fechaOperculacion" name="fechaOperculacion" type="date">
+<label for="fechaDistribucion">Fecha de distribución de celdas</label><input id="fechaDistribucion" name="fechaDistribucion" type="date">
 <label for="nacimiento">Fecha estimada de nacimiento</label><input id="nacimiento" name="nacimiento" type="date">
+<label for="fechaNacimientoReal">Fecha de nacimiento observado</label><input id="fechaNacimientoReal" name="fechaNacimientoReal" type="date">
+<label for="fechaPostura">Fecha prevista de comprobación de postura</label><input id="fechaPostura" name="fechaPostura" type="date">
+<label for="operculadas">Celdas operculadas (cantidad)</label><input id="operculadas" name="operculadas" type="number" min="0" step="1">
+<label for="distribuidas">Celdas distribuidas (cantidad)</label><input id="distribuidas" name="distribuidas" type="number" min="0" step="1">
+<label for="nacidas">Reinas nacidas (cantidad)</label><input id="nacidas" name="nacidas" type="number" min="0" step="1">
+<label for="postura">Postura comprobada</label><select id="postura" name="postura"><option value="">Sin comprobar</option><option value="Sí">Sí</option><option value="No">No</option></select>
+<label for="avisoDias">Avisar con cuántos días de anticipación</label><input id="avisoDias" name="avisoDias" type="number" min="0" max="30" step="1" value="1">
+<label for="lote">Identificador del lote</label><input id="lote" name="lote" type="text" placeholder="Ej.: Lote 004">
 <label for="resultado">Resultado y observaciones</label><textarea id="resultado" name="resultado" rows="3"></textarea><div class="actions"><button class="primary" type="submit">Guardar registro</button><button class="secondary" id="limpiar" type="button">Limpiar formulario</button></div><p class="status" id="estado" role="status" aria-live="polite"></p></form></section>
 <section class="panel"><h2>Registros guardados</h2><div id="registros" class="record-grid"></div></section></main>
 <script>
 (function(){
  const key="apiecuador-modulo-22-v1";
- const fields=[{"id":"fecha","label":"Fecha del traslarve"},{"id":"apiario","label":"Apiario / ubicación"},{"id":"madre","label":"Colonia madre (línea genética)"},{"id":"iniciadora","label":"Colonia iniciadora o criadora"},{"id":"cantidad","label":"Celdas transferidas"},{"id":"aceptadas","label":"Celdas aceptadas"},{"id":"larvas","label":"Edad aproximada de larvas / método"},{"id":"revision","label":"Fecha de revisión de aceptación"},{"id":"nacimiento","label":"Fecha estimada de nacimiento"},{"id":"resultado","label":"Resultado y observaciones"}];
+ const fields=[{"id":"fecha","label":"Fecha del traslarve"},{"id":"apiario","label":"Apiario / ubicación"},{"id":"madre","label":"Colonia madre (línea genética)"},{"id":"iniciadora","label":"Colonia iniciadora o criadora"},{"id":"cantidad","label":"Celdas transferidas"},{"id":"aceptadas","label":"Celdas aceptadas"},{"id":"larvas","label":"Edad aproximada de larvas / método"},{"id":"revision","label":"Fecha de revisión de aceptación"},{"id":"fechaOperculacion","label":"Fecha de operculación"},{"id":"fechaDistribucion","label":"Fecha de distribución"},{"id":"nacimiento","label":"Fecha estimada de nacimiento"},{"id":"fechaNacimientoReal","label":"Nacimiento observado"},{"id":"fechaPostura","label":"Fecha prevista de postura"},{"id":"operculadas","label":"Celdas operculadas"},{"id":"distribuidas","label":"Celdas distribuidas"},{"id":"nacidas","label":"Reinas nacidas"},{"id":"postura","label":"Postura comprobada"},{"id":"avisoDias","label":"Anticipación de aviso (días)"},{"id":"lote","label":"Identificador del lote"},{"id":"resultado","label":"Resultado y observaciones"}];
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
@@ -30,7 +40,7 @@
   if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay registros. Completa el formulario para comenzar.</p>';return;}
   rows.slice().reverse().forEach(row=>{
    const card=document.createElement("article");card.className="record";
-   const heading=fields.map(f=>row[f.id]).find(v=>v)||"Registro";
+   const heading=row.lote||("Traslarve "+(row.fecha||"sin fecha"));
    const tasa=row.cantidad&&row.aceptadas!==""&&row.aceptadas!=null?(Number(row.aceptadas)/Number(row.cantidad)*100).toFixed(1)+"%":"Pendiente de revisión";
    card.innerHTML='<h3>'+esc(heading)+'</h3>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<p><strong>Porcentaje de aceptación:</strong> '+esc(tasa)+'</p>'+'<div class="actions"><button class="secondary" type="button" data-edit="'+esc(row.id)+'">Editar</button><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
    list.appendChild(card);
