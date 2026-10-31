@@ -113,6 +113,7 @@ input,select,textarea{scroll-margin-top:12px}
 <label for="fechaDistribucion">Fecha estimada para proteger / distribuir las celdas</label><input id="fechaDistribucion" name="fechaDistribucion" type="date">
 <label for="nacimiento">Fecha estimada de nacimiento de las reinas</label><input id="nacimiento" name="nacimiento" type="date"><label for="avisoDias">¿Cuántos días antes quieres el aviso?</label><input id="avisoDias" name="avisoDias" type="number" min="0" max="365" step="1" value="1" required><p class="muted">1 = el día anterior; 3 = tres días antes; 0 = el mismo día. Al crear el calendario se aplicará a cada revisión de esta tanda.</p><div class="actions"><button class="secondary" id="calcular-fechas" type="button">📅 Calcular fechas orientativas</button></div><p class="muted"><strong>Regla de fechas de ApiEcuador:</strong> el día del traslarve cuenta como Día 1. Por eso, el Día 10 cae 9 días después (por ejemplo, traslarve el 27 de octubre → proteger/distribuir celdas el 5 de noviembre). Las fechas son orientativas y debes confirmarlas según el desarrollo real y tu método.</p>
 <label for="resultado">Resultado y observaciones</label><textarea id="resultado" name="resultado" rows="3"></textarea><div class="actions"><button class="primary" id="guardar" type="submit">Guardar registro</button><button class="secondary" id="cancelar-edicion" type="button" hidden>Cancelar edición</button><button class="secondary" id="limpiar" type="button">Limpiar formulario</button></div><p class="status" id="estado" role="status" aria-live="polite"></p></form></section>
+<section class="panel" id="rendimiento-madres"><h2>📊 Rendimiento por reina madre</h2><p class="muted">Resumen histórico de todos los lotes, incluidos los archivados. Los porcentajes se calculan solo con los lotes que ya tienen ese dato registrado; un dato pendiente no cuenta como cero.</p><div id="resumen-madres" class="record-grid"><p class="empty">Todavía no hay resultados registrados.</p></div></section>
 <section class="panel"><h2>Registros guardados</h2><p class="muted">Consejo: guarda también una copia JSON; sirve para recuperar los registros de esta tanda en otro navegador.</p><div id="registros" class="record-grid"></div><div class="actions"><button class="secondary" id="exportar" type="button">Exportar CSV</button><button class="secondary" id="exportar-json" type="button">Descargar respaldo JSON</button><button class="secondary" id="importar-json" type="button">Importar respaldo JSON</button><input id="archivo-json" type="file" accept=".json,application/json" hidden></div></section></main>
 <script>
 (function(){
@@ -126,7 +127,34 @@ input,select,textarea{scroll-margin-top:12px}
  function nextLotNumber(){let max=0;rows.forEach(r=>{const m=String(r.lote||"").match(/Lote\s+(\d+)/i);if(m)max=Math.max(max,Number(m[1]));});return lotNumber(max+1)}
  rows.forEach((r,i)=>{if(!r.lote)r.lote=lotNumber(i+1);});try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+ function renderMotherPerformance(){
+  const target=document.getElementById("resumen-madres");
+  if(!target)return;
+  const groups=new Map();
+  rows.forEach(row=>{
+   const raw=String(row.madre||"").trim();
+   if(!raw)return;
+   const key=raw.toLocaleLowerCase("es");
+   if(!groups.has(key))groups.set(key,{name:raw,lots:0,transfer:0,acceptTransfer:0,accepted:0,distributedBase:0,distributed:0,bornBase:0,born:0,postureBase:0,posture:0});
+   const g=groups.get(key);g.lots++;
+   const n=(v)=>v!==""&&v!=null&&Number.isFinite(Number(v))?Number(v):null;
+   const transfer=n(row.cantidad),accepted=n(row.aceptadas),distributed=n(row.distribuidas),operculated=n(row.operculadas),born=n(row.nacidas),posture=n(row.postura);
+   if(transfer!==null)g.transfer+=transfer;
+   if(accepted!==null&&transfer!==null){g.accepted+=accepted;g.acceptTransfer+=transfer;}
+   const distBase=operculated!==null?operculated:(accepted!==null?accepted:transfer);
+   if(distributed!==null&&distBase!==null){g.distributed+=distributed;g.distributedBase+=distBase;}
+   const bornBase=distributed!==null?distributed:(operculated!==null?operculated:accepted);
+   if(born!==null&&bornBase!==null){g.born+=born;g.bornBase+=bornBase;}
+   if(posture!==null&&born!==null){g.posture+=posture;g.postureBase+=born;}
+  });
+  if(!groups.size){target.innerHTML='<p class="empty">Completa “Colonia madre” en tus lotes para comenzar el historial.</p>';return;}
+  const pct=(value,base)=>base>0?(value/base*100).toFixed(1)+"%":"Sin datos";
+  target.innerHTML=Array.from(groups.values()).sort((a,b)=>b.posture-a.posture||b.lots-a.lots).map(g=>
+   '<article class="record"><h3>'+esc(g.name)+'</h3><p><strong>Lotes registrados:</strong> '+g.lots+'</p><p><strong>Celdas transferidas:</strong> '+g.transfer+'</p><p><strong>Aceptación:</strong> '+g.accepted+' / '+g.acceptTransfer+' ('+pct(g.accepted,g.acceptTransfer)+')</p><p><strong>Distribuidas:</strong> '+g.distributed+' / '+g.distributedBase+' ('+pct(g.distributed,g.distributedBase)+')</p><p><strong>Reinas nacidas:</strong> '+g.born+' / '+g.bornBase+' ('+pct(g.born,g.bornBase)+')</p><p><strong>Reinas en postura:</strong> '+g.posture+' / '+g.postureBase+' ('+pct(g.posture,g.postureBase)+')</p></article>'
+  ).join("");
+ }
  function render(){
+  renderMotherPerformance();
   list.innerHTML="";
   if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay registros. Completa el formulario para comenzar.</p>';return;}
   rows.slice().reverse().sort((a,b)=>Number(!!a.cerrado)-Number(!!b.cerrado)).forEach(row=>{
