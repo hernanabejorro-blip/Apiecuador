@@ -369,6 +369,18 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <div class="actions"><button type="button" class="secondary" id="export">Descargar copia JSON</button><button type="button" class="secondary" id="import">Importar copia JSON</button><input id="file" type="file" accept=".json,application/json" hidden></div>
 <p class="muted">Los registros se guardan en este navegador y dispositivo. Esta primera versión no los sincroniza con la nube. Exporta una copia JSON periódicamente y guárdala junto a tus respaldos de ApiEcuador.</p>
 </section>
+
+<section class="panel" id="inventario-flora-apicola-maate">
+<h2>🌼 Inventario nacional oficial de flora con uso apícola</h2>
+<p>Fuente prioritaria para ampliar el Atlas más allá de las plantaciones comerciales. El Ministerio de Ambiente y Energía publicó un inventario validado de <strong>2.472 especies nativas</strong> de flora con potencial de aprovechamiento sostenible para todo Ecuador: Costa, Sierra, Amazonía y Galápagos. Cada especie está clasificada por categorías de uso, entre ellas <strong>Apícola</strong>. El total de 2.472 corresponde a todas las categorías, no solo a plantas apícolas.</p>
+<div class="notice"><strong>Cómo interpretar correctamente:</strong> el inventario procede de revisión bibliográfica y registros previos; no es un censo de campo ni demuestra que una especie forme un bosque extenso, florezca actualmente o produzca néctar suficiente. El conjunto excluye especies endémicas, introducidas y especies amenazadas o reguladas por CITES. La distribución nacional es una referencia para orientar búsquedas, no una coordenada de cada rodal.</div>
+<div class="grid">
+<div class="record"><h3>📥 Descargar datos oficiales</h3><p>Archivo Darwin Core (DwC-A), versión 1.2, con 2.472 registros y tablas complementarias de nombres comunes, descripciones y distribución.</p><div class="actions"><a class="link" href="https://patrimonio.ambiente.gob.ec/iptmae/archive.do?r=7a602310-e6f8-4c97-a9aa-bf8e3b2dac64&amp;v=1.2">⬇️ Descargar inventario (ZIP)</a><a class="link secondary" href="https://patrimonio.ambiente.gob.ec/iptmae/resource?r=7a602310-e6f8-4c97-a9aa-bf8e3b2dac64&amp;v=1.2" target="_blank" rel="noopener">Ver ficha y metodología MAATE</a></div></div>
+<div class="record"><h3>🧭 Cruce que haremos en ApiEcuador</h3><p>1. Filtrar taxones cuya categoría de uso sea Apícola. 2. Recuperar nombre científico y nombres comunes. 3. Revisar descripciones y distribución. 4. Cruzar especies con ecosistemas, coberturas forestales, altitud y estudios de floración. 5. Priorizar manchas grandes para verificación satelital y de campo.</p></div>
+</div>
+<p class="muted">Licencia publicada: Creative Commons Atribución 4.0 (CC BY 4.0). Referencia: Ministerio de Ambiente y Energía (2025), Listado de plantas de uso y aprovechamiento sostenible en Ecuador, versión 1.2, DOI 10.60545/eifqjo. No se mostrarán conteos de especies apícolas hasta filtrar el archivo fuente y comprobar el campo de uso.</p>
+</section>
+
 </main>
 <script>
 (function(){
