@@ -505,6 +505,8 @@ calendarButton.addEventListener("click", async () => {
   } catch (error) {
     localStorage.removeItem(pendingCalendarKey);
     calendarStatus.textContent = googleErrorMessage(error) + " El lote guardado se conserva; vuelve a intentarlo.";
+  } finally {
+    // Permite programar otro lote sin tener que recargar la página.
     calendarButton.disabled = false;
     calendarButton.textContent = original;
   }
