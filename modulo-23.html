@@ -104,7 +104,10 @@ input,select,textarea{scroll-margin-top:12px}
    if(lc){card.style.borderLeft="7px solid "+lc[0];card.style.background="linear-gradient(90deg,"+lc[1]+" 0%,#ffffff 46%)";}
    else if(due&&due<=today){card.style.borderColor="#d9a441";card.style.background="#fffaf0";}
    const heading=(row.loteReina?row.loteReina+" · ":"")+((row.tarea||row.tipo)||"Registro");
-   card.innerHTML='<h3>'+esc(heading)+'</h3><p><strong>Estado:</strong> '+(row.completada?'Completada':'Pendiente')+'</p>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+'<div class="actions"><button class="primary" type="button" data-calendar="'+esc(row.id)+'">Preparar aviso para Calendario</button><button class="secondary" type="button" data-edit="'+esc(row.id)+'">Editar / reprogramar</button><button class="secondary" type="button" data-done="'+esc(row.id)+'">'+(row.completada?'Marcar pendiente':'Marcar completada')+'</button><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button></div>';
+   const automatic=!!row.origenReina;
+   const management=automatic?'<p class="muted"><strong>🔗 Tarea automática:</strong> cambia su fecha o elimina el lote desde Cría de Reinas. Aquí puedes marcarla como completada y preparar el aviso.</p>':'';
+   const editDelete=automatic?'':'<button class="secondary" type="button" data-edit="'+esc(row.id)+'">Editar / reprogramar</button><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button>';
+   card.innerHTML='<h3>'+esc(heading)+'</h3><p><strong>Estado:</strong> '+(row.completada?'Completada':'Pendiente')+'</p>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+management+'<div class="actions"><button class="primary" type="button" data-calendar="'+esc(row.id)+'">Preparar aviso para Calendario</button>'+editDelete+'<button class="secondary" type="button" data-done="'+esc(row.id)+'">'+(row.completada?'Marcar pendiente':'Marcar completada')+'</button></div>';
    list.appendChild(card);
   });
  }
