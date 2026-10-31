@@ -121,7 +121,14 @@ input,select,textarea{scroll-margin-top:12px}
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
- let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[]}
+ let rows=[];let editingId=null;let storageReady=true;
+  try{const raw=localStorage.getItem(key);rows=raw===null?[]:JSON.parse(raw);if(!Array.isArray(rows))throw new Error("Los datos guardados no son una lista.");}
+  catch(e){storageReady=false;rows=[];}
+  if(!storageReady){
+   status.textContent="⚠️ No pude leer los registros de Cría de Reinas. Por seguridad no se permitirá guardar, editar ni eliminar desde esta pantalla. No se ha sobrescrito la copia original. Descarga o recupera primero el respaldo JSON.";
+   status.style.color="#9b2c20";form.querySelectorAll("input,select,textarea,button").forEach(el=>el.disabled=true);
+   return;
+  }
  function lotNumber(n){return "Lote "+String(n).padStart(3,"0")}
  function nextLotNumber(){let max=0;rows.forEach(r=>{const m=String(r.lote||"").match(/Lote\s+(\d+)/i);if(m)max=Math.max(max,Number(m[1]));});return lotNumber(max+1)}
  rows.forEach((r,i)=>{if(!r.lote)r.lote=lotNumber(i+1);});try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
@@ -163,7 +170,7 @@ input,select,textarea{scroll-margin-top:12px}
  try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
  function sincronizarTareasCalendario(){
   const calendarKey="apiecuador-modulo-23-v1";
-  let tasks=[];try{tasks=JSON.parse(localStorage.getItem(calendarKey)||"[]");if(!Array.isArray(tasks))tasks=[];}catch(e){tasks=[];}
+  let tasks=[];try{const rawTasks=localStorage.getItem(calendarKey);tasks=rawTasks===null?[]:JSON.parse(rawTasks);if(!Array.isArray(tasks))throw new Error("El calendario guardado no es una lista.");}catch(e){status.textContent="⚠️ No se pudo leer el Calendario Apícola. Los avisos existentes se conservaron y no se sobrescribirán. Revisa o recupera el respaldo antes de sincronizar.";status.style.color="#9b2c20";return -1;}
   const generated=[];
   rows.forEach(row=>{
    if(!row.fecha||!/^\d{4}-\d{2}-\d{2}$/.test(row.fecha))return;
