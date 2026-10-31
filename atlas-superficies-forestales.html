@@ -67,6 +67,23 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px 7px;b
 <div class="actions"><button type="button" class="secondary" id="export">Exportar respaldo JSON</button><button type="button" class="secondary" id="export-csv">Exportar tabla CSV</button><button type="button" class="danger" id="delete-all" style="background:#9a352e">Borrar todos los datos de este atlas</button></div>
 <p class="muted">Los datos se guardan solo en este navegador y dispositivo. Este atlas usa una clave local independiente y no modifica las zonas ya registradas en el Explorador.</p>
 </section>
+<section class="panel" id="inventario-forestal-oficial">
+<h2>🌳 Inventario forestal comercial: cifras oficiales y cómo aprovecharlas</h2>
+<div class="stats">
+<div class="stat"><strong>≈ 172.000 ha</strong><span>Plantaciones forestales comerciales en Ecuador, cifra nacional informada por el MAGP</span></div>
+<div class="stat"><strong>2.245,68 ha</strong><span>Plantaciones incentivadas por el proyecto citado por el MAGP, en 18 provincias continentales</span></div>
+</div>
+<p><strong>Especies mencionadas por el MAGP:</strong> teca, balsa, melina, eucalipto, pino, laurel y pachaco. El proyecto de incentivos también menciona aguacate y chuncho.</p>
+<div class="warn"><strong>Importante:</strong> las 172.000 ha son el total nacional de varias especies, no hectáreas de eucalipto. Las 2.245,68 ha corresponden a plantaciones apoyadas por un proyecto específico, no al inventario completo del país. No repartiré esas cifras por provincia o especie sin una tabla oficial que lo demuestre.</div>
+<h3>La pista para conseguir polígonos reales</h3>
+<p>El Registro Forestal del MAGP solicita al propietario de una plantación un mapa digital vectorial con tabla de atributos, en proyección WGS84 zona 17 Sur, y un inventario forestal. Esos documentos son una vía concreta para identificar polígonos y especies, si la autoridad puede facilitar datos agregados o de acceso público.</p>
+<div class="actions">
+<a class="btn" href="https://www.agricultura.gob.ec/gobierno-nacional-impulsa-la-produccion-forestal-sostenible-y-las-exportaciones-con-asistencia-tecnica-e-incentivos/" target="_blank" rel="noopener">Ver cifra nacional del MAGP</a>
+<a class="btn secondary" href="https://www.agricultura.gob.ec/inscripcion-en-el-registro-forestal/" target="_blank" rel="noopener">Requisitos del Registro Forestal</a>
+<a class="btn secondary" href="https://spf.agricultura.gob.ec/spf/index.php/login" target="_blank" rel="noopener">Sistema Informático de Producción Forestal</a>
+</div>
+<p class="muted">Siguiente objetivo de investigación: obtener del MAGP una capa o tabla pública, agregada por provincia y especie, de plantaciones registradas. Si no existe descarga pública, identificar el canal oficial para solicitarla. No se mostrarán predios privados ni datos personales.</p>
+</section>
 <section class="panel" id="metodo-manchas-grandes">
 <h2>🛰️ Método para localizar grandes manchas continuas</h2>
 <p>El objetivo no es sumar todos los árboles de una provincia: queremos encontrar <strong>polígonos grandes, conectados y con la misma cobertura</strong>, y después comprobar qué especie los forma.</p>
