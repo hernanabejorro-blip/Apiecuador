@@ -80,6 +80,22 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <p id="status" role="status" aria-live="polite"></p>
 </form>
 </section>
+<section class="panel" id="calculadora-capacidad">
+<h2>🐝 Calculadora de capacidad apícola forestal</h2>
+<p>Estima una primera referencia de cuántas colonias podrían competir por el alimento de una superficie forestal. El cálculo usa una referencia bibliográfica ecuatoriana de 2 colonias/ha en flora pobre y 4 colonias/ha en flora buena; <strong>no es una norma ni una capacidad demostrada para eucalipto</strong>. La decisión final requiere evaluación de floración, colmenas vecinas y prueba de campo.</p>
+<div class="grid">
+<div><label for="cap-area">Superficie total del bosque (ha)</label><input id="cap-area" type="number" min="0" step="0.1" placeholder="Ej. 100"></div>
+<div><label for="cap-share">Porcentaje realmente ocupado por la flora objetivo (%)</label><input id="cap-share" type="number" min="0" max="100" step="1" value="70"></div>
+<div><label for="cap-quality">Calidad floral observada</label><select id="cap-quality"><option value="poor">Pobre o irregular</option><option value="good">Buena y abundante</option><option value="unknown" selected>Desconocida / por verificar</option></select></div>
+<div><label for="cap-existing">Colmenas de otros apicultores en el entorno (estimación)</label><input id="cap-existing" type="number" min="0" step="1" value="0"></div>
+<div><label for="cap-planned">Colmenas que quieres instalar</label><input id="cap-planned" type="number" min="0" step="1" value="30"></div>
+<div><label for="cap-days">Días de floración útil observada (opcional)</label><input id="cap-days" type="number" min="0" step="1" placeholder="Ej. 35"></div>
+</div>
+<div class="actions"><button type="button" id="cap-calc">Calcular escenario</button><button type="button" class="secondary" id="cap-reset">Limpiar</button></div>
+<div id="cap-result" class="notice" aria-live="polite">Introduce la superficie y pulsa «Calcular escenario». Sin hectáreas efectivas ni calidad floral comprobada, no emitiremos una recomendación de carga.</div>
+<p class="muted"><strong>Reglas de prudencia:</strong> el resultado es una criba inicial. La referencia UPEC no estudia específicamente eucaliptales ni reemplaza mediciones locales. Como guía de organización, la FAO describe apiarios comerciales de 30–80 colonias cuando el forraje es suficiente; la fuente UPEC citada recomienda apiarios menores en sus escenarios y advierte contra concentraciones excesivas. ApiEcuador mostrará un aviso si se proyectan más de 50 colmenas en un solo punto. Separar apiarios alrededor de 2 km o más ayuda a reducir competencia, pero las abejas pueden volar mucho más lejos.</p>
+<div class="actions"><a class="link secondary" href="https://repositorio.upec.edu.ec/bitstreams/69f2ee8d-d133-46dd-a517-7d1c6cdcef8d/download" target="_blank" rel="noopener">Estudio UPEC · referencia ecuatoriana</a><a class="link secondary" href="https://www.fao.org/4/x0083e/X0083E06.htm" target="_blank" rel="noopener">FAO · ubicación y tamaño de apiarios</a><a class="link secondary" href="https://www.scielo.isciii.es/scielo.php?lng=es&nrm=iso&pid=S0004-05922011000400045&script=sci_arttext" target="_blank" rel="noopener">Estudio sobre Eucalyptus grandis</a></div>
+</section>
 <section class="panel" id="cobertura-nacional">
 <h2>🇪🇨 Búsqueda nacional: las 24 provincias</h2>
 <p>La prospección de ApiEcuador cubre todo el país, no solo la Sierra norte. Registra cada candidato con su provincia y región para comparar superficies y encontrar concentraciones forestales grandes.</p>
@@ -173,6 +189,21 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const coord=(v,min,max)=>{const n=Number(String(v).trim().replace(',','.'));return Number.isFinite(n)&&n>=min&&n<=max?n:null;};
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(rows));return true;}catch(e){$('status').textContent='No se pudo guardar. Exporta una copia y revisa el espacio disponible del navegador.';return false;}}
 function mapUrl(r){return 'https://www.google.com/maps/@'+r.lat+','+r.lon+',15000m/data=!3m1!1e3';}
+function capacityCalc(){
+ const area=Number($('cap-area').value),share=Number($('cap-share').value),existing=Number($('cap-existing').value||0),planned=Number($('cap-planned').value||0),days=Number($('cap-days').value||0),quality=$('cap-quality').value;
+ const out=$('cap-result');
+ if(!Number.isFinite(area)||area<=0||!Number.isFinite(share)||share<0||share>100||existing<0||planned<0){out.textContent='Revisa los datos: la superficie debe ser mayor que cero y el porcentaje debe estar entre 0 y 100.';return;}
+ const effective=area*share/100;
+ if(effective<=0){out.textContent='No hay hectáreas efectivas de flora objetivo. No se puede estimar capacidad.';return;}
+ const low=effective*2,high=effective*4,total=existing+planned,density=total/effective;
+ const format=x=>Math.round(x).toLocaleString('es-EC');
+ const ref=quality==='poor'?'Escenario de flora pobre: '+format(low)+' colonias como referencia superior inicial (2/ha).':quality==='good'?'Escenario de flora buena: '+format(high)+' colonias como referencia teórica (4/ha).':'Rango bibliográfico muy general: '+format(low)+'–'+format(high)+' colonias (2–4/ha); no seleccionar un extremo hasta verificar la floración.';
+ let status=quality==='unknown'?'La calidad floral aún no está verificada: el cálculo NO autoriza instalar colmenas.':density>4?'La densidad proyectada supera la referencia alta de 4 colonias/ha: riesgo de competencia.':density>2?'La densidad proyectada está entre 2 y 4 colonias/ha: exige comprobación local y seguimiento.':'La densidad proyectada está dentro o por debajo de la referencia baja; aún hay que comprobar recursos y apiarios vecinos.';
+ const sites=Math.ceil(planned/30),over=planned>50?' <strong>Alerta:</strong> más de 50 colmenas en un solo punto. Divide y evalúa ubicaciones separadas.':'';
+ out.innerHTML='<strong>Resultado de prospección (no es capacidad certificada)</strong><div class="grid"><div><strong>'+area.toLocaleString('es-EC')+' ha</strong><br>superficie total</div><div><strong>'+effective.toLocaleString('es-EC',{maximumFractionDigits:1})+' ha</strong><br>flora objetivo efectiva estimada</div><div><strong>'+format(low)+'–'+format(high)+'</strong><br>rango de referencia bibliográfica</div><div><strong>'+density.toLocaleString('es-EC',{maximumFractionDigits:2})+' colmenas/ha</strong><br>densidad con las '+format(total)+' colmenas existentes + previstas</div></div><p>'+ref+'</p><p><strong>Plan propuesto:</strong> '+format(planned)+' nuevas colmenas; aproximadamente '+sites+' apiario(s) si se organizan en grupos de hasta 30. Colmenas vecinas declaradas: '+format(existing)+'.</p><p><strong>Evaluación:</strong> '+status+'</p>'+(days>0?'<p><strong>Floración útil registrada:</strong> '+format(days)+' días. Una floración breve puede producir un pico de néctar y después dejar a las colonias sin alimento; planifica salida o alimentación antes de instalar.</p>':'<p>Registra duración de floración para valorar si el bosque sostiene una cosecha o solo un flujo corto.</p>')+over+'<p class="muted">Este cálculo no resta mecánicamente colmenas vecinas: las abejas comparten áreas de pecoreo y el radio real depende del paisaje. El dato de colmenas cercanas se incorpora a la densidad conjunta, no como una cuota exacta por predio.</p>';
+}
+$('cap-calc').addEventListener('click',capacityCalc);
+$('cap-reset').addEventListener('click',()=>{$('cap-area').value='';$('cap-share').value='70';$('cap-quality').value='unknown';$('cap-existing').value='0';$('cap-planned').value='30';$('cap-days').value='';$('cap-result').textContent='Introduce la superficie y pulsa «Calcular escenario».';});
 function render(){
  const q=$('search').value.trim().toLocaleLowerCase('es'),region=$('filter-region').value;
  const shown=rows.filter(r=>(!region||r.region===region)&&fields.some(k=>String(r[k]??'').toLocaleLowerCase('es').includes(q))).sort((a,b)=>String(a.name).localeCompare(String(b.name),'es'));
