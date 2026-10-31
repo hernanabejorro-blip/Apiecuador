@@ -51,7 +51,7 @@ input,select,textarea{scroll-margin-top:12px}
 <section class="panel" aria-label="Continuar seguimiento"><h2>🔄 Después del traslarve</h2><p>Cuando revises la aceptación, anota las celdas aceptadas aquí y continúa el control del lote hasta la emergencia y la postura.</p><p><a href="./modulo-30.html" style="display:inline-block;background:#245c43;color:#fff;text-decoration:none;padding:11px 14px;border-radius:10px;font-weight:650">👑 Abrir Seguimiento de Reinas →</a></p></section>
 <section class="panel" id="google-calendar-panel">
 <h2>📅 Programar avisos directamente en Google Calendar</h2>
-<p>Conecta tu cuenta de Google y ApiEcuador intentará guardar en tu calendario las siete tareas de esta tanda, incluido el inicio del traslarve (Día 1). Si ya existe un aviso de esta tanda, lo actualizará en lugar de duplicarlo.</p>
+<p>Conecta tu cuenta de Google y ApiEcuador intentará guardar en tu calendario las ocho tareas de esta tanda, incluido el inicio del traslarve (Día 1). Si ya existe un aviso de esta tanda, lo actualizará en lugar de duplicarlo.</p>
 <p class="muted">La primera vez, Google te pedirá permiso para gestionar eventos del calendario. El acceso se usa solo cuando pulsas el botón. Si el servicio de Calendar aún no está habilitado en el proyecto de Google, aparecerá un mensaje indicándolo; mientras tanto, puedes seguir usando «Crear recordatorios».</p>
 <div class="actions"><button class="primary" id="programar-google" type="button">🔐 Autorizar y programar avisos</button></div>
 <p class="status" id="estado-google-calendar" role="status" aria-live="polite"></p>
@@ -101,7 +101,7 @@ input,select,textarea{scroll-margin-top:12px}
 <label for="apiario">Apiario / ubicación</label><input id="apiario" name="apiario" type="text" required>
 <label for="madre">Colonia madre (línea genética)</label><input id="madre" name="madre" type="text" required>
 <label for="iniciadora">Colonia iniciadora o criadora</label><input id="iniciadora" name="iniciadora" type="text">
-<label for="cantidad">Celdas transferidas</label><input id="cantidad" name="cantidad" type="number" step="any" min="0" required>
+<label for="cantidad">Celdas transferidas</label><input id="cantidad" name="cantidad" type="number" step="1" min="1" required>
 <label for="aceptadas">Celdas aceptadas (revisión)</label><input id="aceptadas" name="aceptadas" type="number" min="0" step="1" placeholder="Completar al revisar"><p class="muted">Anota cuántas fueron aceptadas para calcular el porcentaje de aceptación de la tanda.</p>
 <label for="operculadas">Celdas operculadas</label><input id="operculadas" name="operculadas" type="number" min="0" step="1" placeholder="Completar al revisar">
 <label for="distribuidas">Celdas distribuidas a núcleos</label><input id="distribuidas" name="distribuidas" type="number" min="0" step="1" placeholder="Completar al distribuir">
@@ -144,7 +144,7 @@ input,select,textarea{scroll-margin-top:12px}
   });
  }
  form.addEventListener("submit",e=>{
-  e.preventDefault();const total=Number(document.getElementById("cantidad").value);const limits=[["aceptadas","Celdas aceptadas",total],["operculadas","Celdas operculadas",document.getElementById("aceptadas").value],["distribuidas","Celdas distribuidas",document.getElementById("operculadas").value||document.getElementById("aceptadas").value],["nacidas","Reinas nacidas",document.getElementById("distribuidas").value||document.getElementById("operculadas").value||document.getElementById("aceptadas").value],["postura","Reinas en postura",document.getElementById("nacidas").value]];for(const [id,label,limit] of limits){const value=document.getElementById(id).value;if(value!==""&&(!Number.isInteger(Number(value))||Number(value)<0)){status.textContent=label+" debe ser un número entero igual o mayor que cero.";return;}if(value!==""&&limit!==""&&limit!=null&&Number(value)>Number(limit)){status.textContent=label+" no puede superar la cantidad registrada en la etapa anterior.";return;}}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+  e.preventDefault();const totalRaw=document.getElementById("cantidad").value;const total=Number(totalRaw);if(!Number.isInteger(total)||total<1){status.textContent="Las celdas transferidas deben ser un número entero mayor que cero.";return;}const prior=(...ids)=>{for(const id of ids){const value=document.getElementById(id).value;if(value!=="")return value;}return "";};const limits=[["aceptadas","Celdas aceptadas",String(total)],["operculadas","Celdas operculadas",prior("aceptadas")],["distribuidas","Celdas distribuidas",prior("operculadas","aceptadas")],["nacidas","Reinas nacidas",prior("distribuidas","operculadas","aceptadas")],["postura","Reinas en postura",prior("nacidas")]];for(const [id,label,limit] of limits){const value=document.getElementById(id).value;if(value!==""&&(!Number.isInteger(Number(value))||Number(value)<0)){status.textContent=label+" debe ser un número entero igual o mayor que cero.";return;}if(value!==""&&(limit===""||limit==null)){status.textContent="Antes de registrar "+label.toLowerCase()+", completa la cantidad de la etapa anterior.";return;}if(value!==""&&Number(value)>Number(limit)){status.textContent=label+" no puede superar la cantidad registrada en la etapa anterior.";return;}}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   if(editingId){row.id=editingId;const previous=rows.find(r=>r.id===editingId);if(previous&&previous.cerrado)row.cerrado=true;rows=rows.map(r=>r.id===editingId?row:r);}else{row.cerrado=false;rows.push(row);}
   try{localStorage.setItem(key,JSON.stringify(rows));const synced=sincronizarTareasCalendario();form.reset();document.getElementById("lote").value=nextLotNumber();editingId=null;document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;render();status.textContent=synced>=0?"Registro guardado. "+synced+" revisiones sincronizadas con Calendario Apícola; abre o actualiza ese módulo para verlas.":"Registro guardado, pero no se pudo sincronizar el calendario en este navegador.";}
@@ -175,7 +175,8 @@ input,select,textarea{scroll-margin-top:12px}
     {fecha:row.nacimiento||datePlus(row.fecha,10),tarea:"Vigilar nacimiento estimado de reinas"},
     {fecha:row.fechaPostura||datePlus(row.fecha,24),tarea:"Revisar fecundación y postura"},
     {fecha:datePlus(row.fecha,30),tarea:"Segunda revisión de postura si aún no se confirmó"},
-    {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"}
+    {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"},
+    {fecha:datePlus(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"}
    ];
    milestones.forEach((m,i)=>{
     if(!/^\d{4}-\d{2}-\d{2}$/.test(m.fecha))return;
@@ -201,7 +202,8 @@ input,select,textarea{scroll-margin-top:12px}
    {fecha:row.nacimiento||datePlus(row.fecha,10),titulo:"ApiEcuador: vigilar nacimiento de reinas · "+nombre,detalle:"Fecha estimada de emergencia. Comprueba el desarrollo real y evita manipular las celdas innecesariamente."},
    {fecha:row.fechaPostura||datePlus(row.fecha,24),titulo:"ApiEcuador: revisar fecundación y postura · "+nombre,detalle:"Revisa con cuidado si hay huevos/postura. Mal tiempo o falta de zánganos pueden retrasarlo; no declares fallida una reina solo por la fecha."},
    {fecha:datePlus(row.fecha,30),titulo:"ApiEcuador: segunda revisión de postura · "+nombre,detalle:"Si aún no se confirmó postura, revisa evolución y condiciones. Ajusta la fecha según clima y manejo."},
-   {fecha:row.fecha,titulo:"🐝 INICIO DEL TRASLARVE · "+nombre,detalle:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."}
+   {fecha:row.fecha,titulo:"🐝 INICIO DEL TRASLARVE · "+nombre,detalle:"Día 1 de la tanda. Realiza el traslarve y registra cuántas cúpulas/larvas transferiste, la colonia donante y la iniciadora. Esta es la fecha base para calcular las revisiones posteriores."},
+   {fecha:datePlus(row.fecha,8),titulo:"ApiEcuador: preparar núcleos y material para las celdas · "+nombre,detalle:"Día 9 contando el traslarve como Día 1. Prepara núcleos, alimento, identificaciones y material. No retires las celdas antes del Día 10; confirma su desarrollo real."}
   ].filter(t=>/^\d{4}-\d{2}-\d{2}$/.test(t.fecha));
   const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z");
   const diasAviso=Math.max(0,Math.min(365,parseInt(row.avisoDias==null||row.avisoDias===""?"1":row.avisoDias,10)||0));const events=tareas.map((t,i)=>"BEGIN:VEVENT\r\nUID:apiecuador-"+String(row.id||"lote")+"-"+i+"@apiecuador\r\nDTSTAMP:"+stamp+"\r\nSUMMARY:"+icsEscape(t.titulo)+"\r\nDESCRIPTION:"+icsEscape(t.detalle+" Aviso configurado con "+diasAviso+" día(s) de anticipación.")+"\r\nDTSTART;VALUE=DATE:"+icsDate(t.fecha)+"\r\nDTEND;VALUE=DATE:"+icsDate(datePlus(t.fecha,1))+"\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:"+icsEscape("Recordatorio: "+t.titulo)+"\r\nTRIGGER:-P"+diasAviso+"D\r\nEND:VALARM\r\nEND:VEVENT").join("\r\n");
