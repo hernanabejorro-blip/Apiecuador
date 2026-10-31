@@ -34,7 +34,7 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <div class="grid">
 <div><label for="name">Nombre de la zona</label><input id="name" maxlength="100" placeholder="Ej. Bosque de eucalipto norte" required></div>
 <div><label for="plant">Especie o flora dominante</label><input id="plant" maxlength="100" placeholder="Ej. Eucalyptus globulus" required></div>
-<div><label for="province">Provincia</label><input id="province" maxlength="70" placeholder="Ej. Pichincha"></div>
+<div><label for="province">Provincia</label><select id="province"><option value="">Seleccionar provincia</option><option>Azuay</option><option>Bolívar</option><option>Cañar</option><option>Carchi</option><option>Chimborazo</option><option>Cotopaxi</option><option>El Oro</option><option>Esmeraldas</option><option>Galápagos</option><option>Guayas</option><option>Imbabura</option><option>Loja</option><option>Los Ríos</option><option>Manabí</option><option>Morona Santiago</option><option>Napo</option><option>Orellana</option><option>Pastaza</option><option>Pichincha</option><option>Santa Elena</option><option>Santo Domingo de los Tsáchilas</option><option>Sucumbíos</option><option>Tungurahua</option><option>Zamora Chinchipe</option></select></div>
 <div><label for="locality">Cantón, parroquia o sector</label><input id="locality" maxlength="120" placeholder="Ej. Tanda, Quito"></div>
 <div><label for="region">Región</label><select id="region"><option value="">Seleccionar</option><option>Sierra</option><option>Costa</option><option>Oriente / Amazonía</option><option>Galápagos</option></select></div>
 <div><label for="area">Superficie estimada (hectáreas)</label><input id="area" type="number" min="0" step="0.1" placeholder="Ej. 250"></div>
@@ -66,6 +66,17 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <p id="status" role="status" aria-live="polite"></p>
 </form>
 </section>
+<section class="panel" id="cobertura-nacional">
+<h2>🇪🇨 Búsqueda nacional: las 24 provincias</h2>
+<p>La prospección de ApiEcuador cubre todo el país, no solo la Sierra norte. Registra cada candidato con su provincia y región para comparar superficies y encontrar concentraciones forestales grandes.</p>
+<div class="grid">
+<div class="record"><h3>⛰️ Sierra</h3><p>Azuay · Bolívar · Cañar · Carchi · Chimborazo · Cotopaxi · Imbabura · Loja · Pichincha · Tungurahua</p></div>
+<div class="record"><h3>🌊 Costa</h3><p>El Oro · Esmeraldas · Guayas · Los Ríos · Manabí · Santa Elena · Santo Domingo de los Tsáchilas</p></div>
+<div class="record"><h3>🌳 Amazonía</h3><p>Morona Santiago · Napo · Orellana · Pastaza · Sucumbíos · Zamora Chinchipe</p></div>
+<div class="record"><h3>🏝️ Galápagos</h3><p>Galápagos · revisar especies, áreas protegidas y normativa antes de considerar cualquier instalación.</p></div>
+</div>
+<div class="notice"><strong>Regla de trabajo:</strong> primero cribamos el territorio completo con mapas nacionales; después priorizamos polígonos grandes y continuos; por último verificamos especie, propietario, acceso, agua, floración y capacidad de carga en campo. No asumiremos que toda cobertura forestal es eucalipto ni que un bosque protegido admite colmenas.</div>
+</section>
 <section class="panel">
 <h2>🧭 Consultar cartografía de Ecuador</h2>
 <p>Estas fuentes ayudan a separar áreas de silvicultura, bosque y otras coberturas. Úsalas para localizar candidatos y después verifica la especie en campo.</p>
@@ -82,6 +93,16 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <div class="actions"><a class="link" href="https://www.arcgis.com/apps/dashboards/1098e8966b4d46d9afc35c7a063b2c70" target="_blank" rel="noopener">🗺️ Abrir mapa de distribución de especies</a><a class="link secondary" href="https://observatorioforestal.utn.edu.ec/" target="_blank" rel="noopener">Abrir Observatorio Forestal UTN</a><a class="link secondary" href="https://observatorioforestal.utn.edu.ec/pages/resources_geo.html" target="_blank" rel="noopener">Ver recursos geoespaciales</a></div>
 </div>
 <div class="notice"><strong>Clave para no confundir el mapa:</strong> en MapBiomas, la clase 9 representa silvicultura y puede incluir plantaciones de pino y eucalipto, pero no identifica por sí sola cuál especie hay en cada píxel. La clase 3 corresponde a bosque y no debe interpretarse automáticamente como plantación de eucalipto. La resolución de 30 m sirve para localizar manchas grandes; confirma especie, superficie continua y estado en otra fuente o en campo.</div>
+<div class="record">
+<h3>MAGP · Mapa nacional de uso y cobertura agropecuaria y forestal 2024–2025</h3>
+<p>El Ministerio presentó en febrero de 2026 una actualización a escala 1:25.000. Es una fuente nacional más reciente para orientar la búsqueda de usos agropecuarios y forestales; hay que revisar la leyenda y confirmar qué clases y especies distingue antes de atribuir un polígono al eucalipto.</p>
+<div class="actions"><a class="link" href="https://www.agricultura.gob.ec/magp-presenta-el-mapa-de-uso-y-cobertura-de-la-tierra-agropecuaria-y-forestal-para-mejorar-la-planificacion-agroproductiva/" target="_blank" rel="noopener">Consultar presentación oficial del mapa 2024–2025</a><a class="link secondary" href="https://iedg.presidencia.gob.ec/servicios/geoservicios/" target="_blank" rel="noopener">Ver geoservicios nacionales MAGP / IGM</a></div>
+</div>
+<div class="record">
+<h3>Datos abiertos · Bosques y Vegetación Protectores</h3>
+<p>Conjunto oficial del MAATE con archivos descargables de superficie de Bosques y Vegetación Protectores. Sirve para detectar restricciones y contexto de conservación, no para tratar esas áreas como destinos apícolas autorizados.</p>
+<div class="actions"><a class="link" href="https://www.datosabiertos.gob.ec/dataset/superficie-cubierta-por-bosques-y-vegetacion-protectores" target="_blank" rel="noopener">Consultar datos abiertos MAATE</a></div>
+</div>
 <div class="record">
 <h3>MAG · Registro de plantaciones forestales</h3>
 <p>El trámite oficial de registro de propietario de plantación solicita coordenadas o un archivo shapefile del predio. Es una vía para buscar información validada por propietarios o gestores, aunque el trámite no equivale a un mapa público nacional descargable de eucaliptales.</p>
