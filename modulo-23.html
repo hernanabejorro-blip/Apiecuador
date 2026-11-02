@@ -46,6 +46,24 @@ input,select,textarea{scroll-margin-top:12px}
 <script>
 (function(){
  const key="apiecuador-modulo-23-v1";
+ const formAtStart=document.getElementById("registro-form");
+ const statusAtStart=document.getElementById("estado");
+ function readArraySafely(storageKey){
+  const raw=localStorage.getItem(storageKey);
+  if(raw===null)return [];
+  const parsed=JSON.parse(raw);
+  if(!Array.isArray(parsed))throw new Error("Formato de datos inesperado");
+  return parsed;
+ }
+ try{
+  readArraySafely(key);
+  readArraySafely("apiecuador-modulo-22-v1");
+ }catch(error){
+  statusAtStart.textContent="⚠️ No pude leer los datos guardados del calendario o los lotes de reinas. Por seguridad se bloqueó esta pantalla para evitar sobrescribir registros. No se ha borrado la información original. Recupera primero una copia JSON válida.";
+  statusAtStart.style.color="#9b2c20";
+  formAtStart.querySelectorAll("input,select,textarea,button").forEach(el=>el.disabled=true);
+  return;
+ }
  const fields=[{"id":"fecha","label":"Fecha prevista"},{"id":"apiario","label":"Apiario"},{"id":"tipo","label":"Tipo de tarea"},{"id":"loteReina","label":"Lote de reinas asociado"},{"id":"tarea","label":"Tarea pendiente"},{"id":"prioridad","label":"Prioridad"},{"id":"avisoDias","label":"Avisarme con días de anticipación"},{"id":"notas","label":"Notas"}];
  const form=document.getElementById("registro-form");
  const loteSelect=document.getElementById("loteReina");
