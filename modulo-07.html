@@ -127,8 +127,15 @@ input,select,textarea{scroll-margin-top:12px}
    }
   }catch(e){storageError="No se pudieron leer los datos del plan. Para protegerlos, se bloqueó la escritura. No borres los datos del navegador; primero haz una copia y solicita ayuda para recuperar este registro.";}
 
- let initialHives=0;
-  try{const a=JSON.parse(localStorage.getItem("apiecuador-apiarios-v1")||"[]");if(Array.isArray(a))initialHives=a.reduce((n,x)=>n+(Number(x&&x.colmenas)||0),0);}catch(e){}
+ let initialHives=0,apiaryReadWarning="";
+  try{
+   const rawApiaries=localStorage.getItem("apiecuador-apiarios-v1");
+   if(rawApiaries!==null){
+    const a=JSON.parse(rawApiaries);
+    if(!Array.isArray(a)||a.some(x=>!x||typeof x!=="object"||Array.isArray(x)))throw new Error("apiarios");
+    initialHives=a.reduce((n,x)=>n+(Number(x.colmenas)||0),0);
+   }
+  }catch(e){apiaryReadWarning="⚠️ No se pudieron leer los apiarios guardados. Revisa manualmente las colmenas de partida antes de guardar el objetivo; no se modificaron tus apiarios.";}
   const defaults={id:"config-2027",tipo:"config",iniciales:initialHives,objetivo:300,inicialesProductivas:0};
  function config(){return Object.assign({},defaults,rows.find(r=>r&&r.id==="config-2027")||{});}
  function save(){if(storageError){$("g-estado").textContent=storageError;return false;}try{localStorage.setItem(key,JSON.stringify(rows));return true}catch(e){$("g-estado").textContent="No se pudo guardar. Comprueba el espacio disponible del teléfono.";return false;}}
@@ -162,7 +169,7 @@ input,select,textarea{scroll-margin-top:12px}
  $("g-guardar-config").addEventListener("click",()=>{const iniciales=number("g-iniciales"),objetivo=number("g-objetivo"),inicialesProductivas=number("g-iniciales-productivas");if(!Number.isInteger(iniciales)||iniciales<0||iniciales>10000||!Number.isInteger(objetivo)||objetivo<1||objetivo>10000||!Number.isInteger(inicialesProductivas)||inicialesProductivas<0||inicialesProductivas>iniciales){$("g-config-estado").textContent="Revisa los objetivos: usa números enteros entre 0 y 10.000; las productivas iniciales no pueden superar las colmenas de partida.";return;}const old=rows.slice(),c={...config(),iniciales,objetivo,inicialesProductivas};rows=rows.filter(r=>r.id!=="config-2027");rows.push(c);if(save()){$("g-config-estado").textContent="Objetivos guardados.";render();}else rows=old;});
  $("g-form").addEventListener("submit",e=>{e.preventDefault();const id=$("g-form").dataset.editing||("tanda-"+Date.now());const r={id,tipo:"tanda",lote:$("g-lote").value.trim(),fecha:$("g-fecha").value,apiario:$("g-apiario").value.trim(),donantes:number("g-donantes"),nucleos:number("g-nucleos"),aceptadas:number("g-aceptadas"),fecundadas:number("g-fecundadas"),postura:number("g-postura"),productivas:number("g-productivas"),notas:$("g-notas").value.trim()};if(!r.lote||!r.fecha||["donantes","nucleos","aceptadas","fecundadas","postura","productivas"].some(k=>!Number.isInteger(r[k])||r[k]<0||r[k]>10000)||r.aceptadas>r.nucleos||r.fecundadas>r.aceptadas||r.postura>r.fecundadas||r.productivas>r.postura||r.productivas>r.nucleos){$("g-estado").textContent="Revisa la tanda: completa identificación y fecha; usa cantidades enteras entre 0 y 10.000; aceptadas ≤ núcleos, fecundadas ≤ aceptadas, postura ≤ fecundadas y productivas ≤ postura confirmada.";return;}const old=rows.slice();rows=rows.filter(x=>x.id!==id);rows.push(r);if(save()){$("g-estado").textContent="Tanda guardada en este teléfono.";reset();render();}else rows=old;});
  $("g-cancelar").addEventListener("click",()=>{reset();$("g-estado").textContent="Edición cancelada.";});
- $("g-fecha").value=localDate();if(storageError){$("g-estado").textContent=storageError;document.querySelectorAll("#plan-crecimiento-2027 input,#plan-crecimiento-2027 textarea,#plan-crecimiento-2027 button").forEach(el=>el.disabled=true);}render();
+ $("g-fecha").value=localDate();if(storageError){$("g-estado").textContent=storageError;document.querySelectorAll("#plan-crecimiento-2027 input,#plan-crecimiento-2027 textarea,#plan-crecimiento-2027 button").forEach(el=>el.disabled=true);}else if(apiaryReadWarning&&!rows.some(r=>r&&r.id==="config-2027")){$("g-config-estado").textContent=apiaryReadWarning;}render();
 })();
 </script>
 </body></html>
