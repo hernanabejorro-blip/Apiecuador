@@ -46,6 +46,10 @@ input,select,textarea{scroll-margin-top:12px}
 <script>
 (function(){
  const key="apiecuador-modulo-23-v1";
+ const formAtStart=document.getElementById("registro-form");
+ const statusAtStart=document.getElementById("estado");
+ function readArraySafely(storageKey){const raw=localStorage.getItem(storageKey);if(raw===null)return [];const parsed=JSON.parse(raw);if(!Array.isArray(parsed)||parsed.some(item=>!item||typeof item!=="object"||Array.isArray(item)))throw new Error("Formato de datos inesperado");return parsed;}
+ try{readArraySafely(key);readArraySafely("apiecuador-modulo-22-v1");}catch(error){statusAtStart.textContent="⚠️ No pude leer los datos del Calendario o de Cría de Reinas. Por seguridad se bloqueó esta pantalla para no sobrescribir los registros. La información original no se ha borrado. Recupera primero una copia JSON válida.";statusAtStart.style.color="#9b2c20";formAtStart.querySelectorAll("input,select,textarea,button").forEach(el=>el.disabled=true);return;}
  const fields=[{"id":"fecha","label":"Fecha prevista"},{"id":"apiario","label":"Apiario"},{"id":"tipo","label":"Tipo de tarea"},{"id":"loteReina","label":"Lote de reinas asociado"},{"id":"tarea","label":"Tarea pendiente"},{"id":"prioridad","label":"Prioridad"},{"id":"avisoDias","label":"Avisarme con días de anticipación"},{"id":"notas","label":"Notas"}];
  const form=document.getElementById("registro-form");
  const loteSelect=document.getElementById("loteReina");
@@ -74,17 +78,20 @@ input,select,textarea{scroll-margin-top:12px}
    const milestones=[
     {fecha:row.revision||addDays(row.fecha,1),tarea:"Revisar aceptación de celdas"},
     {fecha:addDays(row.fecha,5),tarea:"Revisar cría abierta y buscar celdas espontáneas"},
-    {fecha:row.fechaDistribucion||addDays(row.fecha,9),tarea:"Proteger y distribuir celdas antes de la emergencia"},
-    {fecha:row.nacimiento||addDays(row.fecha,10),tarea:"Vigilar nacimiento estimado de reinas"},
+    {fecha:row.fechaProteccion||addDays(row.fecha,8),tarea:"DÍA 9 · Revisar y proteger las celdas reales"},
+    {fecha:row.fechaDistribucion||addDays(row.fecha,9),tarea:"DÍA 10 · Sacar y distribuir las celdas reales"},
+    {fecha:row.nacimiento||addDays(row.fecha,10),tarea:"DÍA 11 · Seguimiento del nacimiento y estado de las reinas"},
     {fecha:row.fechaPostura||addDays(row.fecha,24),tarea:"Revisar fecundación y postura"},
     {fecha:addDays(row.fecha,30),tarea:"Segunda revisión de postura si aún no se confirmó"},
     {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"},
-    {fecha:addDays(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"}
+    {fecha:addDays(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"},
+    {fecha:addDays(row.fecha,-1),tarea:"🐝 PREPARAR COLMENA CRIADORA · huerfanizar y subir cría abierta para reforzar las nodrizas",avisoDias:0},
+    {fecha:row.fechaProteccion||addDays(row.fecha,8),tarea:"DÍA 9 · Revisar y proteger las celdas reales"}
    ];
    milestones.forEach((m,i)=>{
     if(!m.fecha||m.fecha.length!==10)return;
     const id="reina-"+row.id+"-"+i,previous=saved.find(t=>t.id===id);
-    generated.push({id,origenReina:row.id,fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(notice),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 1): "+row.fecha+". Fechas orientativas: confirma el desarrollo real y adapta el manejo al clima.",completada:previous?!!previous.completada:false});
+    generated.push({id,origenReina:row.id,fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(m.avisoDias==null?notice:m.avisoDias),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 1): "+row.fecha+". Fechas orientativas: confirma el desarrollo real y adapta el manejo al clima.",completada:previous?!!previous.completada:false});
    });
   });
   const ids=new Set(generated.map(t=>t.id));
