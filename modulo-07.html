@@ -33,6 +33,23 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 input,select,textarea{scroll-margin-top:12px}
 @media(max-width:520px){button,input[type="button"],input[type="submit"]{min-height:46px}main{padding-bottom:28px}}
 </style>
+
+<style id="apiecuador-crecimiento-2027">
+.growth-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:10px}
+.growth-grid label{display:block;font-size:13px;font-weight:700;color:#39463b}
+.growth-grid input,.growth-grid textarea{display:block;width:100%;margin-top:5px;padding:10px;border:1px solid #d2dccc;border-radius:9px;background:#fff;font:16px system-ui;color:#1c1c18}
+.growth-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px;margin:14px 0}
+.growth-stat{padding:12px;border:1px solid #dfe7dc;border-radius:12px;background:#f8faf6}
+.growth-stat strong{display:block;font-size:25px;color:#245c43;line-height:1.2}
+.growth-stat span{font-size:12px;color:#65584b}
+.growth-progress{height:12px;border-radius:20px;background:#e8e9df;overflow:hidden;margin:8px 0 16px}
+.growth-progress>div{height:100%;width:0;background:#36734c;transition:width .2s}
+.growth-subtitle{font-size:16px;margin:20px 0 8px;color:#245c43}
+.growth-record{border:1px solid #dfe7dc;border-radius:12px;padding:12px;margin:9px 0;background:#fff}
+.growth-record p{font-size:13px;margin:4px 0;color:#4c5149;overflow-wrap:anywhere}
+.growth-record strong{color:#245c43}
+@media(max-width:520px){.growth-grid{grid-template-columns:1fr 1fr}.growth-grid label:first-child{grid-column:auto}}
+</style>
 </head><body>
 <header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🐝 Panel de Apiarios</h1><p>Un vistazo al estado de tus apiarios, inspecciones y trabajos pendientes.</p></div></header>
 <main><div class="notice"><strong>Datos reales, sin simulaciones:</strong> este panel resume los registros guardados en este navegador. Si todavía no registraste apiarios o inspecciones, los contadores aparecerán en cero.</div>
@@ -44,6 +61,44 @@ input,select,textarea{scroll-margin-top:12px}
 <section class="panel"><h2>Floraciones observadas</h2><p class="small">Registros del calendario floral guardados en este teléfono.</p><div id="lista-floraciones"><p class="empty">Todavía no hay observaciones florales registradas.</p></div></section>
 <section class="panel"><h2>Trabajos de extracción</h2><p class="small">Consulta aquí las próximas jornadas que hayas programado.</p><div id="lista-trabajos"><p class="empty">Todavía no hay jornadas registradas.</p></div></section>
 <p class="small">Consejo: haz una copia desde “Copias de Seguridad” antes de cambiar de teléfono o navegador.</p>
+
+<section class="panel" id="plan-crecimiento-2027">
+<h2>📈 Plan de crecimiento 2027</h2>
+<p class="small">Controla la multiplicación y comprueba cuántas colonias llegan realmente fuertes a la cosecha. Estos datos se guardan en este teléfono y se incluyen en la copia general de ApiEcuador.</p>
+<div class="growth-grid">
+<label>Colmenas de partida<input id="g-iniciales" type="number" min="0" max="10000" value="140"></label>
+<label>Objetivo de productivas<input id="g-objetivo" type="number" min="1" max="10000" value="300"></label>
+<label>Productivas iniciales verificadas<input id="g-iniciales-productivas" type="number" min="0" max="10000" value="0"></label>
+</div>
+<div class="actions"><button class="btn" id="g-guardar-config" type="button">Guardar objetivos</button><span class="small" id="g-config-estado" role="status"></span></div>
+<div class="growth-stats">
+<div class="growth-stat"><strong id="g-total-nucleos">0</strong><span>Núcleos formados</span></div>
+<div class="growth-stat"><strong id="g-total-postura">0</strong><span>Reinas con postura confirmada</span></div>
+<div class="growth-stat"><strong id="g-total-productivas">0</strong><span>Colonias productivas verificadas</span></div>
+<div class="growth-stat"><strong id="g-faltan">300</strong><span>Faltan para el objetivo</span></div>
+</div>
+<div class="growth-progress"><div id="g-barra"></div></div>
+<h3 class="growth-subtitle">Registrar una tanda de núcleos</h3>
+<form id="g-form">
+<div class="growth-grid">
+<label>Identificación de la tanda<input id="g-lote" maxlength="60" required placeholder="Ej.: Tanda 01"></label>
+<label>Fecha<input id="g-fecha" type="date" required></label>
+<label>Apiario<input id="g-apiario" maxlength="100" placeholder="Apiario de origen"></label>
+<label>Colonias donantes<input id="g-donantes" type="number" min="0" max="10000" value="0"></label>
+<label>Núcleos formados<input id="g-nucleos" type="number" min="0" max="10000" required value="0"></label>
+<label>Reinas aceptadas<input id="g-aceptadas" type="number" min="0" max="10000" value="0"></label>
+<label>Reinas fecundadas<input id="g-fecundadas" type="number" min="0" max="10000" value="0"></label>
+<label>Postura confirmada<input id="g-postura" type="number" min="0" max="10000" value="0"></label>
+<label>Colonias productivas verificadas<input id="g-productivas" type="number" min="0" max="10000" value="0"></label>
+</div>
+<label>Observaciones<textarea id="g-notas" rows="2" maxlength="800" placeholder="Pérdidas, núcleos atrasados, calidad de reina, alimentación…"></textarea></label>
+<div class="actions"><button class="btn" type="submit" id="g-submit">Guardar tanda</button><button class="btn alt" type="button" id="g-cancelar" hidden>Cancelar edición</button></div>
+<p class="small" id="g-estado" role="status" aria-live="polite"></p>
+</form>
+<h3 class="growth-subtitle">Historial de tandas</h3>
+<div id="g-lista"><p class="empty">Todavía no hay tandas registradas.</p></div>
+<p class="small">Criterio de control: una reina solo cuenta como confirmada cuando verificas fecundación y postura. Una colonia solo cuenta como productiva cuando alcanza la fuerza necesaria para la floración prevista. No se suman automáticamente núcleos recién formados.</p>
+</section>
 </main><script>
 (function(){
  const read=(k)=>{try{const x=JSON.parse(localStorage.getItem(k)||"[]");return Array.isArray(x)?x:[]}catch(e){return []}};
@@ -61,4 +116,44 @@ input,select,textarea{scroll-margin-top:12px}
  document.getElementById("lista-trabajos").innerHTML=jobs.length?jobs.slice().sort((a,b)=>(a.fecha||"").localeCompare(b.fecha||"")).slice(0,5).map(j=>'<article class="record"><h3>👷 '+esc(j.apiario||"Apiario pendiente")+' · '+esc(j.fecha||"Sin fecha")+'</h3><p>Responsable: '+esc(j.responsable||"No asignado")+' · Estado: '+esc(j.estado||"Pendiente")+'</p><p>'+esc(j.tarea||"Sin tarea descrita")+'</p></article>').join(""):empty('Todavía no hay jornadas registradas.');
  document.getElementById("lista-floraciones").innerHTML=flores.length?flores.slice().sort((a,b)=>(b.start||"").localeCompare(a.start||"")).slice(0,5).map(f=>'<article class="record"><h3>🌼 '+esc(f.plant||"Planta sin nombre")+' · '+esc(f.locality||"Localidad no indicada")+'</h3><p>Inicio observado: '+esc(f.start||"Sin fecha")+' · Recurso: '+esc(f.resource||"No determinado")+'</p><p>Actividad de abejas: '+esc(f["bee-activity"]||"No evaluada")+' · Intensidad: '+esc(f.intensity||"No evaluada")+'</p></article>').join(""):empty('Todavía no hay observaciones florales registradas. Usa “Registrar floración”.');
 })();
-</script></body></html>
+</script>
+<script id="apiecuador-plan-crecimiento-2027">
+(function(){
+ const key="apiecuador-crecimiento-2027-v1", $=id=>document.getElementById(id);
+ let rows=[];try{const v=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(v))rows=v;}catch(e){}
+ const defaults={id:"config-2027",tipo:"config",iniciales:140,objetivo:300,inicialesProductivas:0};
+ function config(){return Object.assign({},defaults,rows.find(r=>r&&r.id==="config-2027")||{});}
+ function save(){try{localStorage.setItem(key,JSON.stringify(rows));return true}catch(e){$("g-estado").textContent="No se pudo guardar. Comprueba el espacio disponible del teléfono.";return false;}}
+ function number(id){return Math.max(0,Number($(id).value)||0);}
+ function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+ function render(){
+  const c=config(), batches=rows.filter(r=>r&&r.tipo==="tanda");
+  const sum=k=>batches.reduce((n,r)=>n+(Number(r[k])||0),0);
+  const productivas=(Number(c.inicialesProductivas)||0)+sum("productivas");
+  const objetivo=Math.max(1,Number(c.objetivo)||300),pct=Math.min(100,productivas/objetivo*100);
+  $("g-iniciales").value=c.iniciales;$("g-objetivo").value=c.objetivo;$("g-iniciales-productivas").value=c.inicialesProductivas;
+  $("g-total-nucleos").textContent=sum("nucleos");
+  $("g-total-postura").textContent=sum("postura");
+  $("g-total-productivas").textContent=productivas;
+  $("g-faltan").textContent=Math.max(0,objetivo-productivas);
+  $("g-barra").style.width=pct+"%";
+  const list=$("g-lista");list.innerHTML="";
+  if(!batches.length){list.innerHTML='<p class="empty">Todavía no hay tandas registradas.</p>';return;}
+  batches.slice().sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||"")).forEach(r=>{
+   const el=document.createElement("article");el.className="growth-record";
+   el.innerHTML='<strong>'+esc(r.lote)+'</strong><p>'+esc(r.fecha)+' · '+esc(r.apiario||"Apiario sin indicar")+'</p><p>Donantes: '+r.donantes+' · Núcleos: '+r.nucleos+' · Reinas aceptadas: '+r.aceptadas+' · Fecundadas: '+r.fecundadas+' · Postura confirmada: '+r.postura+' · Productivas: '+r.productivas+'</p>'+(r.notas?'<p>'+esc(r.notas)+'</p>':'');
+   const actions=document.createElement("div");actions.className="actions";
+   const edit=document.createElement("button");edit.type="button";edit.className="btn alt";edit.textContent="Editar";edit.addEventListener("click",()=>load(r.id));
+   const del=document.createElement("button");del.type="button";del.className="btn alt";del.textContent="Eliminar";del.addEventListener("click",()=>{if(!confirm("¿Eliminar esta tanda del registro de crecimiento?"))return;rows=rows.filter(x=>x.id!==r.id);if(save())render();});
+   actions.append(edit,del);el.append(actions);list.append(el);
+  });
+ }
+ function reset(){["g-lote","g-apiario","g-notas"].forEach(id=>$(id).value="");["g-donantes","g-nucleos","g-aceptadas","g-fecundadas","g-postura","g-productivas"].forEach(id=>$(id).value="0");$("g-fecha").value=new Date().toISOString().slice(0,10);$("g-submit").textContent="Guardar tanda";$("g-cancelar").hidden=true;delete $("g-form").dataset.editing;}
+ function load(id){const r=rows.find(x=>x.id===id);if(!r)return;const map={lote:"g-lote",fecha:"g-fecha",apiario:"g-apiario",donantes:"g-donantes",nucleos:"g-nucleos",aceptadas:"g-aceptadas",fecundadas:"g-fecundadas",postura:"g-postura",productivas:"g-productivas",notas:"g-notas"};Object.keys(map).forEach(k=>$(map[k]).value=r[k]??"");$("g-form").dataset.editing=id;$("g-submit").textContent="Guardar cambios";$("g-cancelar").hidden=false;$("g-form").scrollIntoView({behavior:"smooth",block:"start"});}
+ $("g-guardar-config").addEventListener("click",()=>{const c={...config(),iniciales:number("g-iniciales"),objetivo:Math.max(1,number("g-objetivo")),inicialesProductivas:number("g-iniciales-productivas")};rows=rows.filter(r=>r.id!=="config-2027");rows.push(c);if(save()){$("g-config-estado").textContent="Objetivos guardados.";render();}});
+ $("g-form").addEventListener("submit",e=>{e.preventDefault();const id=$("g-form").dataset.editing||("tanda-"+Date.now());const r={id,tipo:"tanda",lote:$("g-lote").value.trim(),fecha:$("g-fecha").value,apiario:$("g-apiario").value.trim(),donantes:number("g-donantes"),nucleos:number("g-nucleos"),aceptadas:number("g-aceptadas"),fecundadas:number("g-fecundadas"),postura:number("g-postura"),productivas:number("g-productivas"),notas:$("g-notas").value.trim()};if(r.aceptadas>r.nucleos||r.fecundadas>r.aceptadas||r.postura>r.fecundadas||r.productivas>r.nucleos){$("g-estado").textContent="Revisa las cantidades: aceptadas ≤ núcleos, fecundadas ≤ aceptadas, postura ≤ fecundadas y productivas ≤ núcleos.";return;}const old=rows.slice();rows=rows.filter(x=>x.id!==id);rows.push(r);if(save()){$("g-estado").textContent="Tanda guardada en este teléfono.";reset();render();}else rows=old;});
+ $("g-cancelar").addEventListener("click",()=>{reset();$("g-estado").textContent="Edición cancelada.";});
+ $("g-fecha").value=new Date().toISOString().slice(0,10);render();
+})();
+</script>
+</body></html>
