@@ -43,6 +43,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px 7px;b
 <h2>Importar estadísticas provinciales (Excel o CSV)</h2>
 <p>Puedes cargar directamente el Excel oficial de MapBiomas (.xlsx) o una tabla CSV. El importador intentará reconocer provincia, año, clase y hectáreas. Si la estructura del Excel no permite identificar esos campos con seguridad, te mostrará un aviso en vez de inventar resultados. También puedes usar la plantilla CSV.</p>
 <div class="actions"><button id="template" class="secondary" type="button">Descargar plantilla CSV (24 provincias)</button><button id="import-btn" type="button">Importar Excel o CSV</button><input id="csv-file" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></div>
+<p class="muted">La fuente oficial de MapBiomas publica una tabla de estadísticas por provincia para la Colección 4.0. El archivo enlazado en este momento corresponde a la tabla provincial 2024; revisa el año y los encabezados antes de importarlo. La clasificación por satélite no identifica especies como eucalipto.</p>
+<div class="actions"><a class="btn secondary" href="https://ecuador.stg.mapbiomas.org/wp-content/uploads/sites/8/2026/09/mapbiomas-ecuador-collection-4-coverage-provincia_conali_2024_e47848f9-1-0.xlsx" target="_blank" rel="noopener">Descargar tabla provincial oficial MapBiomas (Excel 2024)</a><a class="btn secondary" href="https://ecuador.mapbiomas.org/iniciativas-y-productos/cobertura-y-uso-del-suelo/cobertura-30m/" target="_blank" rel="noopener">Ver metodología, leyenda y estadísticas</a></div>
 <p id="status" role="status" aria-live="polite" class="muted"></p>
 </section>
 <section class="panel">
