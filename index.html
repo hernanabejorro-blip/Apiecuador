@@ -248,6 +248,48 @@ footer{color:#66756a}
 @media(max-width:760px){.hero-orbit{right:3%;opacity:.38}.accesos-rapidos-lista{grid-template-columns:repeat(2,minmax(0,1fr))}.acceso-rapido{min-height:126px}}
 @media(max-width:520px){header{min-height:230px;padding:26px 18px 40px}.bee{width:52px;height:52px;flex-basis:52px}.portada-hero{margin:-15px 12px 19px;padding:23px 19px 15px;min-height:275px;border-radius:21px}.hero-copy{max-width:100%}.hero-copy h2{font-size:27px;max-width:320px}.hero-copy p{max-width:300px;font-size:14px}.hero-orbit{width:140px;height:140px;right:-27px;top:65px;opacity:.24}.hero-orbit span{font-size:54px}.hero-foot{font-size:9px;letter-spacing:.7px;flex-direction:column;gap:4px}.accesos-rapidos{padding:0 16px}.accesos-rapidos-lista{gap:9px}.acceso-rapido{min-height:125px;padding:12px}.acceso-rapido span:last-child{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.acceso-rapido,.hero-cta{transition:none}.acceso-rapido:hover,.hero-cta:hover{transform:none}}
+
+/* APIECUADOR · identidad apícola cálida y catálogo siempre visible */
+body{
+ background-color:#fbf5e7;
+ background-image:
+  radial-gradient(circle at 12px 10px,#e7bd5b22 1.5px,transparent 2px),
+  linear-gradient(30deg,transparent 48%,#d9a83b12 49%,#d9a83b12 51%,transparent 52%),
+  linear-gradient(150deg,transparent 48%,#d9a83b12 49%,#d9a83b12 51%,transparent 52%),
+  linear-gradient(90deg,transparent 48%,#d9a83b0c 49%,#d9a83b0c 51%,transparent 52%),
+  linear-gradient(180deg,#fff9e9 0%,#f6f3e8 58%,#eef3e9 100%);
+ background-size:34px 30px,34px 30px,34px 30px,34px 30px,100% 100%;
+ background-attachment:fixed;
+}
+header{border-bottom:5px solid #eab43b}
+.portada-hero{border:2px solid #e8bd5b;box-shadow:0 18px 42px #60400f26}
+.accesos-rapidos h2{display:flex;align-items:center;gap:9px}
+.acceso-rapido{border:2px solid #fff1c3}
+.note,.aviso-campo{background:linear-gradient(135deg,#fff9e9,#fff0cf);border:1px solid #e9c77d;box-shadow:0 5px 18px #77551b10}
+#herramientas-complementarias{display:block!important;background:linear-gradient(145deg,#fff9e8,#fff1ca)!important;border:2px solid #e7bd5b!important;box-shadow:0 10px 28px #77551b16}
+.catalogo-titulo{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 8px;color:#70400c;font-size:clamp(21px,3vw,28px);letter-spacing:-.5px}
+.catalogo-titulo span{font-size:12px;letter-spacing:.5px;padding:5px 10px;border-radius:99px;background:#f4c64f;color:#55320b}
+#herramientas-complementarias>p{font-size:15px;color:#65513a}
+.grupos-herramientas{gap:13px}
+.grupo-herramientas{display:block!important;border:1px solid #e5c77f;border-radius:17px;background:#fffdf7;padding:14px 15px;box-shadow:0 3px 12px #805b1b0b}
+.grupo-herramientas>summary{list-style:none;display:flex;align-items:center;gap:8px;color:#245c43;font-size:17px;padding:4px 0}
+.grupo-herramientas>summary::-webkit-details-marker{display:none}
+.grupo-herramientas>summary:after{content:"✓";margin-left:auto;color:#b57816;font-weight:900}
+.grupo-herramientas>p{font-size:14px;color:#6b5b46}
+.grupo-herramientas .grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px}
+.grupo-herramientas .card{min-height:125px;border-radius:15px}
+footer{color:#536b5b;text-align:center;font-weight:600}
+@media(max-width:520px){
+ .portada-hero{margin-left:12px;margin-right:12px;padding:23px 19px 15px;min-height:230px}
+ .hero-orbit{right:-35px;opacity:.45;transform:scale(.78)}
+ .accesos-rapidos-lista{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .acceso-rapido{min-height:126px}
+ #herramientas-complementarias{padding:15px 12px!important}
+ .grupo-herramientas{padding:12px}
+ .grupo-herramientas .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .grupo-herramientas .card{min-height:112px;padding:12px}
+ .grupo-herramientas .card .name{font-size:14px}
+}
 </style>
 </head><body>
 <header><div class="wrap"><div class="brand"><span class="bee">🐝</span><div><h1>ApiEcuador</h1><div>Gestión apícola · Panel de módulos</div></div></div>
@@ -321,9 +363,9 @@ footer{color:#66756a}
 <h2 style="font-size:19px;color:#173f32;margin:0 0 6px">Tu jornada apícola, en un solo lugar</h2>
 <p style="margin:0;color:#65584b;line-height:1.5">Usa los accesos rápidos de arriba para las tareas habituales. Las herramientas menos frecuentes quedan agrupadas en el catálogo desplegable de abajo. No necesitas aprender los números de los módulos.</p>
 </section>
-<details id="herramientas-complementarias" style="margin-top:22px;border:1px solid #dce5d8;border-radius:16px;background:#fff;padding:14px 16px">
-<summary style="font-weight:750;color:#245c43;cursor:pointer;font-size:17px">Catálogo de herramientas por áreas (8)</summary>
-<p style="margin:10px 0 14px;color:#65584b;line-height:1.5">Aquí están las herramientas de uso ocasional y las funciones más específicas. Los accesos rápidos de arriba llevan a las tareas habituales; este catálogo conserva el acceso a todas las demás páginas sin llenar la portada.</p>
+<section id="herramientas-complementarias" aria-label="Catálogo completo de herramientas por áreas" style="margin-top:22px;border:1px solid #dce5d8;border-radius:22px;background:#fff;padding:18px 16px">
+<h2 class="catalogo-titulo">📚 Catálogo completo de herramientas por áreas <span>8 áreas</span></h2>
+<p style="margin:10px 0 14px;color:#65584b;line-height:1.5">Todas las herramientas están a la vista y ordenadas por trabajo. Abre directamente la que necesites; los accesos rápidos de arriba te llevan a las tareas de todos los días.</p>
 <div class="grupos-herramientas">
 <details class="grupo-herramientas"><summary>🐝 Colmenas y apiarios</summary><p>Inspecciones, estado de las colmenas, registro de apiarios y evaluación de nuevos sitios.</p><div class="grid">
 <a class="card" href="modulo-21.html"><span class="dot">●</span><span class="name">Inspección de colmenas</span><span class="go">Abrir herramienta →</span></a>
@@ -363,7 +405,7 @@ footer{color:#66756a}
 <details class="grupo-herramientas"><summary>📦 Copias de seguridad</summary><p>Exportar e importar tus registros para proteger la información de trabajo.</p><div class="grid">
 <a class="card" href="modulo-27.html"><span class="dot">●</span><span class="name">Copias de seguridad · Exportar e importar</span><span class="go">Abrir herramienta →</span></a>
 </div></details>
-</div></details>
+</div></section>
 </main><footer class="wrap">Versión inicial creada a partir de la exportación de Stitch. Conserva el ZIP original como copia de seguridad.</footer>
 <script>
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
@@ -409,7 +451,7 @@ buscador.addEventListener("input", function () {
   if (complementarias) {
     complementarias.open = texto.length > 0 && coincideEnComplementarias;
     complementarias.querySelectorAll(".grupo-herramientas").forEach(grupo => {
-      grupo.open = texto.length > 0 && Array.from(grupo.querySelectorAll(".card")).some(t => t.style.display !== "none");
+      grupo.open = texto.length === 0 || Array.from(grupo.querySelectorAll(".card")).some(t => t.style.display !== "none");
     });
   }
   aviso.hidden = visibles > 0;
