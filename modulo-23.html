@@ -73,13 +73,14 @@ input,select,textarea{scroll-margin-top:12px}
    // Se usan los mismos desplazamientos que Google Calendar para evitar avisos con un día de diferencia.
    const milestones=[
     {fecha:row.revision||addDays(row.fecha,1),tarea:"Revisar aceptación de celdas"},
-    {fecha:addDays(row.fecha,5),tarea:"Revisar cría abierta y buscar celdas espontáneas"},
-    {fecha:row.fechaDistribucion||addDays(row.fecha,9),tarea:"Proteger y distribuir celdas antes de la emergencia"},
+    {fecha:addDays(row.fecha,5),tarea:"🐝 Revisar COLMENA CRIADORA: cría abierta y celdas espontáneas"},
+    {fecha:row.fechaDistribucion||addDays(row.fecha,9),tarea:"Sacar, proteger y distribuir celdas antes de la emergencia"},
     {fecha:row.nacimiento||addDays(row.fecha,10),tarea:"Vigilar nacimiento estimado de reinas"},
     {fecha:row.fechaPostura||addDays(row.fecha,24),tarea:"Revisar fecundación y postura"},
     {fecha:addDays(row.fecha,30),tarea:"Segunda revisión de postura si aún no se confirmó"},
     {fecha:row.fecha,tarea:"🐝 INICIO DEL TRASLARVE · realizar y registrar la tanda"},
-    {fecha:addDays(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"}
+    {fecha:addDays(row.fecha,8),tarea:"Preparar núcleos y material para las celdas (Día 9)"},
+    {fecha:addDays(row.fecha,-1),tarea:"🐝 PREPARAR COLMENA CRIADORA · huerfanizar y subir cría abierta para reforzar las nodrizas",avisoDias:0}
    ];
    milestones.forEach((m,i)=>{
     if(!m.fecha||m.fecha.length!==10)return;
