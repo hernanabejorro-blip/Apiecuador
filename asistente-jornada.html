@@ -8,7 +8,9 @@
 <div class="intro"><strong>🧤 Primero lo importante.</strong><br>Reúne las tareas de tu calendario y los controles sanitarios programados. Puedes completar tareas del calendario aquí; los registros de inspección y sanidad se consultan sin modificarlos.</div>
 <div class="stats" aria-live="polite"><div class="stat red"><strong id="n-overdue">0</strong><span>🔴 Vencidas</span></div><div class="stat orange"><strong id="n-today">0</strong><span>🟠 Hoy</span></div><div class="stat"><strong id="n-tomorrow">0</strong><span>🟡 Mañana</span></div><div class="stat"><strong id="n-next">0</strong><span>📅 Más adelante</span></div></div>
 <section class="panel"><h2>📋 Tu lista de trabajo</h2><div class="filters" aria-label="Filtrar tareas"><button type="button" data-filter="all" aria-pressed="true">Todas</button><button type="button" data-filter="urgent" aria-pressed="false">Vencidas y hoy</button><button type="button" data-filter="tomorrow" aria-pressed="false">Mañana</button><button type="button" data-filter="future" aria-pressed="false">Más adelante</button></div><div id="tasks"><p class="empty">Leyendo tus registros guardados…</p></div><p class="warning">Las recomendaciones sanitarias son recordatorios de revisión basados en tus fechas registradas; no son diagnósticos ni prescripciones de tratamiento.</p></section>
-<section class="panel"><h2>⚡ Ir directamente al trabajo</h2><div class="actions"><a class="action primary" href="./modulo-21.html">🔍 Inspeccionar colmenas</a><a class="action" href="./modulo-22.html">👑 Cría de reinas</a><a class="action" href="./modulo-23.html">📅 Calendario y tareas</a><a class="action" href="./modulo-03.html">🩺 Sanidad y Varroa</a><a class="action" href="./modulo-27.html">💾 Copia de seguridad</a></div></section>
+<section class="panel" id="hive-overview"><h2>🐝 Estado de las colmenas</h2><p class="warning">Resumen de las últimas inspecciones guardadas. No modifica tus registros.</p><div id="inspection-overview"><p class="empty">Consultando inspecciones…</p></div></section>
+<section class="panel" id="queen-overview"><h2>👑 Lotes de reinas en seguimiento</h2><p class="warning">Consulta de los lotes activos y sus avances registrados.</p><div id="queen-overview-list"><p class="empty">Consultando lotes…</p></div><div class="actions"><a class="action primary" href="./modulo-22.html">Abrir Cría de Reinas</a><a class="action" href="./modulo-30.html">Seguimiento de Reinas</a></div></section>
+<section class="panel"><h2>⚡ Ir directamente al trabajo</h2><div class="actions"><a class="action primary" href="./modulo-21.html">🔍 Inspeccionar colmenas</a><a class="action" href="./modulo-22.html">👑 Cría de reinas</a><a class="action" href="./modulo-30.html">📈 Seguimiento de reinas</a><a class="action" href="./modulo-23.html">📅 Calendario y tareas</a><a class="action" href="./modulo-03.html">🩺 Sanidad y Varroa</a><a class="action" href="./modulo-27.html">💾 Copia de seguridad</a></div></section>
 <p class="footer-note" id="footnote">Los datos permanecen en este teléfono. Esta pantalla no sincroniza ni borra registros. Haz copias de seguridad periódicas.</p>
 </main>
 <script>
@@ -28,6 +30,40 @@ function collect(){
  san.forEach((r,i)=>{if(!r||!/^\d{4}-\d\d-\d\d$/.test(String(r.next||"")))return;out.push({id:"san-"+String(r.id||i),kind:"sanitary",date:r.next,title:"🔬 Control posterior / revisión sanitaria",place:r.apiary||"Apiario sin indicar",detail:(r.product?"Método/producto: "+r.product+" · ":"")+(r.hives?"Colmenas: "+r.hives+" · ":"")+"Registro: "+fmt(r.date),priority:"Importante",source:"Seguimiento sanitario",href:"./modulo-03.html",record:r});});
  return out.sort((a,b)=>a.date.localeCompare(b.date)||((a.priority==="Urgente"?-1:0)-(b.priority==="Urgente"?-1:0)));
 }
+function renderFieldPanels(){
+ const inspections=read("apiecuador-modulo-21-v1");
+ const queenLots=read("apiecuador-modulo-22-v1");
+ const latest=new Map();
+ inspections.forEach(r=>{
+  if(!r||!r.fecha)return;
+  const k=String(r.apiario||"Apiario")+" · "+String(r.colmena||"Colmena");
+  const prev=latest.get(k);
+  if(!prev||String(r.fecha)>String(prev.fecha))latest.set(k,r);
+ });
+ const ordered=Array.from(latest.entries()).sort((a,b)=>String(b[1].fecha).localeCompare(String(a[1].fecha)));
+ const target=$("inspection-overview");
+ if(!ordered.length){target.innerHTML='<div class="empty">Todavía no hay inspecciones guardadas. Cuando registres una revisión, aquí aparecerá el estado más reciente de cada colmena.</div>';}
+ else{
+  target.innerHTML=ordered.slice(0,8).map(([key,r])=>{
+   const flags=[];
+   if(/no vista|huérfana|huerfana/i.test(String(r.reina||"")))flags.push("Revisar situación de la reina");
+   if(/irregular|escasa|sin cría/i.test(String(r.cria||"")))flags.push("Revisar evolución de la cría");
+   if(/escasas|sin reservas/i.test(String(r.reservas||"")))flags.push("Comprobar reservas de alimento");
+   if(String(r.sanidad||"").trim())flags.push("Observación sanitaria: "+r.sanidad);
+   const status=flags.length?'<p><strong>⚠️ Atención registrada:</strong> '+esc(flags.join(" · "))+'</p>':'<p><strong>✓ Sin alerta automática</strong> en los campos de reina, cría y reservas.</p>';
+   return '<article class="task '+(flags.length?'today':'')+'"><h3>'+esc(key)+'</h3><p><strong>Última inspección:</strong> '+fmt(r.fecha)+'</p><p>Reina: '+esc(r.reina||"Sin dato")+' · Cría: '+esc(r.cria||"Sin dato")+' · Reservas: '+esc(r.reservas||"Sin dato")+'</p>'+status+'<div class="actions"><a class="action" href="./modulo-21.html">Abrir inspecciones</a></div></article>';
+  }).join("")+(ordered.length>8?'<p class="meta">Se muestran las 8 colmenas con inspección más reciente.</p>':'');
+ }
+ const qtarget=$("queen-overview-list");
+ const active=queenLots.filter(r=>r&&!r.cerrado).sort((a,b)=>String(a.fecha||"").localeCompare(String(b.fecha||"")));
+ if(!active.length){qtarget.innerHTML='<div class="empty">No hay lotes activos registrados. Los lotes cerrados permanecen en Cría de Reinas.</div>';return;}
+ qtarget.innerHTML=active.map(r=>{
+  const stage=[["Injertadas",r.cantidad],["Aceptadas",r.aceptadas],["Operculadas",r.operculadas],["Distribuidas",r.distribuidas],["Nacidas",r.nacidas],["En postura",r.postura]].filter(x=>x[1]!==""&&x[1]!=null).map(x=>x[0]+": "+x[1]).join(" · ");
+  const acceptance=r.cantidad&&r.aceptadas!==""?Math.round(Number(r.aceptadas)/Math.max(1,Number(r.cantidad))*100)+"% aceptación":"Aceptación pendiente de registrar";
+  const next=[["Revisar aceptación",r.revision],["Distribuir celdas",r.fechaDistribucion],["Nacimiento estimado",r.nacimiento],["Revisar postura",r.fechaPostura]].find(x=>x[1]&&x[1]>=today);
+  return '<article class="task"><h3>👑 '+esc(r.lote||"Lote sin número")+' · '+esc(r.apiario||"Apiario sin indicar")+'</h3><p>Traslarve: '+fmt(r.fecha||"")+' · '+esc(acceptance)+'</p><p class="meta">'+esc(stage||"Etapas aún sin conteos registrados")+'</p>'+(next?'<p><strong>Próximo hito registrado:</strong> '+esc(next[0])+' · '+fmt(next[1])+'</p>':'<p class="meta">No hay un próximo hito futuro registrado; consulta las fechas del lote.</p>')+'<div class="actions"><a class="action" href="./modulo-22.html">Ver lote y calendario</a><a class="action" href="./modulo-30.html">Registrar evolución</a></div></article>';
+ }).join("");
+}
 function render(){
  tasks=collect();const tomorrow=plus(today,1);const overdue=tasks.filter(t=>t.date<today),due=tasks.filter(t=>t.date===today),tomorrowTasks=tasks.filter(t=>t.date===tomorrow),future=tasks.filter(t=>t.date>tomorrow);
  $("n-overdue").textContent=overdue.length;$("n-today").textContent=due.length;$("n-tomorrow").textContent=tomorrowTasks.length;$("n-next").textContent=future.length;
@@ -44,5 +80,6 @@ function render(){
 document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));render();}));
 $("tasks").addEventListener("click",e=>{const b=e.target.closest("[data-done]");if(!b)return;const rows=read(TASK_KEY),row=rows.find(x=>String(x.id)===b.dataset.done);if(!row)return;row.completada=true;try{localStorage.setItem(TASK_KEY,JSON.stringify(rows));render();}catch(err){$("footnote").textContent="No se pudo guardar el cambio. Abre Calendario y conserva una copia de seguridad."; }});
 render();
+renderFieldPanels();
 })();
 </script></body></html>
