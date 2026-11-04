@@ -75,7 +75,21 @@ input,select,textarea{scroll-margin-top:12px}
     if(!Object.prototype.hasOwnProperty.call(backup.data,k))return;
     const incoming=backup.data[k];
     if(k==="apiecuador-personalizacion-v1"){
-     if(incoming&&typeof incoming==="object"&&!Array.isArray(incoming)){planned[k]=incoming;found++;}
+     if(incoming&&typeof incoming==="object"&&!Array.isArray(incoming)){
+      const current=read(k);
+      const merged=current&&typeof current==="object"&&!Array.isArray(current)?{...incoming,...current}:{...incoming};
+      const oldNames=Array.isArray(current&&current.nombres)?current.nombres:[];
+      const backupNames=Array.isArray(incoming.nombres)?incoming.nombres:[];
+      if(oldNames.length||backupNames.length){
+       const length=Math.max(oldNames.length,backupNames.length);
+       merged.nombres=Array.from({length},(_,i)=>{
+        const actual=typeof oldNames[i]==="string"?oldNames[i].trim():"";
+        const copia=typeof backupNames[i]==="string"?backupNames[i].trim():"";
+        return actual||copia;
+       });
+      }
+      planned[k]=merged;found++;
+     }
      return;
     }
     if(!Array.isArray(incoming))return;
