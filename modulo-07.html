@@ -33,6 +33,29 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 input,select,textarea{scroll-margin-top:12px}
 @media(max-width:520px){button,input[type="button"],input[type="submit"]{min-height:46px}main{padding-bottom:28px}}
 </style>
+
+<style id="apiecuador-acceso-guantes-2026">
+/* Accesibilidad de campo: controles cómodos con guantes de apicultor */
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{font-size:17px;line-height:1.55}
+button,.button-link,.back,[role="button"],input[type="submit"],input[type="button"]{min-height:54px;padding:13px 17px;font-size:16px;touch-action:manipulation}
+button,.button-link{border-radius:13px;font-weight:750}
+.actions,.coord-actions{gap:12px}
+.actions button,.coord-actions button{flex:1 1 155px}
+input:not([type="checkbox"]):not([type="radio"]),select,textarea{min-height:54px;font-size:17px;padding:13px 14px;border-radius:12px}
+textarea{min-height:112px}
+label{font-size:16px;line-height:1.4;margin-top:16px;margin-bottom:7px}
+input[type="checkbox"],input[type="radio"]{width:25px;height:25px;min-width:25px;min-height:25px;accent-color:#245c43;vertical-align:middle}
+a{touch-action:manipulation}
+.back{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;background:#ffffff20}
+.panel,.record,.intro{padding:19px;border-radius:18px}
+h2{font-size:21px;line-height:1.25}
+.record p,.record li{font-size:16px;line-height:1.55}
+:focus-visible{outline:3px solid #d99520!important;outline-offset:3px!important}
+button:active,.button-link:active{transform:scale(.985)}
+@media(max-width:600px){main{padding-left:13px!important;padding-right:13px!important}.panel,.record,.intro{padding:16px}button,.button-link,.back{min-height:56px}.actions button,.coord-actions button{flex-basis:100%}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}button:active,.button-link:active{transform:none}}
+</style>
 </head><body>
 <header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🐝 Panel de Apiarios</h1><p>Un vistazo al estado de tus apiarios, inspecciones y trabajos pendientes.</p></div></header>
 <main><div class="notice"><strong>Datos reales, sin simulaciones:</strong> este panel resume los registros guardados en este navegador. Si todavía no registraste apiarios o inspecciones, los contadores aparecerán en cero.</div>
