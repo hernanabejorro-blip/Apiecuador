@@ -1,21 +1,50 @@
-APIECUADOR — ARCHIVOS PARA PUBLICAR EN GITHUB PAGES
+APIECUADOR — DOCUMENTACIÓN DEL REPOSITORIO ACTUAL
 
-Todos los archivos de este paquete deben quedar en la raíz del repositorio (no dentro de otra carpeta):
-- index.html
-- modulo-01.html hasta modulo-20.html
-- manifest.webmanifest
-- sw.js
-- icon-192.png y icon-512.png
+Este repositorio contiene la aplicación web ApiEcuador publicada mediante GitHub Pages.
+La aplicación tiene una pantalla principal (index.html), módulos HTML independientes,
+archivos PWA y herramientas de respaldo. No es un APK.
 
-PASOS:
-1. En GitHub crea un repositorio llamado apiecuador y elige Public.
-2. Descomprime este ZIP en tu teléfono.
-3. En el repositorio toca Add file > Upload files y selecciona los archivos anteriores. Puedes dejar fuera LEEME_PRIMERO.txt si quieres. Si Android no te permite seleccionar todos a la vez, súbelos en varios grupos; todos deben quedar en la raíz del repositorio.
-4. Pulsa Commit changes.
-5. En el repositorio entra en Settings > Pages.
-6. En Build and deployment elige Deploy from a branch.
-7. En Branch elige main y carpeta /(root), luego Save.
-8. Espera a que GitHub Pages publique el sitio. La dirección suele ser https://TU-USUARIO.github.io/apiecuador/
-9. Abre esa dirección en Chrome Android; toca ⋮ > Instalar aplicación o Añadir a pantalla principal.
+ARCHIVOS PRINCIPALES
+- index.html: menú principal y acceso a los módulos.
+- modulo-01.html a modulo-31.html: módulos de gestión apícola.
+- floraciones-ecuador.html, explorador-zonas-meliferas.html,
+  atlas-superficies-forestales.html y documentos-trashumancia.html:
+  herramientas complementarias.
+- manifest.json: configuración de instalación PWA e iconos.
+- sw.js: caché y funcionamiento sin conexión de archivos principales.
+- icon.svg, icon-192.png e icon-512.png: iconos.
+- firebase.json y .firebaserc: configuración de Firebase Hosting/proyecto.
 
-Nota: este paquete es un panel web instalable, no un APK. Los módulos son pantallas exportadas desde Stitch; las funciones de guardar datos, mapas y botones deben probarse y algunas pueden necesitar desarrollo. Conserva el ZIP original de Stitch.
+PUBLICACIÓN
+La dirección pública actual es:
+https://hernanabejorro-blip.github.io/Apiecuador/
+
+Para publicar cambios, se usa GitHub Pages desde la rama main y la carpeta raíz (/).
+No crear otro repositorio ni volver a subir un paquete inicial antiguo de 20 módulos.
+
+DATOS Y RESPALDOS — LEER ANTES DE MODIFICAR
+- Varios módulos guardan registros en el almacenamiento local del navegador
+  (localStorage) del dispositivo.
+- Iniciar sesión con Google/Firebase no significa que todos los registros estén
+  sincronizados en la nube.
+- Antes de modificar estructuras de datos, claves de almacenamiento o importación,
+  exportar una copia JSON desde el módulo Copias de seguridad y conservarla fuera
+  del teléfono.
+- No borrar caché, datos del sitio, almacenamiento del navegador ni registros
+  existentes como método de prueba.
+- Probar la restauración con una copia de prueba y en un entorno separado; no
+  experimentar sobre los datos reales del apicultor.
+- La importación general combina registros por ID cuando es posible; no asumir
+  que todas las estructuras de todos los módulos se restauran sin pérdida.
+
+CAMBIOS Y CONTROL DE CALIDAD
+- Preferir ramas y pull requests para cambios de código.
+- No integrar cambios que alteren fechas de cría, avisos, almacenamiento o
+  sincronización sin revisar el diff y realizar pruebas funcionales.
+- Distinguir resultados estimados de datos confirmados en campo, especialmente
+  en floraciones, mapas y planificación de trashumancia.
+- Después de cambiar archivos PWA, verificar que todos los archivos precargados
+  por sw.js existan y probar actualización/caché en Android.
+
+Esta documentación describe el estado del repositorio; no garantiza por sí sola
+que cada módulo, integración externa o función haya superado pruebas en un teléfono.
