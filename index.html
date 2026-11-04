@@ -360,6 +360,56 @@ footer{color:#536b5b;text-align:center;font-weight:600}
 @media(prefers-reduced-motion:reduce){.grupo-herramientas .card{transition:none}.grupo-herramientas .card:hover{transform:none}}
 </style>
 
+
+<style id="apiecuador-centro-control">
+/* Centro de control: lectura de datos locales, sin modificar los registros. */
+.centro-control{max-width:960px;margin:18px auto;padding:0 18px}
+.centro-cabecera{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.centro-cabecera h2{margin:0;color:#194b38;font-size:clamp(21px,4vw,27px)}
+.modo-campo-btn{min-height:46px;border:1px solid #b78a36;border-radius:14px;background:#fff8e8;color:#63420e;padding:10px 15px;font-weight:800}
+.modo-campo-btn[aria-pressed="true"]{background:#194b38;color:white;border-color:#194b38}
+.centro-sub{margin:6px 0 13px;color:#665a48}
+.centro-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.centro-stat{background:#fff;border:1px solid #e6d4a8;border-radius:16px;padding:13px;box-shadow:0 5px 16px #65480d0c;min-width:0}
+.centro-stat strong{display:block;font-size:clamp(24px,4vw,32px);line-height:1.1;color:#194b38;font-variant-numeric:tabular-nums}
+.centro-stat span{display:block;margin-top:6px;color:#655744;font-size:13px;font-weight:700}
+.centro-stat.urgente strong{color:#a72d2d}
+.centro-stat.hoy strong{color:#a45b08}
+.centro-stat.manana strong{color:#80620b}
+.centro-panel{margin-top:12px;background:#fffdf7;border:1px solid #e6d4a8;border-radius:17px;padding:15px;box-shadow:0 5px 16px #65480d0c}
+.centro-panel h3{margin:0 0 10px;color:#194b38;font-size:18px}
+.centro-tareas{display:grid;gap:8px}
+.centro-tarea{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:12px;background:#f7f4eb;border-left:5px solid #b78a36}
+.centro-tarea.vencida{border-left-color:#b52d2d;background:#fff1ef}
+.centro-tarea.hoy{border-left-color:#bd741b;background:#fff7e9}
+.centro-tarea .detalle{min-width:0;flex:1}
+.centro-tarea strong{display:block;color:#26392e;overflow-wrap:anywhere}
+.centro-tarea small{display:block;color:#655b4d;margin-top:2px}
+.centro-vacio{padding:12px;background:#edf6ed;border-radius:12px;color:#28583e}
+.centro-acciones{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:12px}
+.centro-accion{display:flex;align-items:center;justify-content:center;gap:7px;min-height:54px;padding:10px;border:1px solid #d7c28d;border-radius:14px;background:#fff;color:#194b38;text-decoration:none;text-align:center;font-weight:800}
+.centro-nota{font-size:12px;color:#716552;margin:9px 2px 0}
+.modo-campo .centro-control{max-width:1100px}
+.modo-campo .centro-accion,.modo-campo .acceso-rapido{min-height:76px;font-size:17px}
+.modo-campo button,.modo-campo input,.modo-campo select,.modo-campo textarea{min-height:54px;font-size:18px!important}
+.modo-campo .grupo-herramientas .card{min-height:150px}
+.modo-campo .centro-stat{padding:16px}
+.modo-campo .centro-stat strong{font-size:34px}
+.modo-campo .centro-tarea{padding:14px}
+.modo-campo .centro-tarea strong{font-size:17px}
+.campo-dock{display:none}
+.modo-campo .campo-dock{position:fixed;z-index:1000;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px;background:#174b38;border:1px solid #e4c77f;border-radius:18px;box-shadow:0 8px 30px #102b2070}
+.campo-dock a{min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:white;text-decoration:none;font-size:11px;font-weight:800;text-align:center;border-radius:11px}
+.modo-campo{padding-bottom:94px}
+@media(max-width:650px){
+ .centro-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .centro-acciones{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .centro-control{padding:0 12px}
+ .centro-panel{padding:12px}
+ .centro-tarea{align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){.centro-accion,.campo-dock a{scroll-behavior:auto}}
+</style>
 </head><body>
 <header><div class="wrap"><div class="brand"><span class="bee">🐝</span><div><h1>ApiEcuador</h1><div>Gestión apícola · Panel de módulos</div></div></div>
 <p>Herramientas de campo para cosecha, floración, sanidad y trashumancia.</p></div></header>
@@ -372,6 +422,40 @@ footer{color:#536b5b;text-align:center;font-weight:600}
   <div class="hero-foot"><span>🐝 APICULTURA DE CAMPO</span><span>ECUADOR · SIERRA · COSTA · ORIENTE</span></div>
 </section>
 
+
+<section class="centro-control" id="centro-control" aria-labelledby="centro-titulo">
+ <div class="centro-cabecera">
+  <h2 id="centro-titulo">🐝 Tu jornada apícola</h2>
+  <button class="modo-campo-btn" id="modo-campo" type="button" aria-pressed="false">🧤 Activar modo campo</button>
+ </div>
+ <p class="centro-sub" id="centro-saludo">Resumen de tus registros y tareas, guardados en este teléfono.</p>
+ <div class="centro-stats" aria-live="polite">
+  <div class="centro-stat urgente"><strong id="cuenta-vencidas">—</strong><span>🔴 Tareas vencidas</span></div>
+  <div class="centro-stat hoy"><strong id="cuenta-hoy">—</strong><span>🟠 Para hoy</span></div>
+  <div class="centro-stat manana"><strong id="cuenta-manana">—</strong><span>🟡 Para mañana</span></div>
+  <div class="centro-stat"><strong id="cuenta-colmenas">—</strong><span>🐝 Apiarios registrados</span></div>
+ </div>
+ <div class="centro-panel">
+  <h3>📋 Lo próximo que debes atender</h3>
+  <div class="centro-tareas" id="centro-lista-tareas"><p class="centro-vacio">Consultando tus tareas guardadas…</p></div>
+  <p class="centro-nota" id="centro-nota">El resumen consulta los datos de este teléfono. No cambia ni completa tareas automáticamente.</p>
+ </div>
+ <div class="centro-panel">
+  <h3>⚡ Entrar directo al trabajo</h3>
+  <div class="centro-acciones">
+   <a class="centro-accion" href="./modulo-21.html">🔍 Inspeccionar colmenas</a>
+   <a class="centro-accion" href="./modulo-22.html">👑 Cría de reinas</a>
+   <a class="centro-accion" href="./modulo-23.html">📅 Calendario y tareas</a>
+   <a class="centro-accion" href="./modulo-27.html">💾 Copia de seguridad</a>
+  </div>
+ </div>
+</section>
+<nav class="campo-dock" aria-label="Navegación rápida de modo campo">
+ <a href="./modulo-21.html">🔍<span>Inspección</span></a>
+ <a href="./modulo-23.html">📅<span>Tareas</span></a>
+ <a href="./modulo-29.html">📍<span>Apiarios</span></a>
+ <a href="./index.html#centro-control">🐝<span>Inicio</span></a>
+</nav>
 <section class="cuenta-panel" aria-labelledby="cuenta-titulo">
   <h2 id="cuenta-titulo">🔐 Mi cuenta ApiEcuador</h2>
   <p>Entra con Google para confirmar tu identidad. Esta etapa no sincroniza ni modifica los registros de tus colmenas.</p>
@@ -612,6 +696,59 @@ buscador.addEventListener("input", function () {
 })();
 </script>
 
+
+<script id="apiecuador-jornada-v1">
+(function(){
+ "use strict";
+ const $=id=>document.getElementById(id);
+ const safeRead=key=>{try{const raw=localStorage.getItem(key);if(raw===null)return null;const v=JSON.parse(raw);return v;}catch(e){return null;}};
+ const arrayRead=key=>{const v=safeRead(key);return Array.isArray(v)?v:[];};
+ const todayKey=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+ const addDay=(key,n)=>{const d=new Date(key+"T12:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+ const formatDate=key=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(String(key||"")))return "Fecha sin definir";const [y,m,d]=key.split("-");return d+"/"+m+"/"+y;};
+ const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ function render(){
+  const tasks=arrayRead("apiecuador-modulo-23-v1");
+  const apiaries=arrayRead("apiecuador-apiarios-v1");
+  const today=todayKey(),tomorrow=addDay(today,1);
+  const pending=tasks.filter(t=>t&&!t.completada&&/^\d{4}-\d{2}-\d{2}$/.test(String(t.fecha||"")));
+  const overdue=pending.filter(t=>t.fecha<today);
+  const dueToday=pending.filter(t=>t.fecha===today);
+  const dueTomorrow=pending.filter(t=>t.fecha===tomorrow);
+  $("cuenta-vencidas").textContent=overdue.length;
+  $("cuenta-hoy").textContent=dueToday.length;
+  $("cuenta-manana").textContent=dueTomorrow.length;
+  $("cuenta-colmenas").textContent=apiaries.length;
+  const lots=arrayRead("apiecuador-modulo-22-v1").filter(r=>r&&!r.cerrado).length;
+  const inspections=arrayRead("apiecuador-modulo-21-v1");
+  $("centro-saludo").textContent="Tienes "+lots+" lote(s) de reinas activos, "+inspections.length+" inspección(es) registradas y "+apiaries.length+" apiario(s) guardados en este teléfono.";
+  const urgent=pending.slice().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha))).slice(0,6);
+  const target=$("centro-lista-tareas");
+  if(!urgent.length){
+   target.innerHTML='<div class="centro-vacio">🌿 No hay tareas pendientes con fecha para hoy o los próximos días. Revisa el calendario para confirmar tus próximas actividades.</div>';
+  }else{
+   target.innerHTML=urgent.map(t=>{
+    const kind=t.fecha<today?"vencida":t.fecha===today?"hoy":"";
+    const state=t.fecha<today?"VENCIDA":t.fecha===today?"HOY":t.fecha===tomorrow?"MAÑANA":"PRÓXIMA";
+    return '<div class="centro-tarea '+kind+'"><div class="detalle"><strong>'+esc(t.tarea||t.tipo||"Tarea apícola")+'</strong><small>'+state+' · '+formatDate(t.fecha)+' · '+esc(t.apiario||"Sin apiario")+(t.loteReina?" · "+esc(t.loteReina):"")+'</small></div></div>';
+   }).join("");
+  }
+  const note=$("centro-nota");
+  if(tasks.length===0)note.textContent="Todavía no hay tareas guardadas en el calendario de este teléfono. Al registrar actividades aparecerán aquí.";
+  else note.textContent="Resumen de "+tasks.length+" tarea(s) del calendario. Las completadas no se cuentan como pendientes. Este panel solo lee tus datos.";
+ }
+ const toggle=$("modo-campo"),prefKey="apiecuador-preferencias-ui-v1";
+ function setMode(on,save){
+  document.body.classList.toggle("modo-campo",on);
+  toggle.setAttribute("aria-pressed",String(on));
+  toggle.textContent=on?"🧤 Modo campo activado":"🧤 Activar modo campo";
+  if(save){try{localStorage.setItem(prefKey,JSON.stringify({modoCampo:on}));}catch(e){}}
+ }
+ const pref=safeRead(prefKey);setMode(!!(pref&&pref.modoCampo),false);
+ toggle.addEventListener("click",()=>setMode(toggle.getAttribute("aria-pressed")!=="true",true));
+ render();
+})();
+</script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
   import {
