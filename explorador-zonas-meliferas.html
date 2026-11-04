@@ -497,6 +497,31 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 </div>
 <div class="notice"><strong>Regla de calidad del catálogo:</strong> «visitada por abejas», «polen detectado en miel», «néctar confirmado», «néctar y polen confirmados» y «potencial bibliográfico» son evidencias distintas. ApiEcuador las mantendrá separadas. Una especie no recibirá meses de floración, altitud ni aporte de néctar inventados.</div>
 </section>
+
+<section class="panel" id="agenda-floral-campo">
+<h2>🌼 Calendario floral de campo · Ecuador</h2>
+<p>Registra cuándo florece cada especie en una localidad y altitud concretas. La agenda conserva por separado observaciones propias y referencias bibliográficas; no extrapola una fecha a toda la provincia.</p>
+<div class="notice">Las fechas son ventanas observadas o estimadas según la evidencia elegida. Una anotación bibliográfica no confirma que el recurso esté activo hoy en tu apiario.</div>
+<form id="flora-form">
+<input type="hidden" id="flora-id">
+<div class="grid">
+<div><label for="flora-species">Especie / recurso floral</label><input id="flora-species" maxlength="100" required placeholder="Ej. Eucalyptus globulus"></div>
+<div><label for="flora-province">Provincia</label><select id="flora-province" required><option value="">Seleccionar</option><option>Azuay</option><option>Bolívar</option><option>Cañar</option><option>Carchi</option><option>Chimborazo</option><option>Cotopaxi</option><option>El Oro</option><option>Esmeraldas</option><option>Galápagos</option><option>Guayas</option><option>Imbabura</option><option>Loja</option><option>Los Ríos</option><option>Manabí</option><option>Morona Santiago</option><option>Napo</option><option>Orellana</option><option>Pastaza</option><option>Pichincha</option><option>Santa Elena</option><option>Santo Domingo de los Tsáchilas</option><option>Sucumbíos</option><option>Tungurahua</option><option>Zamora Chinchipe</option></select></div>
+<div><label for="flora-locality">Localidad / sector</label><input id="flora-locality" maxlength="100" placeholder="Ej. Tanda, Quito" required></div>
+<div><label for="flora-altitude">Altitud (m s. n. m.)</label><input id="flora-altitude" type="number" min="0" max="6500" placeholder="Ej. 2400"></div>
+<div><label for="flora-start">Inicio de floración</label><input id="flora-start" type="date" required></div>
+<div><label for="flora-end">Fin de floración</label><input id="flora-end" type="date" required></div>
+<div><label for="flora-resource">Recurso observado</label><select id="flora-resource"><option value="Néctar y polen">Néctar y polen</option><option value="Néctar">Néctar</option><option value="Polen">Polen</option><option value="Visita de abejas; recurso por confirmar">Visita de abejas; recurso por confirmar</option><option value="Potencial sin confirmar">Potencial sin confirmar</option></select></div>
+<div><label for="flora-evidence">Tipo de evidencia</label><select id="flora-evidence" required><option value="Observación propia en campo">Observación propia en campo</option><option value="Registro de apiario">Registro de apiario</option><option value="Estudio bibliográfico local">Estudio bibliográfico local</option><option value="Estimación pendiente de validar">Estimación pendiente de validar</option></select></div>
+<div><label for="flora-year">Año observado / publicado</label><input id="flora-year" type="number" min="1900" max="2100" placeholder="Ej. 2026"></div>
+</div>
+<label for="flora-source">Fuente, apiario o notas de campo</label><textarea id="flora-source" maxlength="600" placeholder="Anota estudio, fecha de visita, lluvia, intensidad de floración y actividad de abejas."></textarea>
+<div class="actions"><button id="flora-save" type="submit">Guardar registro floral</button><button id="flora-cancel" class="secondary" type="button" hidden>Cancelar edición</button></div>
+<p class="muted" id="flora-status" aria-live="polite"></p>
+</form>
+<div class="grid" style="margin-top:14px"><div><label for="flora-filter-province">Filtrar provincia</label><select id="flora-filter-province"><option value="">Todas las provincias</option><option>Azuay</option><option>Bolívar</option><option>Cañar</option><option>Carchi</option><option>Chimborazo</option><option>Cotopaxi</option><option>El Oro</option><option>Esmeraldas</option><option>Galápagos</option><option>Guayas</option><option>Imbabura</option><option>Loja</option><option>Los Ríos</option><option>Manabí</option><option>Morona Santiago</option><option>Napo</option><option>Orellana</option><option>Pastaza</option><option>Pichincha</option><option>Santa Elena</option><option>Santo Domingo de los Tsáchilas</option><option>Sucumbíos</option><option>Tungurahua</option><option>Zamora Chinchipe</option></select></div><div><label for="flora-filter-month">Mes de inicio</label><select id="flora-filter-month"><option value="">Todo el año</option><option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option><option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option><option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select></div></div>
+<div id="flora-summary" class="muted"></div><div id="flora-records" aria-live="polite"></div>
+</section>
 <section class="panel">
 <h2>📍 Registrar una zona candidata</h2>
 <form id="zone-form">
@@ -695,6 +720,36 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <script>
 (function(){
 'use strict';
+
+const FLORA_KEY='apiecuador-calendario-floral-campo-v1';
+let floraRows=[];try{const saved=JSON.parse(localStorage.getItem(FLORA_KEY)||'[]');if(Array.isArray(saved))floraRows=saved;}catch(e){}
+const floraFields=['species','province','locality','altitude','start','end','resource','evidence','year','source'];
+const fval=id=>document.getElementById(id).value.trim();
+const fesc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function floraPersist(){try{localStorage.setItem(FLORA_KEY,JSON.stringify(floraRows));return true;}catch(e){$('flora-status').textContent='No se pudo guardar. Exporta o libera espacio del navegador.';return false;}}
+function floraReset(){$('flora-form').reset();$('flora-id').value='';$('flora-save').textContent='Guardar registro floral';$('flora-cancel').hidden=true;}
+function floraRender(){
+ const province=$('flora-filter-province').value,month=$('flora-filter-month').value;
+ const list=floraRows.filter(x=>(!province||x.province===province)&&(!month||x.start.slice(5,7)===month)).sort((a,b)=>a.start.localeCompare(b.start));
+ $('flora-summary').textContent=floraRows.length+' registro(s) guardado(s) en este teléfono · '+list.length+' visible(s).';
+ $('flora-records').innerHTML=list.length?list.map(x=>'<article class="record"><h3>🌼 '+fesc(x.species)+'</h3><span class="tag">'+fesc(x.province)+'</span> <span class="tag">'+fesc(x.evidence)+'</span><p><strong>Zona:</strong> '+fesc(x.locality)+(x.altitude?' · '+fesc(x.altitude)+' m':'')+'</p><p><strong>Ventana:</strong> '+fesc(x.start)+' al '+fesc(x.end)+' · <strong>Recurso:</strong> '+fesc(x.resource)+'</p><p><strong>Año:</strong> '+fesc(x.year||'No indicado')+' · <strong>Fuente:</strong> '+fesc(x.source||'Sin notas')+'</p><div class="actions"><button type="button" class="secondary" data-flora-edit="'+fesc(x.id)+'">Editar</button><button type="button" class="danger" data-flora-delete="'+fesc(x.id)+'">Eliminar</button></div></article>').join(''):'<p class="muted">No hay registros para este filtro. Añade una observación local o una fuente identificable; no se precargan meses sin evidencia.</p>';
+}
+$('flora-form').addEventListener('submit',e=>{
+ e.preventDefault();const start=fval('flora-start'),end=fval('flora-end');
+ if(end<start){$('flora-status').textContent='La fecha final no puede ser anterior al inicio.';return;}
+ const id=fval('flora-id'),item={id:id||'flora-'+Date.now()};floraFields.forEach(k=>item[k]=fval('flora-'+k));
+ if(id){const at=floraRows.findIndex(x=>x.id===id);if(at>=0)floraRows[at]=item;}else floraRows.push(item);
+ if(floraPersist()){$('flora-status').textContent='Registro floral guardado en este dispositivo.';floraReset();floraRender();}
+});
+$('flora-cancel').addEventListener('click',floraReset);
+$('flora-filter-province').addEventListener('change',floraRender);$('flora-filter-month').addEventListener('change',floraRender);
+$('flora-records').addEventListener('click',e=>{
+ const edit=e.target.closest('[data-flora-edit]'),del=e.target.closest('[data-flora-delete]');
+ if(edit){const x=floraRows.find(r=>r.id===edit.dataset.floraEdit);if(!x)return;floraReset();$('flora-id').value=x.id;floraFields.forEach(k=>$('flora-'+k).value=x[k]||'');$('flora-save').textContent='Actualizar registro';$('flora-cancel').hidden=false;$('flora-form').scrollIntoView({behavior:'smooth',block:'start'});}
+ if(del){const x=floraRows.find(r=>r.id===del.dataset.floraDelete);if(x&&confirm('¿Eliminar el registro floral de '+x.species+'?')){floraRows=floraRows.filter(r=>r.id!==x.id);if(floraPersist())floraRender();}}
+});
+floraRender();
+
 const KEY='apiecuador-zonas-meliferas-v1';
 const fields=['name','plant','province','locality','region','area','pixels','lat','lon','altitude','density','satellite-cover','species-evidence','mapbiomas-class','mapbiomas-year','mapbiomas-stability','bloom','bee-activity','water','access','permission','confidence','checked','notes'];
 const $=id=>document.getElementById(id);
@@ -716,7 +771,7 @@ function capacityCalc(){
  out.innerHTML='<strong>Ficha de escenario — no es una capacidad de carga</strong><div class="grid"><div><strong>'+area.toLocaleString('es-EC')+' ha</strong><br>superficie total del polígono</div><div><strong>'+effective.toLocaleString('es-EC',{maximumFractionDigits:1})+' ha</strong><br>superficie estimada con la flora objetivo</div><div><strong>'+format(existing)+'</strong><br>colmenas vecinas declaradas</div><div><strong>'+format(planned)+'</strong><br>colmenas que se desea instalar</div></div><p><strong>Relación matemática:</strong> '+(ratio===null?'No hay colmenas registradas para calcularla.':ratio.toLocaleString('es-EC',{maximumFractionDigits:2})+' ha de flora objetivo por colmena, contando '+format(total)+' colmenas existentes y previstas.')+'</p><p><strong>Estado floral:</strong> '+qualityText+'</p><p>'+daysText+'</p><p><strong>Lo que falta antes de decidir:</strong> especie confirmada; hectáreas realmente continuas; observación de abejas trabajando; entrada de néctar y polen; duración del flujo; agua; colmenas de otros apicultores dentro del área de pecoreo; permiso y acceso para camión.</p><p><strong>Conclusión:</strong> esta ficha ordena los datos, pero no calcula cuántas colmenas soporta el bosque. La cantidad segura debe decidirse con observaciones de campo y una prueba gradual, porque dos bosques de igual superficie pueden ofrecer alimento muy distinto.</p>';
 }
 $('cap-calc').addEventListener('click',capacityCalc);
-$('cap-reset').addEventListener('click',()=>{$('cap-area').value='';$('cap-share').value='70';$('cap-quality').value='unknown';$('cap-existing').value='0';$('cap-planned').value='30';$('cap-days').value='';$('cap-result').textContent='Introduce la superficie y pulsa «Calcular escenario».';});
+$('cap-reset').addEventListener('click',()=>{$('cap-area').value='';$('cap-share').value='70';$('cap-quality').value='unknown';$('cap-existing').value='0';$('cap-planned').value='70';$('cap-days').value='';$('cap-result').textContent='Introduce la superficie y pulsa «Calcular escenario».';});
 function updateAtlasDashboard(){
  const total=rows.length;
  const gps=rows.filter(r=>coord(r.lat,-90,90)!==null&&coord(r.lon,-180,180)!==null).length;
