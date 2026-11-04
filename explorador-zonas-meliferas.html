@@ -21,12 +21,31 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 .secondary{background:#eee9df;color:#453b30}.danger{background:#9a352e}.tag{display:inline-block;background:#e8f2e8;color:#245c43;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:700;margin:2px 3px 4px 0}
 #status{min-height:1.4em;color:var(--green)}.record p{margin:6px 0}.record h3{margin:0 0 6px}
 @media(max-width:520px){main{padding:11px}.panel,.record{padding:13px}.actions button,.actions .link{flex:1 1 100%;width:100%}}
+
+#atlas-control-operativo .record{text-align:center;background:#f7f8f2}
+#atlas-control-operativo .record h3{font-size:clamp(25px,5vw,34px);color:#245c43;margin:2px 0 4px}
+#atlas-control-operativo .record p{font-size:13px;margin:0}
 </style>
 </head>
 <body>
 <header><div style="max-width:960px;margin:auto"><a href="./modulo-31.html">← Volver al Atlas Floral y Bosques Melíferos</a><h1>🛰️ Explorador de zonas melíferas</h1><p>Identifica, documenta y compara grandes superficies con potencial apícola antes de planificar la trashumancia.</p></div></header>
 <main>
 <div class="notice"><strong>Importante:</strong> este primer módulo es una libreta de prospección con GPS y acceso a Google Maps satelital. No identifica automáticamente especies ni mide bosques desde satélite. La especie, superficie y floración deben verificarse con imágenes, fuentes locales y visitas de campo. No uses una zona como destino confirmado sin comprobar permiso, agua, acceso y floración activa.</div>
+<section class="panel" id="atlas-control-operativo">
+<h2>📍 Panel de control del Atlas · estado de las zonas</h2>
+<p>Este resumen se actualiza con las fichas que guardes en este teléfono. Separa una zona apenas investigada de un destino que ya fue visitado y comprobado.</p>
+<div class="grid">
+<div class="record"><h3 id="atlas-total">0</h3><p>Zonas registradas</p></div>
+<div class="record"><h3 id="atlas-gps">0</h3><p>Con coordenadas GPS</p></div>
+<div class="record"><h3 id="atlas-especie">0</h3><p>Especie confirmada en campo</p></div>
+<div class="record"><h3 id="atlas-flor">0</h3><p>Con floración abundante observada</p></div>
+<div class="record"><h3 id="atlas-permiso">0</h3><p>Con permiso confirmado</p></div>
+<div class="record"><h3 id="atlas-listas">0</h3><p>Fichas completas para evaluación de traslado</p></div>
+</div>
+<div class="notice" id="atlas-diagnostico" aria-live="polite">Aún no hay zonas guardadas en este dispositivo. Comienza registrando una candidata.</div>
+<p class="muted">“Ficha completa” significa que hay coordenadas, especie confirmada en campo, floración abundante y actividad de abejas observada, agua, acceso para camión y permiso confirmado. No significa que la zona soporte 70 colmenas ni autoriza el traslado: la carga debe comprobarse con seguimiento de campo.</p>
+<div class="actions"><a class="link" href="#zone-form">＋ Registrar zona</a><a class="link secondary" href="./atlas-superficies-forestales.html">Consultar superficies provinciales</a><a class="link secondary" href="./modulo-06.html">Planificar trashumancia</a></div>
+</section>
 <section class="panel"><h2>📊 Atlas nacional de superficies forestales</h2><p>Compara hectáreas de silvicultura, bosque y bosque abierto en las 24 provincias. Carga estadísticas oficiales por año y ordena las provincias para decidir dónde investigar primero.</p><div class="actions"><a class="link" href="./atlas-superficies-forestales.html">Abrir Atlas de superficies forestales</a></div></section>
 <section class="panel" id="prioridades-magp-2025">
 <h2>🧭 Prioridades nacionales · cartografía oficial 2024–2025</h2>
@@ -525,7 +544,7 @@ button,.link{border:0;border-radius:10px;padding:11px 14px;font:650 14px system-
 <div><label for="cap-share">Porcentaje realmente ocupado por la flora objetivo (%)</label><input id="cap-share" type="number" min="0" max="100" step="1" value="70"></div>
 <div><label for="cap-quality">Calidad floral observada</label><select id="cap-quality"><option value="poor">Pobre o irregular</option><option value="good">Buena y abundante</option><option value="unknown" selected>Desconocida / por verificar</option></select></div>
 <div><label for="cap-existing">Colmenas de otros apicultores en el entorno (estimación)</label><input id="cap-existing" type="number" min="0" step="1" value="0"></div>
-<div><label for="cap-planned">Colmenas que quieres instalar</label><input id="cap-planned" type="number" min="0" step="1" value="30"></div>
+<div><label for="cap-planned">Colmenas que quieres instalar</label><input id="cap-planned" type="number" min="0" step="1" value="70"></div>
 <div><label for="cap-days">Días de floración útil observada (opcional)</label><input id="cap-days" type="number" min="0" step="1" placeholder="Ej. 35"></div>
 </div>
 <div class="actions"><button type="button" id="cap-calc">Calcular escenario</button><button type="button" class="secondary" id="cap-reset">Limpiar</button></div>
@@ -698,6 +717,21 @@ function capacityCalc(){
 }
 $('cap-calc').addEventListener('click',capacityCalc);
 $('cap-reset').addEventListener('click',()=>{$('cap-area').value='';$('cap-share').value='70';$('cap-quality').value='unknown';$('cap-existing').value='0';$('cap-planned').value='30';$('cap-days').value='';$('cap-result').textContent='Introduce la superficie y pulsa «Calcular escenario».';});
+function updateAtlasDashboard(){
+ const total=rows.length;
+ const gps=rows.filter(r=>coord(r.lat,-90,90)!==null&&coord(r.lon,-180,180)!==null).length;
+ const species=rows.filter(r=>r['species-evidence']==='Confirmada en visita de campo').length;
+ const bloom=rows.filter(r=>r.bloom==='Floración abundante').length;
+ const permission=rows.filter(r=>r.permission==='Confirmado').length;
+ const ready=rows.filter(r=>coord(r.lat,-90,90)!==null&&coord(r.lon,-180,180)!==null&&r['species-evidence']==='Confirmada en visita de campo'&&r.bloom==='Floración abundante'&&['Alta','Media'].includes(r['bee-activity'])&&['Agua cercana','Agua en el sitio'].includes(r.water)&&r.access==='Acceso comprobado'&&r.permission==='Confirmado').length;
+ $('atlas-total').textContent=total;
+ $('atlas-gps').textContent=gps;
+ $('atlas-especie').textContent=species;
+ $('atlas-flor').textContent=bloom;
+ $('atlas-permiso').textContent=permission;
+ $('atlas-listas').textContent=ready;
+ $('atlas-diagnostico').textContent=total===0?'Aún no hay zonas guardadas en este dispositivo. Comienza registrando una candidata.':ready>0?'Hay '+ready+' ficha(s) con los controles mínimos completos. Aún falta evaluar por separado la carga de colmenas, competencia y rendimiento real.':'Tienes '+total+' zona(s) registradas. Todavía ninguna reúne todos los controles mínimos para pasar a evaluación de traslado. Completa las fichas en campo; no se recomienda mover colmenas solo por superficie forestal.';
+}
 function render(){
  const q=$('search').value.trim().toLocaleLowerCase('es'),region=$('filter-region').value;
  const shown=rows.filter(r=>(!region||r.region===region)&&fields.some(k=>String(r[k]??'').toLocaleLowerCase('es').includes(q))).sort((a,b)=>String(a.name).localeCompare(String(b.name),'es'));
@@ -739,6 +773,7 @@ $('export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({f
 $('import').addEventListener('click',()=>$('file').click());
 $('file').addEventListener('change',async e=>{const file=e.target.files&&e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());const incoming=Array.isArray(data)?data:data.records;if(!Array.isArray(incoming)||!incoming.every(r=>r&&typeof r==='object'&&typeof r.name==='string'&&typeof r.plant==='string')){throw new Error('Formato no reconocido: faltan nombre o especie en algún registro');}const known=new Set(rows.map(r=>String(r.id||'')));const additions=[];incoming.forEach((r,i)=>{const id=String(r.id||'importada-'+Date.now()+'-'+i);if(known.has(id))return;const clean={...Object.fromEntries(fields.map(k=>[k,r[k]??''])),id};additions.push(clean);known.add(id);});if(!additions.length){$('status').textContent='No hay zonas nuevas para importar. Tus registros actuales siguen intactos.';return;}const previous=rows;rows=rows.concat(additions);if(persist()){$('status').textContent='Importación completada: '+additions.length+' zona(s) nueva(s). Las zonas que ya tenías se conservaron.';render();}else rows=previous;}catch(err){$('status').textContent='No se pudo importar: '+err.message;}finally{$('file').value='';}});
 render();
+updateAtlasDashboard();
 })();
 </script>
 </body>
