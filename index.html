@@ -369,7 +369,7 @@ footer{color:#536b5b;text-align:center;font-weight:600}
 .modo-campo-btn{min-height:46px;border:1px solid #b78a36;border-radius:14px;background:#fff8e8;color:#63420e;padding:10px 15px;font-weight:800}
 .modo-campo-btn[aria-pressed="true"]{background:#194b38;color:white;border-color:#194b38}
 .centro-sub{margin:6px 0 13px;color:#665a48}
-.centro-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.centro-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .centro-stat{background:#fff;border:1px solid #e6d4a8;border-radius:16px;padding:13px;box-shadow:0 5px 16px #65480d0c;min-width:0}
 .centro-stat strong{display:block;font-size:clamp(24px,4vw,32px);line-height:1.1;color:#194b38;font-variant-numeric:tabular-nums}
 .centro-stat span{display:block;margin-top:6px;color:#655744;font-size:13px;font-weight:700}
@@ -434,6 +434,8 @@ footer{color:#536b5b;text-align:center;font-weight:600}
   <div class="centro-stat hoy"><strong id="cuenta-hoy">—</strong><span>🟠 Para hoy</span></div>
   <div class="centro-stat manana"><strong id="cuenta-manana">—</strong><span>🟡 Para mañana</span></div>
   <div class="centro-stat"><strong id="cuenta-colmenas">—</strong><span>🐝 Apiarios registrados</span></div>
+  <div class="centro-stat"><strong id="cuenta-reinas">—</strong><span>👑 Lotes de reinas activos</span></div>
+  <div class="centro-stat"><strong id="cuenta-inspecciones">—</strong><span>🔍 Inspecciones registradas</span></div>
  </div>
  <div class="centro-panel">
   <h3>📋 Lo próximo que debes atender</h3>
@@ -447,6 +449,8 @@ footer{color:#536b5b;text-align:center;font-weight:600}
    <a class="centro-accion" href="./modulo-22.html">👑 Cría de reinas</a>
    <a class="centro-accion" href="./modulo-23.html">📅 Calendario y tareas</a>
    <a class="centro-accion" href="./modulo-27.html">💾 Copia de seguridad</a>
+   <a class="centro-accion" href="./explorador-zonas-meliferas.html">🌳 Atlas melífero</a>
+   <a class="centro-accion" href="./modulo-06.html">🚚 Planificar trashumancia</a>
   </div>
  </div>
 </section>
@@ -721,6 +725,8 @@ buscador.addEventListener("input", function () {
   $("cuenta-colmenas").textContent=apiaries.length;
   const lots=arrayRead("apiecuador-modulo-22-v1").filter(r=>r&&!r.cerrado).length;
   const inspections=arrayRead("apiecuador-modulo-21-v1");
+  $("cuenta-reinas").textContent=lots;
+  $("cuenta-inspecciones").textContent=inspections.length;
   $("centro-saludo").textContent="Tienes "+lots+" lote(s) de reinas activos, "+inspections.length+" inspección(es) registradas y "+apiaries.length+" apiario(s) guardados en este teléfono.";
   const urgent=pending.slice().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha))).slice(0,6);
   const target=$("centro-lista-tareas");
