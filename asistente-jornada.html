@@ -23,7 +23,7 @@ const dayKey=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+S
 const today=dayKey(new Date()),plus=(s,n)=>{const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+n);return dayKey(d)};
 const fmt=s=>/^\d{4}-\d\d-\d\d$/.test(String(s||""))?s.slice(8,10)+"/"+s.slice(5,7)+"/"+s.slice(0,4):"Fecha sin definir";
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let filter="all",tasks=[];
+let filter="all",tasks=[],fieldPlans=[];
 function collect(){
  const rows=read(TASK_KEY),san=read(SAN_KEY),out=[];
  rows.forEach(r=>{if(!r||!r.fecha||r.completada)return;out.push({id:String(r.id),kind:"calendar",date:r.fecha,title:r.tarea||r.tipo||"Tarea apícola",place:r.apiario||"Apiario sin indicar",detail:(r.loteReina?"Lote: "+r.loteReina+" · ":"")+(r.prioridad?"Prioridad: "+r.prioridad:""),priority:r.prioridad||"Normal",source:"Calendario apícola",href:"./modulo-23.html",record:r});});
@@ -44,14 +44,19 @@ function renderFieldPanels(){
  const target=$("inspection-overview");
  if(!ordered.length){target.innerHTML='<div class="empty">Todavía no hay inspecciones guardadas. Cuando registres una revisión, aquí aparecerá el estado más reciente de cada colmena.</div>';}
  else{
+  fieldPlans=[];
   target.innerHTML=ordered.slice(0,8).map(([key,r])=>{
-   const flags=[];
-   if(/no vista|huérfana|huerfana/i.test(String(r.reina||"")))flags.push("Revisar situación de la reina");
-   if(/irregular|escasa|sin cría/i.test(String(r.cria||"")))flags.push("Revisar evolución de la cría");
-   if(/escasas|sin reservas/i.test(String(r.reservas||"")))flags.push("Comprobar reservas de alimento");
-   if(String(r.sanidad||"").trim())flags.push("Observación sanitaria: "+r.sanidad);
-   const status=flags.length?'<p><strong>⚠️ Atención registrada:</strong> '+esc(flags.join(" · "))+'</p>':'<p><strong>✓ Sin alerta automática</strong> en los campos de reina, cría y reservas.</p>';
-   return '<article class="task '+(flags.length?'today':'')+'"><h3>'+esc(key)+'</h3><p><strong>Última inspección:</strong> '+fmt(r.fecha)+'</p><p>Reina: '+esc(r.reina||"Sin dato")+' · Cría: '+esc(r.cria||"Sin dato")+' · Reservas: '+esc(r.reservas||"Sin dato")+'</p>'+status+'<div class="actions"><a class="action" href="./modulo-21.html">Abrir inspecciones</a></div></article>';
+   const plans=[];
+   const addPlan=(kind,title,task,why)=>plans.push({key,recordId:String(r.id||key),apiario:String(r.apiario||"Apiario sin indicar"),colmena:String(r.colmena||"Colmena"),kind,title,task,why,fecha:String(r.fecha||"")});
+   if(/no vista|huérfana|huerfana/i.test(String(r.reina||"")))addPlan("reina","Confirmar situación de la reina","Revisar presencia de reina, huevos y cría joven","La inspección registró: "+r.reina+". Confirmar lo observado antes de decidir cualquier manejo.");
+   else if(/necesita evaluación/i.test(String(r.reina||"")))addPlan("reina","Evaluar actividad de la reina","Comprobar postura reciente y evolución de la cría","La inspección indicó que la reina necesita evaluación.");
+   if(/irregular|escasa|sin cría/i.test(String(r.cria||"")))addPlan("cria","Revisar evolución de la cría","Revisar patrón, edad de la cría y evolución en la próxima visita","La inspección registró cría: "+r.cria+". Contrastar con la fuerza y condiciones de la colonia.");
+   if(/escasas|sin reservas/i.test(String(r.reservas||"")))addPlan("reservas","Comprobar reservas de alimento","Volver a comprobar reservas y disponibilidad de alimento","La inspección registró reservas: "+r.reservas+". Valorar la situación en campo antes de decidir alimentación.");
+   if(String(r.sanidad||"").trim())addPlan("sanidad","Dar seguimiento a observación sanitaria","Revisar la observación sanitaria registrada y documentar su evolución","Observación anotada: "+r.sanidad+". Este aviso no identifica una enfermedad ni prescribe un tratamiento.");
+   const hasPlans=plans.length>0;
+   const status=hasPlans?'<p><strong>⚠️ Conviene dar seguimiento:</strong> hay observaciones registradas que merecen una nueva comprobación.</p>':'<p><strong>✓ Sin recomendación automática</strong> con los datos registrados. Esto no sustituye la inspección visual.</p>';
+   const planHtml=plans.map(p=>{const index=fieldPlans.push(p)-1;return '<div class="task today"><h3>🧭 '+esc(p.title)+'</h3><p>'+esc(p.task)+'</p><p class="meta">'+esc(p.why)+'</p><button class="action primary" type="button" data-plan="'+index+'">＋ Añadir tarea para hoy al calendario</button></div>';}).join("");
+   return '<article class="task '+(hasPlans?'today':'')+'"><h3>'+esc(key)+'</h3><p><strong>Última inspección:</strong> '+fmt(r.fecha)+'</p><p>Reina: '+esc(r.reina||"Sin dato")+' · Cría: '+esc(r.cria||"Sin dato")+' · Reservas: '+esc(r.reservas||"Sin dato")+'</p>'+status+(planHtml?'<div>'+planHtml+'</div>':'')+'<div class="actions"><a class="action" href="./modulo-21.html">Abrir inspecciones</a></div></article>';
   }).join("")+(ordered.length>8?'<p class="meta">Se muestran las 8 colmenas con inspección más reciente.</p>':'');
  }
  const qtarget=$("queen-overview-list");
@@ -79,6 +84,17 @@ function render(){
 }
 document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));render();}));
 $("tasks").addEventListener("click",e=>{const b=e.target.closest("[data-done]");if(!b)return;const rows=read(TASK_KEY),row=rows.find(x=>String(x.id)===b.dataset.done);if(!row)return;row.completada=true;try{localStorage.setItem(TASK_KEY,JSON.stringify(rows));render();}catch(err){$("footnote").textContent="No se pudo guardar el cambio. Abre Calendario y conserva una copia de seguridad."; }});
+$("inspection-overview").addEventListener("click",e=>{
+ const b=e.target.closest("[data-plan]");if(!b)return;
+ const plan=fieldPlans[Number(b.dataset.plan)];if(!plan)return;
+ const rows=read(TASK_KEY),id="campo-"+plan.recordId+"-"+plan.kind;
+ if(rows.some(r=>String(r.id)===id)){
+  b.textContent="✓ Ya está en tu calendario";b.disabled=true;return;
+ }
+ const task={id,fecha:today,apiario:plan.apiario,tipo:"Seguimiento de inspección",tarea:plan.task,prioridad:"Importante",avisoDias:"0",notas:"Sugerencia de ApiEcuador a partir de inspección del "+fmt(plan.fecha)+" · "+plan.colmena+". "+plan.why+" Confirmar en campo y decidir el manejo según la situación real.",completada:false,origenInspeccion:plan.recordId};
+ try{rows.push(task);localStorage.setItem(TASK_KEY,JSON.stringify(rows));b.textContent="✓ Tarea añadida al calendario";b.disabled=true;$( "footnote" ).textContent="Tarea añadida al Calendario Apícola. Puedes revisar o reprogramar la fecha desde el módulo Calendario.";}
+ catch(err){$( "footnote" ).textContent="No se pudo guardar la tarea. No se modificó la inspección original.";}
+});
 render();
 renderFieldPanels();
 })();
