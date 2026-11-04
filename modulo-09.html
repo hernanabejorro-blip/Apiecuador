@@ -30,6 +30,29 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 input,select,textarea{scroll-margin-top:12px}
 @media(max-width:520px){button,input[type="button"],input[type="submit"]{min-height:46px}main{padding-bottom:28px}}
 </style>
+
+<style id="apiecuador-acceso-guantes-2026">
+/* Accesibilidad de campo: controles cómodos con guantes de apicultor */
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{font-size:17px;line-height:1.55}
+button,.button-link,.back,[role="button"],input[type="submit"],input[type="button"]{min-height:54px;padding:13px 17px;font-size:16px;touch-action:manipulation}
+button,.button-link{border-radius:13px;font-weight:750}
+.actions,.coord-actions{gap:12px}
+.actions button,.coord-actions button{flex:1 1 155px}
+input:not([type="checkbox"]):not([type="radio"]),select,textarea{min-height:54px;font-size:17px;padding:13px 14px;border-radius:12px}
+textarea{min-height:112px}
+label{font-size:16px;line-height:1.4;margin-top:16px;margin-bottom:7px}
+input[type="checkbox"],input[type="radio"]{width:25px;height:25px;min-width:25px;min-height:25px;accent-color:#245c43;vertical-align:middle}
+a{touch-action:manipulation}
+.back{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;background:#ffffff20}
+.panel,.record,.intro{padding:19px;border-radius:18px}
+h2{font-size:21px;line-height:1.25}
+.record p,.record li{font-size:16px;line-height:1.55}
+:focus-visible{outline:3px solid #d99520!important;outline-offset:3px!important}
+button:active,.button-link:active{transform:scale(.985)}
+@media(max-width:600px){main{padding-left:13px!important;padding-right:13px!important}.panel,.record,.intro{padding:16px}button,.button-link,.back{min-height:56px}.actions button,.coord-actions button{flex-basis:100%}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}button:active,.button-link:active{transform:none}}
+</style>
 </head><body>
 <header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>📦 Inventario y ciclo de cera</h1><p>Controla materiales, cuadros, alzas, cera y suministros apícolas.</p></div></header><main><div class="notice"><strong>Guardado local:</strong> el inventario se guarda en este teléfono. No descuenta materiales automáticamente al registrar cosechas ni está sincronizado con otros dispositivos.</div>
 <section class="panel"><h2 id="form-title">Añadir artículo al inventario</h2><form id="form"><input id="rid" type="hidden"><div class="two"><div><label for="name">Artículo *</label><input id="name" maxlength="100" required placeholder="Ej.: Cuadros alambrados"></div><div><label for="category">Categoría</label><select id="category"><option>Material de colmena</option><option>Cera</option><option>Alimentación</option><option>Sanidad</option><option>Protección y herramientas</option><option>Envases y cosecha</option><option>Otro</option></select></div></div><div class="two"><div><label for="qty">Cantidad disponible *</label><input id="qty" type="number" min="0" step="0.01" required value="0"></div><div><label for="unit">Unidad *</label><select id="unit"><option>unidades</option><option>kg</option><option>g</option><option>litros</option><option>ml</option><option>rollos</option><option>paquetes</option></select></div></div><div class="two"><div><label for="min">Avisar cuando quede por debajo de</label><input id="min" type="number" min="0" step="0.01" value="0"></div><div><label for="date">Fecha de revisión</label><input id="date" type="date"></div></div><label for="notes">Notas, lote o ubicación</label><textarea id="notes" maxlength="1000" placeholder="Estante, proveedor, lote, vencimiento..."></textarea><div class="actions"><button class="primary" type="submit" id="save">Guardar artículo</button><button class="secondary" type="button" id="clear">Limpiar</button></div><p class="status" id="status" role="status" aria-live="polite"></p></form></section>
