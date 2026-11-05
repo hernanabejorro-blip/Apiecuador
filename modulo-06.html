@@ -164,7 +164,7 @@ function renderAtlasHints(){
  const host=$('atlas-hints-list');if(!host)return;
  const norm=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es').trim();
  const dest=norm($('destination').value);
- let zones=[];try{const v=JSON.parse(localStorage.getItem('apiecuador-zonas-meliferas-v1')||'[]');if(Array.isArray(v))zones=v;}catch(e){}
+ let zones=[];try{const v=JSON.parse(localStorage.getItem('apiecuador-zonas-meliferas-v1')||'[]');if(Array.isArray(v))zones=v.filter(z=>z&&typeof z==='object'&&!Array.isArray(z));}catch(e){}
  if(!dest){host.innerHTML='<p class="muted">Escribe una localidad o destino para buscar coincidencias del Atlas.</p>';return;}
  const matches=zones.filter(z=>[z.name,z.plant,z.province,z.locality,z.region].some(v=>{const item=norm(v);return item.length>2&&(item.includes(dest)||dest.includes(item));})).slice(0,6);
  host.innerHTML=matches.length?matches.map(z=>'<article class="item"><strong>'+safeText(z.name||z.plant||'Zona melífera registrada')+'</strong><p>'+safeText([z.locality,z.province,z.region].filter(Boolean).join(' · ')||'Ubicación por completar')+'</p><p>Especie/flora: '+safeText(z.plant||'Sin identificar')+' · Superficie: '+safeText(z.area||'No registrada')+' ha · Altitud: '+safeText(z.altitude||'No registrada')+'</p><p>Floración: '+safeText(z.bloom||'Sin fecha registrada')+' · Agua: '+safeText(z.water||'Por verificar')+' · Acceso: '+safeText(z.access||'Por verificar')+'</p><p class="muted">Confianza del registro: '+safeText(z.confidence||'Sin clasificar')+' · Evidencia: '+safeText(z.checked||'Sin fecha de revisión')+'</p></article>').join(''):'<p class="muted">No hay coincidencias guardadas para este destino. Abre el Atlas y registra la zona para que aparezca aquí.</p>';
@@ -177,7 +177,7 @@ function renderFlowerHints(){
  const region=$('flower-region-filter')?$('flower-region-filter').value:'';
  const year=$('flower-year-filter')?$('flower-year-filter').value:'';
  let flowers=[];
- try{const v=JSON.parse(localStorage.getItem('apiecuador-floracion-v1')||'[]');if(Array.isArray(v))flowers=v;}catch(e){}
+ try{const v=JSON.parse(localStorage.getItem('apiecuador-floracion-v1')||'[]');if(Array.isArray(v))flowers=v.filter(f=>f&&typeof f==='object'&&!Array.isArray(f));}catch(e){}
  const yearSelect=$('flower-year-filter');
  if(yearSelect){const selected=yearSelect.value;const years=[...new Set(flowers.filter(f=>!f.recordType||f.recordType==='observed').map(f=>String(f.year||'')).filter(y=>/^\d{4}$/.test(y)))].sort((a,b)=>b.localeCompare(a));yearSelect.innerHTML='<option value="">Todos los años</option>'+years.map(y=>'<option value="'+y+'">'+y+'</option>').join('');yearSelect.value=years.includes(selected)?selected:'';}
  const activeYear=yearSelect?yearSelect.value:year;
