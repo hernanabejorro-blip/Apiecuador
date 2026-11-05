@@ -177,7 +177,44 @@ function renderFlowerHints(){
  const region=$('flower-region-filter')?$('flower-region-filter').value:'';
  const year=$('flower-year-filter')?$('flower-year-filter').value:'';
  let flowers=[];
- try{const v=JSON.parse(localStorage.getItem('apiecuador-floracion-v1')||'[]');if(Array.isArray(v))flowers=v.filter(f=>f&&typeof f==='object'&&!Array.isArray(f));}catch(e){}
+ try{
+  const v=JSON.parse(localStorage.getItem('apiecuador-floracion-v1')||'[]');
+  if(Array.isArray(v))flowers=v.filter(f=>f&&typeof f==='object'&&!Array.isArray(f)&&(!f.recordType||f.recordType==='observed'));
+ }catch(e){}
+ // Lectura adicional y de solo lectura del registro del Explorador de zonas.
+ // Solo se incorporan evidencias de campo o de apiario; estudios y estimaciones
+ // permanecen fuera de las observaciones reales para no confundir al apicultor.
+ let fieldRows=[];
+ try{
+  const v=JSON.parse(localStorage.getItem('apiecuador-calendario-floral-campo-v1')||'[]');
+  if(Array.isArray(v))fieldRows=v.filter(f=>f&&typeof f==='object'&&!Array.isArray(f));
+ }catch(e){}
+ const provinceRegion={
+  'Azuay':'Sierra','Bolívar':'Sierra','Cañar':'Sierra','Carchi':'Sierra','Chimborazo':'Sierra','Cotopaxi':'Sierra','Imbabura':'Sierra','Loja':'Sierra','Pichincha':'Sierra','Tungurahua':'Sierra',
+  'El Oro':'Costa','Esmeraldas':'Costa','Guayas':'Costa','Los Ríos':'Costa','Manabí':'Costa','Santa Elena':'Costa','Santo Domingo de los Tsáchilas':'Costa',
+  'Morona Santiago':'Oriente / Amazonía','Napo':'Oriente / Amazonía','Orellana':'Oriente / Amazonía','Pastaza':'Oriente / Amazonía','Sucumbíos':'Oriente / Amazonía','Zamora Chinchipe':'Oriente / Amazonía','Galápagos':'Galápagos'
+ };
+ const fieldFlowers=fieldRows.filter(f=>['Observación propia en campo','Registro de apiario'].includes(String(f.evidence||''))).map(f=>({
+  plant:f.species||'',
+  locality:f.locality||'',
+  region:provinceRegion[String(f.province||'')]||'',
+  altitude:f.altitude||'',
+  start:f.start||'',
+  peak:'',
+  end:f.end||'',
+  year:f.year||'',
+  resource:f.resource||'No determinado',
+  'bee-activity':'No evaluada',
+  intensity:'No evaluada',
+  notes:f.source||'',
+  fieldEvidence:f.evidence||'',
+  sourceKey:'explorador'
+ }));
+ const seen=new Set(flowers.map(f=>[f.plant,f.locality,f.start,f.end,f.year].map(x=>String(x||'').trim().toLocaleLowerCase('es')).join('|')));
+ fieldFlowers.forEach(f=>{
+  const key=[f.plant,f.locality,f.start,f.end,f.year].map(x=>String(x||'').trim().toLocaleLowerCase('es')).join('|');
+  if(!seen.has(key)){flowers.push(f);seen.add(key);}
+ });
  const yearSelect=$('flower-year-filter');
  if(yearSelect){const selected=yearSelect.value;const years=[...new Set(flowers.filter(f=>!f.recordType||f.recordType==='observed').map(f=>String(f.year||'')).filter(y=>/^\d{4}$/.test(y)))].sort((a,b)=>b.localeCompare(a));yearSelect.innerHTML='<option value="">Todos los años</option>'+years.map(y=>'<option value="'+y+'">'+y+'</option>').join('');yearSelect.value=years.includes(selected)?selected:'';}
  const activeYear=yearSelect?yearSelect.value:year;
@@ -195,7 +232,7 @@ function renderFlowerHints(){
  host.innerHTML=filtered.map(f=>{
   let mapLink='';
   if(f.apiary){try{const apiaries=JSON.parse(localStorage.getItem('apiecuador-apiarios-v1')||'[]');const target=String(f.apiary).trim().toLocaleLowerCase('es');const a=Array.isArray(apiaries)?apiaries.find(x=>x&&String(x.nombre||'').trim().toLocaleLowerCase('es')===target):null;if(a&&a.latitud!==''&&a.longitud!==''&&Number.isFinite(Number(a.latitud))&&Number.isFinite(Number(a.longitud))&&Number(a.latitud)>=-90&&Number(a.latitud)<=90&&Number(a.longitud)>=-180&&Number(a.longitud)<=180)mapLink='<p><a href="https://www.google.com/maps?q='+encodeURIComponent(Number(a.latitud)+','+Number(a.longitud))+'" target="_blank" rel="noopener noreferrer">Abrir apiario en Google Maps ↗</a></p>';}catch(e){}}
-  const observedYear=Number(f.year);const currentYear=new Date().getFullYear();const age=Number.isFinite(observedYear)&&observedYear>1900?currentYear-observedYear:null;const freshness=age===null?'<p class="muted"><strong>Antigüedad no indicada:</strong> confirma las fechas en el campo.</p>':age===0?'<p class="muted"><strong>Observación del año actual:</strong> sigue siendo necesario confirmar la floración activa antes del traslado.</p>':age===1?'<p class="muted"><strong>Observación del año pasado:</strong> úsala como referencia y confirma las fechas en el campo.</p>':'<p class="muted"><strong>Registro de hace '+age+' años:</strong> antecedente histórico; no confirma la floración de esta temporada.</p>';const flowerKey=[f.plant||'',f.locality||'',f.start||'',f.end||''].join('|');const isSelected=flowerKey===selectedFlowerKey;return '<article class="item" style="'+(isSelected?'border:2px solid #245c43;background:#f3f8f1;':'')+'"><strong>'+safeText(f.plant||'Planta sin nombre')+'</strong><p><strong>Referencia histórica de campo</strong> · '+safeText(f.locality||'Localidad no indicada')+(f.region?' · '+safeText(f.region):'')+(f.altitude?' · '+safeText(f.altitude)+' m':'')+(f.year?' · Año de observación: '+safeText(f.year):'')+'</p>'+freshness+'<p>Inicio: '+safeText(f.start||'sin fecha')+' · Pico: '+safeText(f.peak||'no indicado')+' · Fin: '+safeText(f.end||'no indicado')+'</p><p>Intensidad: '+safeText(f.intensity||'no evaluada')+' · Actividad de abejas: '+safeText(f['bee-activity']||'no evaluada')+' · Recurso: '+safeText(f.resource||'no determinado')+'</p>'+(f.apiary?'<p>Apiario: '+safeText(f.apiary)+'</p>':'')+mapLink+(f.notes?'<p>'+safeText(f.notes)+'</p>':'')+'<div class="actions"><button type="button" class="secondary" data-use-flower="1" aria-pressed="'+(isSelected?'true':'false')+'" data-plant="'+safeText(f.plant||'')+'" data-start="'+safeText(f.start||'')+'" data-end="'+safeText(f.end||'')+'" data-locality="'+safeText(f.locality||'')+'">'+(isSelected?'✓ Observación seleccionada':'Usar en esta ruta')+'</button></div></article>';
+  const observedYear=Number(f.year);const currentYear=new Date().getFullYear();const age=Number.isFinite(observedYear)&&observedYear>1900?currentYear-observedYear:null;const freshness=age===null?'<p class="muted"><strong>Antigüedad no indicada:</strong> confirma las fechas en el campo.</p>':age===0?'<p class="muted"><strong>Observación del año actual:</strong> sigue siendo necesario confirmar la floración activa antes del traslado.</p>':age===1?'<p class="muted"><strong>Observación del año pasado:</strong> úsala como referencia y confirma las fechas en el campo.</p>':'<p class="muted"><strong>Registro de hace '+age+' años:</strong> antecedente histórico; no confirma la floración de esta temporada.</p>';const flowerKey=[f.plant||'',f.locality||'',f.start||'',f.end||''].join('|');const isSelected=flowerKey===selectedFlowerKey;return '<article class="item" style="'+(isSelected?'border:2px solid #245c43;background:#f3f8f1;':'')+'"><strong>'+safeText(f.plant||'Planta sin nombre')+'</strong><p><strong>Referencia histórica de campo</strong> · '+safeText(f.locality||'Localidad no indicada')+(f.region?' · '+safeText(f.region):'')+(f.altitude?' · '+safeText(f.altitude)+' m':'')+(f.year?' · Año de observación: '+safeText(f.year):'')+'</p>'+freshness+'<p>Inicio: '+safeText(f.start||'sin fecha')+' · Pico: '+safeText(f.peak||'no indicado')+' · Fin: '+safeText(f.end||'no indicado')+'</p><p>Intensidad: '+safeText(f.intensity||'no evaluada')+' · Actividad de abejas: '+safeText(f['bee-activity']||'no evaluada')+' · Recurso: '+safeText(f.resource||'no determinado')+'</p>'+(f.fieldEvidence?'<p><strong>Origen del registro:</strong> '+safeText(f.fieldEvidence)+' (Explorador de zonas)</p>':'')+(f.apiary?'<p>Apiario: '+safeText(f.apiary)+'</p>':'')+mapLink+(f.notes?'<p>'+safeText(f.notes)+'</p>':'')+'<div class="actions"><button type="button" class="secondary" data-use-flower="1" aria-pressed="'+(isSelected?'true':'false')+'" data-plant="'+safeText(f.plant||'')+'" data-start="'+safeText(f.start||'')+'" data-end="'+safeText(f.end||'')+'" data-locality="'+safeText(f.locality||'')+'">'+(isSelected?'✓ Observación seleccionada':'Usar en esta ruta')+'</button></div></article>';
  }).join('');
 }
 $('destination').addEventListener('input',renderFlowerHints);
