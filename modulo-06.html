@@ -244,7 +244,7 @@ $('maps').addEventListener('click',()=>{const origin=$('origin').value.trim(),de
 try{
  const params=new URLSearchParams(window.location.search);
  const incoming={flora:params.get('flora'),destination:params.get('destination'),colonies:params.get('destinationColonies')};
- let appliedFlora=false,appliedDestination=false,appliedColonies=false;
+ let appliedFlora=false,appliedDestination=false,appliedColonies=false,appliedArea=false;
  Object.keys(incoming).forEach(id=>{
   const value=incoming[id],field=$(id);
   if(value&&field&&!field.value){
@@ -254,10 +254,18 @@ try{
    if(id==='colonies')appliedColonies=true;
   }
  });
- if(appliedDestination&&appliedColonies){
+ const zoneArea=params.get('zoneArea'),areaField=$('siteHectares');
+ if(zoneArea&&areaField&&!areaField.value&&Number.isFinite(Number(zoneArea))&&Number(zoneArea)>0){areaField.value=zoneArea;appliedArea=true;}
+ const zoneName=params.get('zoneName'),zoneRegion=params.get('zoneRegion'),zoneEvidence=params.get('zoneEvidence');
+ if(zoneName){
+  const zoneContext='Zona del Atlas Melífero: '+zoneName+' · Región: '+(zoneRegion||'no indicada')+' · Estado de evidencia: '+(zoneEvidence||'Por investigar')+'. La superficie transferida es el área total registrada, no hectáreas melíferas útiles. Completa el porcentaje aprovechable solo después de verificarlo y no asignes densidad sin validación de campo.';
+  const notes=$('notes');
+  if(notes&&!notes.value.includes(zoneContext)&&zoneContext.length<=notes.maxLength)notes.value=notes.value.trim()?(notes.value.trim()+'\\n'+zoneContext):zoneContext;
+  $('status').textContent='🛰️ Zona recibida desde el Atlas: '+zoneName+'. '+(appliedArea?'Se cargaron '+zoneArea+' ha como superficie total. ':'')+'Confirma el área realmente melífera, porcentaje útil, floración, agua, acceso, permisos y densidad en campo. La densidad queda vacía deliberadamente.';
+ }else if(appliedDestination&&appliedColonies){
   $('status').textContent='Destino y número de colmenas cargados desde Mis Apiarios. Completa el origen y las fechas; confirma los datos antes de guardar.';
  }else if(appliedFlora&&appliedDestination){
-  $('status').textContent='Floración y destino cargados desde el Calendario Floral o Mis Apiarios. Completa el origen, las fechas y el número de colmenas antes de guardar.';
+  $('status').textContent='Floración y destino cargados desde el Calendario Floral o Mis Apiarios. Completa el origen, las fechas y el número de colmenas antes de guardar la ruta.';
  }else if(appliedFlora){
   $('status').textContent='Floración cargada desde el Calendario Floral. Comprueba localidad y fechas reales antes de guardar la ruta.';
  }else if(appliedDestination){
