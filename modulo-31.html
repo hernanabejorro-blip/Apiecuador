@@ -266,6 +266,14 @@ label{font-weight:750}
 <select id="compare-select"><option value="">Todavía no hay temporadas para comparar</option></select>
 <div id="compare-results"><p class="muted">La comparación usa solo observaciones reales de campo, no estimaciones. Registra la misma planta y localidad en otro año para empezar la comparación. Tus observaciones anteriores se conservan.</p></div>
 </section>
+<section class="panel" id="consulta-floral-conjunta">
+<details>
+<summary><strong>🔎 Consultar todos los registros florales de este teléfono</strong></summary>
+<p class="muted">Vista conjunta de solo lectura: reúne las observaciones del Atlas y los registros del Explorador. No copia, modifica ni elimina tus datos originales.</p>
+<div id="consulta-floral-resumen" class="notice" role="status" aria-live="polite">Leyendo registros locales…</div>
+<div id="consulta-floral-lista"></div>
+</details>
+</section>
 <section class="panel">
 <h2>🐝 Próximo paso: planificar trashumancia</h2>
 <p>Usa estas observaciones junto con <a href="./modulo-06.html">Planificador de trashumancia</a> y <a href="./modulo-29.html">Mis apiarios</a>. Este calendario todavía no genera recomendaciones automáticas ni consulta el clima; primero reuniremos datos reales de tus zonas.</p>
@@ -472,6 +480,35 @@ filtrarGuia();
    },{once:true});
   });
  });
+})();
+</script>
+<script id="consulta-floral-conjunta-v1">
+(function(){
+"use strict";
+const root=document.getElementById("consulta-floral-lista");
+const summary=document.getElementById("consulta-floral-resumen");
+if(!root||!summary)return;
+const read=(key)=>{
+ try{
+  const raw=localStorage.getItem(key);
+  if(raw===null)return {rows:[],bad:false};
+  const value=JSON.parse(raw);
+  return Array.isArray(value)?{rows:value.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)),bad:false}:{rows:[],bad:true};
+ }catch(e){return {rows:[],bad:true};}
+};
+const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const atlas=read("apiecuador-floracion-v1");
+const field=read("apiecuador-calendario-floral-campo-v1");
+const rows=[
+ ...atlas.rows.map(r=>({source:"Atlas Floral",plant:r.plant||"Planta sin nombre",place:[r.locality,r.region].filter(Boolean).join(" · "),altitude:r.altitude,start:r.start,end:r.end,year:r.year,type:!r.recordType||r.recordType==="observed"?"Observación de campo":"Estimación",resource:r.resource,activity:r["bee-activity"],notes:r.notes})),
+ ...field.rows.map(r=>({source:"Explorador de zonas",plant:r.species||"Especie sin nombre",place:[r.locality,r.province].filter(Boolean).join(" · "),altitude:r.altitude,start:r.start,end:r.end,year:r.year,type:r.evidence||"Evidencia no indicada",resource:r.resource,activity:"",notes:r.source}))
+].sort((a,b)=>String(b.start||"").localeCompare(String(a.start||"")));
+summary.textContent=atlas.rows.length+" registro(s) del Atlas · "+field.rows.length+" del Explorador · "+rows.length+" en total. "+(atlas.bad||field.bad?" Atención: una de las claves contiene datos con formato inesperado; esta consulta no los modifica.":"Solo lectura; los registros originales permanecen separados y seguros.");
+if(!rows.length){
+ root.innerHTML='<p class="muted">Todavía no hay registros florales guardados en estas dos herramientas. Cuando añadas observaciones, aparecerán aquí sin duplicarse ni trasladarse.</p>';
+ return;
+}
+root.innerHTML=rows.slice(0,30).map(r=>'<article class="record"><h3>🌼 '+esc(r.plant)+' <span class="tag">'+esc(r.source)+'</span></h3><p><strong>Zona:</strong> '+esc(r.place||"No indicada")+(r.altitude?' · '+esc(r.altitude)+' m':'')+'</p><p><strong>Fechas:</strong> '+esc(r.start||"sin inicio")+(r.end?' a '+esc(r.end):'')+' · <strong>Año:</strong> '+esc(r.year||"no indicado")+'</p><p><strong>Tipo / evidencia:</strong> '+esc(r.type)+' · <strong>Recurso:</strong> '+esc(r.resource||"no indicado")+(r.activity?' · <strong>Actividad:</strong> '+esc(r.activity):"")+'</p>'+(r.notes?'<p><strong>Fuente / notas:</strong> '+esc(r.notes)+'</p>':'')+'</article>').join("")+(rows.length>30?'<p class="muted">Se muestran los 30 registros más recientes. Los demás siguen guardados en sus herramientas originales.</p>':'');
 })();
 </script>
 </body>
