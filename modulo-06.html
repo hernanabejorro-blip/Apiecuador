@@ -187,7 +187,12 @@ function renderFlowerHints(){
  let fieldRows=[];
  try{
   const v=JSON.parse(localStorage.getItem('apiecuador-calendario-floral-campo-v1')||'[]');
-  if(Array.isArray(v))fieldRows=v.filter(f=>f&&typeof f==='object'&&!Array.isArray(f));
+  if(Array.isArray(v))fieldRows=v.filter(f=>f&&typeof f==='object'&&!Array.isArray(f)
+   &&['Observación propia en campo','Registro de apiario'].includes(String(f.evidence||''))
+   &&String(f.species||'').trim()&&String(f.locality||'').trim()
+   &&/^\\d{4}-\\d{2}-\\d{2}$/.test(String(f.start||''))
+   &&/^\\d{4}-\\d{2}-\\d{2}$/.test(String(f.end||''))
+   &&String(f.end)>=String(f.start));
  }catch(e){}
  const provinceRegion={
   'Azuay':'Sierra','Bolívar':'Sierra','Cañar':'Sierra','Carchi':'Sierra','Chimborazo':'Sierra','Cotopaxi':'Sierra','Imbabura':'Sierra','Loja':'Sierra','Pichincha':'Sierra','Tungurahua':'Sierra',
@@ -195,6 +200,7 @@ function renderFlowerHints(){
   'Morona Santiago':'Oriente / Amazonía','Napo':'Oriente / Amazonía','Orellana':'Oriente / Amazonía','Pastaza':'Oriente / Amazonía','Sucumbíos':'Oriente / Amazonía','Zamora Chinchipe':'Oriente / Amazonía','Galápagos':'Galápagos'
  };
  const fieldFlowers=fieldRows.filter(f=>['Observación propia en campo','Registro de apiario'].includes(String(f.evidence||''))).map(f=>({
+  recordType:'observed',
   plant:f.species||'',
   locality:f.locality||'',
   region:provinceRegion[String(f.province||'')]||'',
