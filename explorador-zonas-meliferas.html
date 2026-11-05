@@ -730,7 +730,7 @@ function floraPersist(){try{localStorage.setItem(FLORA_KEY,JSON.stringify(floraR
 function floraReset(){$('flora-form').reset();$('flora-id').value='';$('flora-save').textContent='Guardar registro floral';$('flora-cancel').hidden=true;}
 function floraRender(){
  const province=$('flora-filter-province').value,month=$('flora-filter-month').value;
- const list=floraRows.filter(x=>(!province||x.province===province)&&(!month||x.start.slice(5,7)===month)).sort((a,b)=>a.start.localeCompare(b.start));
+ const list=floraRows.filter(x=>(!province||x.province===province)&&(!month||String(x.start||'').slice(5,7)===month)).sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')));
  $('flora-summary').textContent=floraRows.length+' registro(s) guardado(s) en este teléfono · '+list.length+' visible(s).';
  $('flora-records').innerHTML=list.length?list.map(x=>'<article class="record"><h3>🌼 '+fesc(x.species)+'</h3><span class="tag">'+fesc(x.province)+'</span> <span class="tag">'+fesc(x.evidence)+'</span><p><strong>Zona:</strong> '+fesc(x.locality)+(x.altitude?' · '+fesc(x.altitude)+' m':'')+'</p><p><strong>Ventana:</strong> '+fesc(x.start)+' al '+fesc(x.end)+' · <strong>Recurso:</strong> '+fesc(x.resource)+'</p><p><strong>Año:</strong> '+fesc(x.year||'No indicado')+' · <strong>Fuente:</strong> '+fesc(x.source||'Sin notas')+'</p><div class="actions"><button type="button" class="secondary" data-flora-edit="'+fesc(x.id)+'">Editar</button><button type="button" class="danger" data-flora-delete="'+fesc(x.id)+'">Eliminar</button></div></article>').join(''):'<p class="muted">No hay registros para este filtro. Añade una observación local o una fuente identificable; no se precargan meses sin evidencia.</p>';
 }
