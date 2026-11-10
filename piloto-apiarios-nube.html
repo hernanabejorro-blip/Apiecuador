@@ -52,7 +52,7 @@ function status(msg){$("estado-datos").textContent=msg;}
 function readLocal(){let value;try{value=JSON.parse(localStorage.getItem(key)||"[]");}catch(e){throw new Error("No se pudieron leer los datos locales. No se ha cambiado nada.");}
 if(!Array.isArray(value))throw new Error("El formato local no es una lista de apiarios. No se ha cambiado nada.");
 return value;}
-function cleanRows(rows){return rows.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)&&String(x.id||"").trim());}
+function cleanRows(rows){if(!Array.isArray(rows))throw new Error("Los datos no tienen el formato esperado. No se modificó nada.");const out=[];for(const row of rows){if(!row||typeof row!=="object"||Array.isArray(row)||!String(row.id||"").trim())throw new Error("Hay un registro sin identificador válido. Primero abre Mis Apiarios y descarga un respaldo; no se omitió ningún registro.");out.push(row);}return out;}
 function stable(x){if(Array.isArray(x))return "["+x.map(stable).join(",")+"]";if(x&&typeof x==="object")return "{"+Object.keys(x).sort().map(k=>JSON.stringify(k)+":"+stable(x[k])).join(",")+"}";return JSON.stringify(x);}
 function merge(a,b){const map=new Map();for(const row of cleanRows(a))map.set(String(row.id),row);for(const row of cleanRows(b)){const id=String(row.id),old=map.get(id);if(old&&stable(old)!==stable(row))throw new Error("Conflicto en el apiario con identificador "+id+". No se guardó ni se modificó ningún registro.");if(!old)map.set(id,row);}return [...map.values()];}
 function ref(){if(!user)throw new Error("Primero inicia sesión con Google.");return doc(db,"users",user.uid,"apiariosPiloto","misApiarios");}
