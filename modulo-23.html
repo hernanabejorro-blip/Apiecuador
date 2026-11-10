@@ -153,7 +153,7 @@ label{font-weight:750}
  rows=sincronizarDesdeCria();
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){
-  list.innerHTML="";
+  list.innerHTML="";if(storageReadError){list.innerHTML='<p role="alert">⚠️ Error de lectura. Modo de solo lectura: conserva los datos del navegador y recupera una copia de seguridad.</p>';return;}
   if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay registros. Completa el formulario para comenzar.</p>';return;}
   rows.slice().sort((a,b)=>String(a.fecha||"").localeCompare(String(b.fecha||""))).forEach(row=>{
    const card=document.createElement("article");card.className="record";
