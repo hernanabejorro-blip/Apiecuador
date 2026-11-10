@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f2b632">
+<title>ApiEcuador · Piloto seguro de respaldo en la nube</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#17251e;background:#f3f6f2}
+body{margin:0;padding:18px;max-width:760px;margin-inline:auto}header,.panel{background:#fff;border:1px solid #d8e2d9;border-radius:16px;padding:18px;margin:14px 0}
+h1{font-size:1.45rem;margin:.2rem 0 .6rem}h2{font-size:1.08rem;margin-top:0}
+p{line-height:1.5}.notice{background:#fff6dc;border-left:5px solid #d69d18;padding:12px;border-radius:8px}
+.status{background:#edf4ee;padding:12px;border-radius:9px;overflow-wrap:anywhere}
+button{font:600 1rem system-ui;padding:13px 16px;border:0;border-radius:10px;background:#245c43;color:#fff;margin:5px 5px 5px 0;min-height:48px}
+button.secondary{background:#e5ece6;color:#173c2c}button:disabled{opacity:.5}
+small{color:#53645a}.actions{display:flex;flex-wrap:wrap;gap:6px}
+</style>
+</head>
+<body>
+<header><h1>🐝 Piloto seguro · Mis Apiarios</h1><p>Prueba aislada para preparar una copia de seguridad en Firebase. No modifica la aplicación principal ni activa sincronización automática.</p></header>
+<section class="panel">
+<div class="notice"><strong>Antes de empezar:</strong> esta prueba solo lee tus apiarios locales cuando pulsas el botón. No envía nada a la nube sin que confirmes expresamente. No borra registros locales ni registros que ya estén en la nube.</div>
+<h2>1. Identidad</h2>
+<p id="estado-cuenta" class="status">Comprobando sesión…</p>
+<div class="actions"><button id="entrar">Entrar con Google</button><button id="salir" class="secondary" hidden>Cerrar sesión</button></div>
+</section>
+<section class="panel">
+<h2>2. Estado de los datos</h2>
+<p id="estado-datos" class="status">Esperando la sesión.</p>
+<div class="actions"><button id="subir" disabled>Enviar una copia a la nube</button><button id="bajar" class="secondary" disabled>Recuperar copia de la nube</button></div>
+<p><small>Regla de seguridad: solo tu cuenta puede leer y escribir su propio espacio apiariosPiloto. Si dos copias tienen el mismo identificador pero datos distintos, la prueba se detiene y no mezcla ese registro.</small></p>
+</section>
+<section class="panel">
+<h2>3. Límites de esta prueba</h2>
+<ul>
+<li>La copia se combina por identificador; no elimina datos.</li>
+<li>Los cambios y eliminaciones posteriores no se sincronizan automáticamente.</li>
+<li>Si hay conflictos, se detiene para evitar sobrescribir información.</li>
+<li>El documento piloto tiene un límite preventivo de 700 KB.</li>
+<li>Haz y conserva primero tu respaldo JSON habitual desde Mis Apiarios.</li>
+</ul>
+<p><a href="./modulo-29.html">Volver a Mis Apiarios</a></p>
+</section>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const config={apiKey:"AIzaSyCIw41NJ7wIYfpAMj8R_aX4jC8x1uXXWbs",authDomain:"apiecuador-34b2d.firebaseapp.com",projectId:"apiecuador-34b2d",storageBucket:"apiecuador-34b2d.firebasestorage.app",messagingSenderId:"1084250214880",appId:"1:1084250214880:web:4a4babf94a7da2f0f81b85"};
+const app=initializeApp(config),auth=getAuth(app),db=getFirestore(app),provider=new GoogleAuthProvider();
+const key="apiecuador-apiarios-v1",$=id=>document.getElementById(id);
+let user=null,localRows=[];
+function status(msg){$("estado-datos").textContent=msg;}
+function readLocal(){let value;try{value=JSON.parse(localStorage.getItem(key)||"[]");}catch(e){throw new Error("No se pudieron leer los datos locales. No se ha cambiado nada.");}
+if(!Array.isArray(value))throw new Error("El formato local no es una lista de apiarios. No se ha cambiado nada.");
+return value;}
+function cleanRows(rows){return rows.filter(x=>x&&typeof x==="object"&&!Array.isArray(x)&&String(x.id||"").trim());}
+function stable(x){if(Array.isArray(x))return "["+x.map(stable).join(",")+"]";if(x&&typeof x==="object")return "{"+Object.keys(x).sort().map(k=>JSON.stringify(k)+":"+stable(x[k])).join(",")+"}";return JSON.stringify(x);}
+function merge(a,b){const map=new Map();for(const row of cleanRows(a))map.set(String(row.id),row);for(const row of cleanRows(b)){const id=String(row.id),old=map.get(id);if(old&&stable(old)!==stable(row))throw new Error("Conflicto en el apiario con identificador "+id+". No se guardó ni se modificó ningún registro.");if(!old)map.set(id,row);}return [...map.values()];}
+function ref(){if(!user)throw new Error("Primero inicia sesión con Google.");return doc(db,"users",user.uid,"apiariosPiloto","misApiarios");}
+async function cloudRows(){const snap=await getDoc(ref());if(!snap.exists())return [];const data=snap.data();if(data.schema!==1||!Array.isArray(data.records))throw new Error("La copia de nube tiene un formato no reconocido. No se modificó.");return cleanRows(data.records);}
+function updateButtons(){const on=!!user;$("subir").disabled=!on;$("bajar").disabled=!on;$("entrar").hidden=on;$("salir").hidden=!on;}
+$("entrar").addEventListener("click",async()=>{try{await signInWithPopup(auth,provider);}catch(e){if(e.code==="auth/popup-blocked"){try{await signInWithRedirect(auth,provider);}catch(err){status("No se pudo iniciar sesión: "+err.code);}}else status("No se pudo iniciar sesión: "+e.code);}});
+$("salir").addEventListener("click",()=>signOut(auth).catch(e=>status("No se pudo cerrar sesión: "+e.code)));
+$("subir").addEventListener("click",async()=>{try{localRows=cleanRows(readLocal());const cloud=await cloudRows();const combined=merge(cloud,localRows);const bytes=new Blob([JSON.stringify(combined)]).size;if(bytes>700*1024)throw new Error("La copia supera el límite preventivo de 700 KB. No se envió.");if(!confirm("Vas a enviar a Firebase una copia combinada de "+combined.length+" apiario(s), asociada a "+user.email+". Los datos locales no se borrarán. ¿Continuar?"))return;await setDoc(ref(),{schema:1,records:combined,updatedAt:new Date().toISOString(),source:"piloto-manual"});status("Copia guardada en tu espacio privado de Firebase: "+combined.length+" apiario(s). Tus registros locales permanecen intactos.");}catch(e){status("No se completó el envío. "+e.message);}});
+$("bajar").addEventListener("click",async()=>{try{const cloud=await cloudRows();if(!cloud.length){status("No hay una copia en la nube todavía.");return;}const local=cleanRows(readLocal());const combined=merge(local,cloud);if(!confirm("Se añadirán "+(combined.length-local.length)+" apiario(s) de la nube a este teléfono. Los registros locales no se reemplazarán ni borrarán. ¿Continuar?"))return;try{localStorage.setItem(key,JSON.stringify(combined));}catch(e){throw new Error("El navegador no pudo guardar la recuperación. No se modificaron los datos de la nube.");}status("Recuperación completada: "+combined.length+" apiario(s) en este teléfono. La copia de la nube sigue intacta.");}catch(e){status("No se completó la recuperación. "+e.message);}});
+getRedirectResult(auth).catch(e=>status("No se pudo completar el acceso: "+e.code));
+onAuthStateChanged(auth,async u=>{user=u;updateButtons();if(!u){$("estado-cuenta").textContent="Sin sesión. Los registros locales no se han leído ni enviado.";status("Inicia sesión para consultar el estado del piloto.");return;}$("estado-cuenta").textContent="Sesión activa: "+(u.email||"cuenta Google");try{const local=cleanRows(readLocal());const cloud=await cloudRows();status("Teléfono: "+local.length+" apiario(s). Nube: "+cloud.length+" apiario(s). No se ha enviado ni cambiado ningún dato.");}catch(e){status("Sesión activa, pero no se pudo consultar el estado: "+e.message);}});
+</script>
+</body>
+</html>
