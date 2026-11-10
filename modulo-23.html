@@ -107,7 +107,7 @@ label{font-weight:750}
  let queenSourceReadError=false;
  function cargarLotesReina(){
   const selected=loteSelect.value;let lots=[];
-  try{const raw=localStorage.getItem("apiecuador-modulo-22-v1");lots=raw===null?[]:JSON.parse(raw);if(!Array.isArray(lots)||lots.some(r=>!r||typeof r!=="object"||Array.isArray(r)))throw new Error("Lotes inválidos");queenSourceReadError=false;}catch(e){queenSourceReadError=true;loteSelect.innerHTML='<option value="">No se pudieron leer los tandas de reinas</option>';loteSelect.disabled=true;return;}
+  try{const raw=localStorage.getItem("apiecuador-modulo-22-v1");lots=raw===null?[]:JSON.parse(raw);if(!Array.isArray(lots)||lots.some(r=>!r||typeof r!=="object"||Array.isArray(r)))throw new Error("Lotes inválidos");queenSourceReadError=false;}catch(e){queenSourceReadError=true;loteSelect.innerHTML='<option value="">No se pudieron leer los lotes de reinas</option>';loteSelect.disabled=true;return;}
   loteSelect.innerHTML='<option value="">Sin lote asociado</option>';
   lots.forEach(r=>{if(!r.lote)return;const o=document.createElement("option");o.value=r.lote;o.textContent=r.lote+" · "+(r.apiario||"apiario sin nombre")+" · "+(r.fecha||"sin fecha");loteSelect.appendChild(o);});
   if(selected&&!Array.from(loteSelect.options).some(o=>o.value===selected)){const o=document.createElement("option");o.value=selected;o.textContent=selected+" · lote guardado anteriormente";loteSelect.appendChild(o);}
@@ -118,9 +118,9 @@ label{font-weight:750}
  const status=document.getElementById("estado");
  let rows=[];let storageReadError=false;try{const raw=localStorage.getItem(key);const saved=raw===null?[]:JSON.parse(raw);if(!Array.isArray(saved)||saved.some(t=>!t||typeof t!=="object"||Array.isArray(t)))throw new Error("Tareas inválidas");rows=saved;}catch(e){storageReadError=true;status.textContent="⚠️ No se pudieron leer las tareas guardadas. Modo de solo lectura: conserva los datos del navegador y recupera una copia de seguridad.";}
  function sincronizarDesdeCria(){
-  let lots=[];try{lots=JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1")||"[]");if(!Array.isArray(lots))lots=[];}catch(e){lots=[];}
-  let saved=[];try{saved=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(saved))saved=[];}catch(e){saved=[];}
-  if(storageReadError||queenSourceReadError){if(queenSourceReadError)status.textContent="⚠️ No se sincronizaron tareas automáticas porque no se pudieron leer los lotes de Cría de Reinas. Los registros actuales se conservaron.";return rows;}
+  if(storageReadError||queenSourceReadError)return rows;
+  let lots=[];try{const raw=localStorage.getItem("apiecuador-modulo-22-v1");lots=raw===null?[]:JSON.parse(raw);if(!Array.isArray(lots)||lots.some(r=>!r||typeof r!=="object"||Array.isArray(r)))throw new Error("Lotes inválidos");}catch(e){queenSourceReadError=true;status.textContent="⚠️ No se pudieron leer los lotes de Cría de Reinas. No se modificaron las tareas existentes.";return rows;}
+  let saved=[];try{const raw=localStorage.getItem(key);saved=raw===null?[]:JSON.parse(raw);if(!Array.isArray(saved)||saved.some(t=>!t||typeof t!=="object"||Array.isArray(t)))throw new Error("Tareas inválidas");}catch(e){storageReadError=true;status.textContent="⚠️ No se pudieron leer las tareas actuales. Se canceló la sincronización para proteger los registros.";return rows;}
   const generated=[];
   const addDays=(date,n)=>{const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
   lots.forEach(row=>{
@@ -150,7 +150,7 @@ label{font-weight:750}
   generated.forEach(t=>{const i=merged.findIndex(old=>old.id===t.id);if(i>=0)merged[i]=t;else merged.push(t);});
   try{localStorage.setItem(key,JSON.stringify(merged));return JSON.parse(localStorage.getItem(key)||"[]");}catch(e){return saved;}
  }
- if(!storageReadError&&!queenSourceReadError)rows=sincronizarDesdeCria();
+ rows=sincronizarDesdeCria();
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){
   list.innerHTML="";
@@ -177,7 +177,19 @@ label{font-weight:750}
   catch(e){if(!existing)rows.pop();status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
  });
  list.addEventListener("click",e=>{
-  if(storageReadError){["limpiar","traslarve","exportar"].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=true;});Array.from(form.elements).forEach(el=>el.disabled=true);list.innerHTML='<p role="alert">⚠️ Error de lectura. Modo de solo lectura: conserva los datos del navegador y recupera una copia de seguridad.</p>';}else if(queenSourceReadError){status.textContent="⚠️ No se pudo leer Cría de Reinas; el selector de lotes quedó desactivado y se omitió la sincronización automática.";}
+  if(storageReadError){status.textContent="Edición y eliminación bloqueadas por seguridad.";return;}
+  const edit=e.target.closest("[data-edit]");if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{const el=document.getElementById(f.id);if(el)el.value=row[f.id]||"";});form.dataset.editing=row.id;form.querySelector('button[type="submit"]').textContent="Guardar cambios";status.textContent="Edita los datos y guarda para reprogramar la tarea.";form.scrollIntoView({behavior:"smooth",block:"start"});return;}
+  const done=e.target.closest("[data-done]");if(done){const row=rows.find(r=>r.id===done.dataset.done);if(!row)return;row.completada=!row.completada;try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent=row.completada?"Tarea marcada como completada.":"Tarea devuelta a pendientes.";}catch(err){status.textContent="No se pudo guardar el estado.";}return;}
+  const cal=e.target.closest("[data-calendar]");if(cal){const row=rows.find(r=>r.id===cal.dataset.calendar);if(!row||!row.fecha){status.textContent="Añade una fecha antes de preparar el aviso.";return;}const date=row.fecha.replace(/-/g,"");const escIcs=s=>String(s||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");const summary=escIcs(row.tarea||row.tipo||"Tarea apícola");const desc=escIcs("Apiario: "+(row.apiario||"Sin especificar")+"\nNotas: "+(row.notas||"")+"\nGestionar la tarea en ApiEcuador.");const aviso=Math.max(0,Math.min(365,parseInt(row.avisoDias||"1",10)||0));const fin=(()=>{const d=new Date(row.fecha+"T12:00:00");d.setDate(d.getDate()+1);return d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0")})();const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ApiEcuador//Calendario Apicola//ES","CALSCALE:GREGORIAN","BEGIN:VEVENT","UID:apiecuador-"+row.id+"@apiecuador","DTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,""),"DTSTART;TZID=America/Guayaquil:"+date+"T080000","DTEND;TZID=America/Guayaquil:"+date+"T081500","SUMMARY:"+summary,"DESCRIPTION:"+desc,"BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:Recordatorio ApiEcuador","TRIGGER:-P"+aviso+"D","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n")+"\r\n";const blob=new Blob([ics],{type:"text/calendar;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="aviso-apiecuador-"+date+".ics";a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);status.textContent="Aviso preparado. Abre el archivo descargado y añádelo al Calendario; confirma que quede guardado.";return;}
+  const b=e.target.closest("[data-delete]");if(!b)return;
+  rows=rows.filter(r=>r.id!==b.dataset.delete);
+  try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent="Registro eliminado.";}catch(err){status.textContent="No se pudo actualizar el almacenamiento.";}
+ });
+ document.getElementById("limpiar").addEventListener("click",()=>{form.reset();delete form.dataset.editing;form.querySelector('button[type="submit"]').textContent="Guardar registro";cargarLotesReina();status.textContent="Formulario limpio.";});
+ document.getElementById("traslarve").addEventListener("click",()=>{document.getElementById("tipo").value="Cría de reinas";cargarLotesReina();document.getElementById("tarea").value="Preparar y realizar lote de traslarve (10–20 cúpulas)";document.getElementById("prioridad").value="Importante";document.getElementById("notas").value="Comprobar colonia donante, larvas jóvenes, material limpio, colonia criadora y alimento. Registrar aceptación, emergencia e introducción de reinas en el módulo Seguimiento de Reinas.";document.getElementById("avisoDias").value="1";status.textContent="Plantilla de traslarve cargada. Completa la fecha y el apiario antes de guardar.";});
+ document.getElementById("exportar").addEventListener("click",()=>{if(storageReadError){status.textContent="Exportación bloqueada por error de lectura.";return;}if(!rows.length){status.textContent="No hay registros para exportar.";return;}const csv=[fields.map(f=>f.label).join(","),...rows.map(r=>fields.map(f=>'"'+String(r[f.id]||"").replace(/"/g,'""')+'"').join(","))].join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="calendario-apicola.csv";a.click();URL.revokeObjectURL(url);status.textContent="Archivo CSV preparado para guardar.";});
+ if(storageReadError){["limpiar","traslarve","exportar"].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=true;});Array.from(form.elements).forEach(el=>el.disabled=true);list.innerHTML='<p role="alert">⚠️ Error de lectura. Modo de solo lectura: conserva los datos del navegador y recupera una copia de seguridad.</p>';}
+ else if(queenSourceReadError){status.textContent="⚠️ No se pudo leer Cría de Reinas; el selector de lotes quedó desactivado y se omitió la sincronización automática.";}
  render();
 })();
 </script></body></html>
