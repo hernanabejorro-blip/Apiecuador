@@ -102,6 +102,26 @@ label{font-weight:750}
  function inspect(key){const raw=localStorage.getItem(key);if(raw===null)return {exists:false,valid:true,value:null};try{return {exists:true,valid:true,value:JSON.parse(raw)}}catch(e){return {exists:true,valid:false,value:null,raw}}}
  function read(key){const result=inspect(key);return result.valid?result.value:null}
  function contar(value){if(Array.isArray(value))return value.length;if(value&&typeof value==="object")return Object.keys(value).length;return value==null?0:1;}
+ function mergeBackup(backup,current){
+  if(current===undefined)return backup;
+  if(Array.isArray(backup)&&Array.isArray(current)){
+   const merged=current.slice();
+   const seen=new Set(merged.map(v=>v&&v.id!=null?"id:"+v.id:JSON.stringify(v)));
+   backup.forEach(v=>{const sig=v&&v.id!=null?"id:"+v.id:JSON.stringify(v);if(!seen.has(sig)){merged.push(v);seen.add(sig);}});
+   return merged;
+  }
+  const isObject=v=>v!==null&&typeof v==="object"&&!Array.isArray(v);
+  if(isObject(backup)&&isObject(current)){
+   const merged={...backup,...current};
+   Object.keys(backup).forEach(key=>{
+    if(Object.prototype.hasOwnProperty.call(current,key))merged[key]=mergeBackup(backup[key],current[key]);
+    else merged[key]=backup[key];
+   });
+   return merged;
+  }
+  // En conflictos de valores simples, prevalece lo que ya está en este teléfono.
+  return current;
+ }
  function actualizarResumen(){const summary=document.getElementById("resumen-copia"),detail=document.getElementById("detalle-copia");let modules=0,total=0;const invalid=[],groups={Apiarios:0,Inspecciones:0,"Cría y reinas":0,Calendario:0,Floraciones:0,"Otros datos":0};const allKeys=new Set(keys);for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("apiecuador-"))allKeys.add(k);}allKeys.forEach(k=>{const result=inspect(k);if(!result.valid){invalid.push(k);return;}if(result.value!==null){modules++;total+=contar(result.value);let g="Otros datos";if(k.includes("apiario"))g="Apiarios";else if(k.includes("modulo-21"))g="Inspecciones";else if(k.includes("reina")||k.includes("modulo-22"))g="Cría y reinas";else if(k.includes("modulo-23"))g="Calendario";else if(k.includes("floracion"))g="Floraciones";groups[g]+=contar(result.value);}});summary.textContent="Datos disponibles en este teléfono: "+modules+" grupos y aproximadamente "+total+" registro(s)/elemento(s)."+(invalid.length?" ATENCIÓN: "+invalid.length+" grupo(s) ilegibles. No se permitirá crear una copia incompleta.":" No se detectaron grupos ilegibles.");detail.innerHTML=Object.entries(groups).map(([name,count])=>'<div class="backup-item"><strong>'+count+'</strong><span>'+name+'</span></div>').join("")+(invalid.length?'<div class="backup-warning">⚠️ Hay datos que no se pueden leer. No borres ni restaures nada hasta revisarlos.</div>':"");}
  actualizarResumen();
  document.getElementById("exportar").addEventListener("click",async function(){
@@ -144,11 +164,11 @@ label{font-weight:750}
      }
      return;
     }
-    if(!Array.isArray(incoming))return;
-    const current=read(k);const merged=Array.isArray(current)?current.slice():[];
-    const seen=new Set(merged.map((r)=>r&&r.id!=null?"id:"+r.id:JSON.stringify(r)));
-    incoming.forEach(r=>{const sig=r&&r.id!=null?"id:"+r.id:JSON.stringify(r);if(!seen.has(sig)){merged.push(r);seen.add(sig);}});
-    planned[k]=merged;found++;
+    const currentState=inspect(k);
+    if(!currentState.valid)return;
+    const current=currentState.exists?currentState.value:undefined;
+    planned[k]=mergeBackup(incoming,current);
+    found++;
    });
    if(!found)throw new Error("vacio");
    const unreadable=Object.keys(planned).filter(k=>!inspect(k).valid);if(unreadable.length){status.textContent="Importación detenida para proteger datos actuales que no se pueden leer: "+unreadable.join(", ")+". No se modificó ningún registro.";return;}
