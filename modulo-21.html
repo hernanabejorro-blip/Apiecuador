@@ -93,10 +93,11 @@ label{font-weight:750}
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
- let rows=[];try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}
+ let rows=[];let storageReadError=null;try{const raw=localStorage.getItem(key);rows=raw===null?[]:JSON.parse(raw);if(!Array.isArray(rows))throw new Error("Los datos guardados no tienen el formato esperado.");}catch(e){storageReadError=e;rows=[];}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function render(){
   list.innerHTML="";
+  if(storageReadError){list.innerHTML='<p class="empty" role="alert">⚠️ No se pudieron leer los registros guardados de este teléfono. Por seguridad, ApiEcuador bloqueó guardar, editar y eliminar en esta pantalla para evitar sobrescribir información. No borres los datos del navegador. Exporta una copia del teléfono si todavía es posible y solicita una revisión técnica.</p>';return;}
   if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay registros. Completa el formulario para comenzar.</p>';return;}
   rows.slice().reverse().forEach(row=>{
    const card=document.createElement("article");card.className="record";
@@ -106,13 +107,14 @@ label{font-weight:750}
   });
  }
  form.addEventListener("submit",e=>{
-  e.preventDefault();if(form.dataset.editing)return;const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+  e.preventDefault();if(storageReadError){status.textContent="Guardado bloqueado: primero hay que recuperar la lectura de los registros existentes.";return;}if(form.dataset.editing)return;const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   rows.push(row);
   try{localStorage.setItem(key,JSON.stringify(rows));form.reset();render();status.textContent="Registro guardado en este teléfono.";}
   catch(e){rows.pop();status.textContent="No se pudo guardar. Puede faltar espacio disponible en el navegador."; }
  });
  list.addEventListener("click",e=>{
+  if(storageReadError){status.textContent="Edición y eliminación bloqueadas por seguridad hasta recuperar los registros.";return;}
   const edit=e.target.closest("[data-edit]");
   if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{const el=document.getElementById(f.id);if(el)el.value=row[f.id]||"";});form.dataset.editing=row.id;form.querySelector('button[type="submit"]').textContent="Guardar cambios";status.textContent="Editando registro. Guarda los cambios cuando termines.";form.scrollIntoView({behavior:"smooth",block:"start"});return;}
   const b=e.target.closest("[data-delete]");if(!b)return;
@@ -122,15 +124,16 @@ label{font-weight:750}
  form.addEventListener("submit",e=>{
   // Si se está editando, actualizar ese registro en lugar de crear otro.
   if(!form.dataset.editing)return;
-  e.preventDefault();const id=form.dataset.editing;const i=rows.findIndex(r=>r.id===id);if(i<0){delete form.dataset.editing;return;}
+  e.preventDefault();if(storageReadError){status.textContent="Edición bloqueada por seguridad hasta recuperar los registros.";return;}const id=form.dataset.editing;const i=rows.findIndex(r=>r.id===id);if(i<0){delete form.dataset.editing;return;}
   const updated={id};fields.forEach(f=>{updated[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   const previous=rows[i];rows[i]=updated;
   try{localStorage.setItem(key,JSON.stringify(rows));delete form.dataset.editing;form.reset();form.querySelector('button[type="submit"]').textContent="Guardar registro";render();status.textContent="Cambios guardados correctamente.";}catch(err){rows[i]=previous;status.textContent="No se pudieron guardar los cambios.";} 
  });
  document.getElementById("limpiar").addEventListener("click",()=>{form.reset();delete form.dataset.editing;form.querySelector('button[type="submit"]').textContent="Guardar registro";status.textContent="Formulario limpio.";});
- const exportBtn=document.createElement("button");exportBtn.type="button";exportBtn.className="secondary";exportBtn.textContent="Exportar CSV";exportBtn.addEventListener("click",()=>{const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';const csv=[fields.map(f=>cell(f.label)).join(","),...rows.map(r=>fields.map(f=>cell(r[f.id])).join(","))].join("\r\n");const blob=new Blob(["\\ufeff"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="apiecuador-inspecciones.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);status.textContent="Archivo CSV preparado. Si el teléfono pregunta, guarda el archivo y revisa Descargas.";});
+ const exportBtn=document.createElement("button");exportBtn.type="button";exportBtn.className="secondary";exportBtn.textContent="Exportar CSV";exportBtn.disabled=!!storageReadError;if(storageReadError)exportBtn.title="Exportación bloqueada porque los datos no pudieron leerse con seguridad.";exportBtn.addEventListener("click",()=>{const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';const csv=[fields.map(f=>cell(f.label)).join(","),...rows.map(r=>fields.map(f=>cell(r[f.id])).join(","))].join("\r\n");const blob=new Blob(["\\ufeff"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="apiecuador-inspecciones.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);status.textContent="Archivo CSV preparado. Si el teléfono pregunta, guarda el archivo y revisa Descargas.";});
  document.querySelector("#registros").parentElement.appendChild(exportBtn);
  render();
+ if(storageReadError){status.textContent="⚠️ Lectura de registros detenida por seguridad. No se modificó ni eliminó ningún dato.";}
 
  // Sugerencias desde el registro principal de "Mis apiarios".
  // Solo propone nombres; mantiene la posibilidad de escribir manualmente.
