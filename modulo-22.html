@@ -233,7 +233,7 @@ label{font-weight:750}
   }).join("");
  }
  function render(){
-  renderMotherHistory();list.innerHTML="";
+  renderMotherHistory();list.innerHTML="";if(storageReadError){list.innerHTML="<p role=\"alert\">⚠️ Error de lectura. Modo de solo lectura: conserva los datos del navegador y recupera una copia de seguridad.</p>";return;}
   if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay registros. Completa el formulario para comenzar.</p>';return;}
   rows.slice().reverse().sort((a,b)=>Number(!!a.cerrado)-Number(!!b.cerrado)).forEach(row=>{
    const card=document.createElement("article");card.className="record";
@@ -266,7 +266,7 @@ label{font-weight:750}
   if(r.nacimiento===datePlus(r.fecha,11))r.nacimiento=datePlus(r.fecha,10);
   if(r.fechaPostura===datePlus(r.fecha,25))r.fechaPostura=datePlus(r.fecha,24);
  });
- try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
+ if(!storageReadError)try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){storageReadError=true;status.textContent="⚠️ No se pudo guardar el ajuste de fechas. Edición bloqueada para proteger los lotes.";}
  function sincronizarTareasCalendario(){
   const calendarKey="apiecuador-modulo-23-v1";
   let tasks=[];try{const raw=localStorage.getItem(calendarKey);tasks=raw===null?[]:JSON.parse(raw);if(!Array.isArray(tasks)||tasks.some(t=>!t||typeof t!=="object"||Array.isArray(t)))throw new Error("Calendario inválido");}catch(e){status.textContent="⚠️ No se pudo leer Calendario Apícola. Se conservaron los lotes y no se modificarán sus avisos.";return -1;}
@@ -364,6 +364,7 @@ label{font-weight:750}
  const fileInput=document.getElementById("archivo-json");
  document.getElementById("importar-json").addEventListener("click",()=>{if(storageReadError){status.textContent="Importación bloqueada por error de lectura.";return;}fileInput.click();});
  fileInput.addEventListener("change",async()=>{
+  if(storageReadError){status.textContent="Importación bloqueada por error de lectura.";fileInput.value="";return;}
   const file=fileInput.files&&fileInput.files[0];if(!file)return;
   try{
    const parsed=JSON.parse(await file.text());
