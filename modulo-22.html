@@ -625,8 +625,12 @@ calendarButton.addEventListener("click", async () => {
 });
   document.getElementById("registros").addEventListener("click", async function(event) {
   const button = event.target.closest("[data-delete-google]"); if (!button) return;
-  const rowId = button.dataset.deleteGoogle; let savedRows = [];
-  try { savedRows = JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1") || "[]"); } catch (_) {}
+  if(window.__apiecuadorQueenStorageError){calendarStatus.textContent="Eliminación de avisos bloqueada: primero recupera la lectura de los lotes locales.";return;}
+  const rowId = button.dataset.deleteGoogle; let savedRows = [], tasks = [];
+  try { const raw=localStorage.getItem("apiecuador-modulo-22-v1");savedRows=raw===null?[]:JSON.parse(raw);if(!Array.isArray(savedRows)||savedRows.some(item=>!item||typeof item!=="object"||Array.isArray(item)))throw new Error("Lotes inválidos"); }
+  catch (_) { calendarStatus.textContent="No se pudieron leer los lotes locales. No se tocarán los avisos de Google Calendar.";return; }
+  try { const raw=localStorage.getItem("apiecuador-modulo-23-v1");tasks=raw===null?[]:JSON.parse(raw);if(!Array.isArray(tasks)||tasks.some(task=>!task||typeof task!=="object"||Array.isArray(task)))throw new Error("Tareas inválidas"); }
+  catch (_) { calendarStatus.textContent="No se pudo leer Calendario Apícola. No se eliminarán eventos de Google.";return; }
   const row = savedRows.find(function(item) { return String(item.id) === String(rowId); });
   if (!row) { calendarStatus.textContent = "No encuentro ese lote guardado."; return; }
   if (!window.confirm("Eliminar " + (row.lote || "este lote") + " y sus avisos vinculados de Google Calendar. Los demás lotes se conservarán. ¿Continuar?")) return;
@@ -645,8 +649,7 @@ calendarButton.addEventListener("click", async () => {
     for (const item of items) { await calendarRequest(token, "https://www.googleapis.com/calendar/v3/calendars/primary/events/" + encodeURIComponent(item.id), {method:"DELETE"}); deleted++; }
    }
    localStorage.setItem("apiecuador-modulo-22-v1", JSON.stringify(savedRows.filter(function(item){return String(item.id)!==String(rowId);})));
-   const taskKey="apiecuador-modulo-23-v1"; let tasks=[]; try {tasks=JSON.parse(localStorage.getItem(taskKey)||"[]");} catch (_) {}
-   localStorage.setItem(taskKey,JSON.stringify(tasks.filter(function(task){return String(task.origenReina||"")!==String(rowId) && !String(task.id||"").startsWith("reina-"+rowId+"-");})));
+   localStorage.setItem("apiecuador-modulo-23-v1",JSON.stringify(tasks.filter(function(task){return String(task.origenReina||"")!==String(rowId) && !String(task.id||"").startsWith("reina-"+rowId+"-");})));
    calendarStatus.textContent="Eliminado "+(row.lote||"el lote")+" y "+deleted+" aviso(s) de Google Calendar. Los demás lotes se conservaron."; window.location.reload();
   } catch (error) { calendarStatus.textContent=googleErrorMessage(error)+" El lote guardado se conserva; vuelve a intentarlo."; button.disabled=false; }
  });
