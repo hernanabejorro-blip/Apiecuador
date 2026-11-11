@@ -127,8 +127,24 @@ label{font-weight:750}
     if(current===undefined)return incoming;
     if(Array.isArray(current)&&Array.isArray(incoming)){
      const merged=current.slice();
-     const seen=new Set(merged.map(v=>v&&typeof v==="object"&&v.id!=null?"id:"+v.id:JSON.stringify(v)));
-     incoming.forEach(v=>{const sig=v&&typeof v==="object"&&v.id!=null?"id:"+v.id:JSON.stringify(v);if(!seen.has(sig)){merged.push(v);seen.add(sig);}});
+     const positions=new Map();
+     const seen=new Set();
+     merged.forEach((value,index)=>{
+      if(value&&typeof value==="object"&&value.id!=null)positions.set("id:"+value.id,index);
+      else seen.add(JSON.stringify(value));
+     });
+     incoming.forEach(value=>{
+      const hasId=value&&typeof value==="object"&&value.id!=null;
+      const signature=hasId?"id:"+value.id:JSON.stringify(value);
+      if(hasId&&positions.has(signature)){
+       const index=positions.get(signature);
+       merged[index]=mergeBackupValues(merged[index],value);
+      }else if(!seen.has(signature)&&(!hasId||!positions.has(signature))){
+       merged.push(value);
+       if(hasId)positions.set(signature,merged.length-1);
+       else seen.add(signature);
+      }
+     });
      return merged;
     }
     if(current&&incoming&&typeof current==="object"&&typeof incoming==="object"&&!Array.isArray(current)&&!Array.isArray(incoming)){
