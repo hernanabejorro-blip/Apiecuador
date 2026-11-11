@@ -144,6 +144,14 @@ label{font-weight:750}
      }
      return;
     }
+    // Los respaldos pueden contener grupos guardados como objetos además de listas.
+    // Completa los campos ausentes con la copia, pero conserva los valores actuales.
+    if(incoming&&typeof incoming==="object"&&!Array.isArray(incoming)){
+     const current=read(k);
+     const merged=current&&typeof current==="object"&&!Array.isArray(current)?{...incoming,...current}:{...incoming};
+     planned[k]=merged;found++;
+     return;
+    }
     if(!Array.isArray(incoming))return;
     const current=read(k);const merged=Array.isArray(current)?current.slice():[];
     const seen=new Set(merged.map((r)=>r&&r.id!=null?"id:"+r.id:JSON.stringify(r)));
