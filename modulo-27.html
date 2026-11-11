@@ -122,7 +122,26 @@ label{font-weight:750}
   try{
    const backup=JSON.parse(await file.text());
    if(!backup||backup.app!=="ApiEcuador"||backup.formatVersion!==1||!backup.data||typeof backup.data!=="object")throw new Error("formato");if(backup.integrity&&backup.integrity.algorithm==="SHA-256"){if(!(window.crypto&&crypto.subtle))throw new Error("integridad");const bytes=new TextEncoder().encode(JSON.stringify(backup.data));const digest=await crypto.subtle.digest("SHA-256",bytes);const actual=Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");if(actual!==backup.integrity.digest)throw new Error("integridad");}
-   const planned={};let found=0;
+   const planned={};let found=0,restored=0,combined=0,kept=0;
+   function mergeBackupValues(current,incoming){
+    if(current===undefined)return incoming;
+    if(Array.isArray(current)&&Array.isArray(incoming)){
+     const merged=current.slice();
+     const seen=new Set(merged.map(v=>v&&typeof v==="object"&&v.id!=null?"id:"+v.id:JSON.stringify(v)));
+     incoming.forEach(v=>{const sig=v&&typeof v==="object"&&v.id!=null?"id:"+v.id:JSON.stringify(v);if(!seen.has(sig)){merged.push(v);seen.add(sig);}});
+     return merged;
+    }
+    if(current&&incoming&&typeof current==="object"&&typeof incoming==="object"&&!Array.isArray(current)&&!Array.isArray(incoming)){
+     const merged={...current};
+     Object.keys(incoming).forEach(key=>{
+      if(key==="__proto__"||key==="prototype"||key==="constructor")return;
+      merged[key]=Object.prototype.hasOwnProperty.call(current,key)?mergeBackupValues(current[key],incoming[key]):incoming[key];
+     });
+     return merged;
+    }
+    // Si ya existe un valor de otro tipo, se conserva el actual: nunca se pisa silenciosamente.
+    return current;
+   }
    Array.from(new Set([...keys,...Object.keys(backup.data).filter(k=>k.startsWith("apiecuador-"))])).forEach(k=>{
     if(!Object.prototype.hasOwnProperty.call(backup.data,k))return;
     const incoming=backup.data[k];
@@ -144,18 +163,21 @@ label{font-weight:750}
      }
      return;
     }
-    if(!Array.isArray(incoming))return;
-    const current=read(k);const merged=Array.isArray(current)?current.slice():[];
-    const seen=new Set(merged.map((r)=>r&&r.id!=null?"id:"+r.id:JSON.stringify(r)));
-    incoming.forEach(r=>{const sig=r&&r.id!=null?"id:"+r.id:JSON.stringify(r);if(!seen.has(sig)){merged.push(r);seen.add(sig);}});
+    const rawCurrent=localStorage.getItem(k);
+    let current;
+    try{current=rawCurrent===null?undefined:JSON.parse(rawCurrent);}catch(e){return;}
+    const merged=mergeBackupValues(current,incoming);
     planned[k]=merged;found++;
+    if(rawCurrent===null)restored++;
+    else if(JSON.stringify(merged)!==JSON.stringify(current))combined++;
+    else kept++;
    });
    if(!found)throw new Error("vacio");
    const unreadable=Object.keys(planned).filter(k=>!inspect(k).valid);if(unreadable.length){status.textContent="Importación detenida para proteger datos actuales que no se pueden leer: "+unreadable.join(", ")+". No se modificó ningún registro.";return;}
    const before={};Object.keys(planned).forEach(k=>{before[k]=localStorage.getItem(k);});
    try{Object.keys(planned).forEach(k=>localStorage.setItem(k,JSON.stringify(planned[k])));}
    catch(writeError){Object.keys(planned).forEach(k=>{try{if(before[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,before[k]);}catch(ignore){}});throw writeError;}
-   status.textContent="Importación terminada. Los registros se combinaron sin reemplazar los existentes. Abre cada módulo para comprobarlos.";actualizarResumen();
+   status.textContent="Importación terminada: "+restored+" grupos restaurados, "+combined+" combinados y "+kept+" conservados sin cambios. Los datos actuales no se reemplazaron. Abre los módulos principales para comprobarlos.";actualizarResumen();
   }catch(e){status.textContent=e&&e.message==="integridad"?"La huella de seguridad no coincide o no se pudo verificar. Importación cancelada; tus datos actuales se conservaron.":"No se pudo importar: el archivo no parece una copia válida de ApiEcuador o no hay espacio suficiente. Tus datos anteriores se conservaron."; }
  });
 document.getElementById("archivo").addEventListener("change",function(){const file=this.files&&this.files[0];const label=document.getElementById("archivo-seleccionado");if(!file){label.textContent="Selecciona una copia para revisar su nombre y tamaño antes de importarla.";return;}label.textContent="Archivo seleccionado: "+file.name+" · "+(file.size/1024).toFixed(1)+" KB. La huella se comprobará antes de combinarlo.";});
