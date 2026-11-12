@@ -248,7 +248,31 @@ label{font-weight:750}
   }catch(err){status.textContent="No se pudo importar el archivo. Comprueba que sea una copia JSON válida de Seguimiento de Reinas.";}
   finally{fileInput.value="";}
  });
- cargarOpcionesLotes();mostrarResumenLoteOrigen();render();
+ cargarOpcionesLotes();
+ const requestedLotId=new URLSearchParams(window.location.search).get("loteOrigenId");
+ if(requestedLotId){
+  const source=leerLotesCria().find(item=>String(item.id)===String(requestedLotId));
+  if(source){
+   const set=(id,value)=>{const el=document.getElementById(id);if(el&&value!==undefined&&value!==null&&String(value)!=="")el.value=String(value);};
+   set("lote",source.lote);
+   set("apiario",source.apiario);
+   set("fechaTraslarve",source.fecha);
+   set("cantidad",source.cantidad);
+   set("aceptadas",source.aceptadas);
+   set("nacidasCantidad",source.nacidas);
+   set("posturasCantidad",source.postura);
+   set("madreId",source.madreId);
+   document.getElementById("loteOrigenId").value=String(source.id);
+   mostrarResumenLoteOrigen();
+   status.textContent="Lote de origen cargado desde Cría de Reinas. Revisa los datos y guarda para crear el seguimiento vinculado; el registro original no se modifica.";
+  }else{
+   status.textContent="No se encontró el lote de origen en este teléfono. Los registros existentes se conservan; puedes vincularlo manualmente si corresponde.";
+   mostrarResumenLoteOrigen();
+  }
+ }else{
+  mostrarResumenLoteOrigen();
+ }
+ render();
 })();
 </script><script>
 /* Sugerencias desde "Mis apiarios". No modifica ni borra registros existentes. */
