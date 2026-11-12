@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#245c43"><link rel="manifest" href="./manifest.json">
+<title>Planificador de Núcleos · ApiEcuador</title>
+<style>
+:root{color-scheme:light;--green:#245c43;--cream:#fcf9f2;--ink:#1c1c18;--gold:#b87919}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:17px system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5}
+header{background:linear-gradient(125deg,#153e30,#36734c);color:#fff;padding:22px 16px}header>div,main{max-width:920px;margin:auto}.back{display:inline-flex;align-items:center;min-height:48px;padding:8px 13px;border:1px solid #ffffff55;border-radius:12px;color:#fff;text-decoration:none;margin-bottom:12px;font-weight:700}h1{font-size:clamp(25px,6vw,34px);line-height:1.2;margin:0 0 8px}header p{margin:0;color:#eaf3e8}main{padding:18px 13px 36px}
+.panel,.notice,.task{background:#fff;border:1px solid #e1e6db;border-radius:17px;padding:16px;margin:0 0 13px;box-shadow:0 5px 16px #173f320a}.notice{background:#fff5df;border-color:#ead4a8;font-size:15px}.notice strong{color:#71470f}
+h2{font-size:21px;color:var(--green);margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px}
+label{display:block;font-weight:750;margin:12px 0 6px;font-size:15px}input,select,textarea{width:100%;min-height:54px;border:1px solid #d2dccc;border-radius:11px;padding:12px;font:17px system-ui;background:#fff;color:var(--ink)}button{min-height:52px;border:0;border-radius:12px;padding:12px 16px;font:750 16px system-ui;cursor:pointer}.primary{background:var(--green);color:white}.secondary{background:#f1ecdf;color:#514633}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}.actions button{flex:1 1 180px}.muted,.status{font-size:14px;color:#625c50}.status{min-height:1.5em;color:var(--green)}.task{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}.task input[type=checkbox]{width:26px;height:26px;min-height:26px;margin-top:5px;accent-color:var(--green)}.task label{margin:0}.task input[type=date]{margin-top:8px;min-height:48px}.task small{display:block;color:#655e52;font-weight:400;margin-top:3px}.tag{display:inline-block;padding:4px 8px;border-radius:99px;background:#e6f0e5;color:#245c43;font-size:12px;font-weight:800;margin-bottom:8px}.decision{padding:12px;border-radius:12px;background:#f4f7ef;border:1px solid #dce6d8;margin-top:12px}.decision ul{margin:8px 0 0;padding-left:21px}.danger{background:#fff0ec;border-color:#efc8bd}.empty{padding:12px;color:#625c50}@media(max-width:520px){main{padding:14px 11px 28px}.panel,.notice,.task{padding:14px}.actions button{flex-basis:100%}}
+</style>
+</head>
+<body>
+<header><div><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🐝 Planificador de Núcleos</h1><p>Preparar la campaña de febrero 2027 sin debilitar el apiario ni dividir por obligación.</p></div></header>
+<main>
+<section class="notice"><strong>Criterio de campo:</strong> este plan organiza revisiones; no declara apta una colmena por calendario. La decisión final se toma mirando población adulta, cría sana y compacta, reservas, reina y sanidad. Si no alcanza la fuerza, no se divide. Es preferible producir menos núcleos y que salgan buenos.</section>
+<section class="panel">
+<h2>1. Datos de la campaña</h2>
+<div class="grid">
+<div><label for="nombre">Nombre de campaña</label><input id="nombre" maxlength="70" value="Núcleos · Febrero 2027"></div>
+<div><label for="apiario">Apiario o zona</label><input id="apiario" maxlength="80" placeholder="Ej.: Tanda"></div>
+<div><label for="fecha">Fecha de primera evaluación</label><input id="fecha" type="date" value="2027-02-01" required></div>
+<div><label for="candidatas">Colonias candidatas a revisar</label><input id="candidatas" type="number" min="0" max="2000" value="100"></div>
+<div><label for="objetivo">Núcleos objetivo (orientativo)</label><input id="objetivo" type="number" min="0" max="2000" value="30"></div>
+<div><label for="modelo">Estrategia prevista</label><select id="modelo"><option value="evaluar">Decidir colonia por colonia</option><option value="2">Hasta 2 núcleos por madre apta</option><option value="3">Hasta 3 núcleos por madre excepcional</option></select></div>
+</div>
+<p class="muted">El número de candidatas y el objetivo son estimaciones de planificación, no una orden de división. El modo de 3 núcleos queda reservado para madres excepcionalmente fuertes y con población suficiente.</p>
+<div class="actions"><button class="primary" id="generar" type="button">Preparar cronograma</button><button class="secondary" id="guardar" type="button">Guardar campaña</button></div>
+<p class="status" id="estado" role="status" aria-live="polite"></p>
+</section>
+<section class="panel">
+<h2>2. Cronograma de trabajo</h2>
+<p class="muted">Las fechas se calculan desde la primera evaluación y puedes cambiarlas. Marca cada labor cuando realmente esté hecha.</p>
+<div id="tareas"><p class="empty">Completa los datos y pulsa “Preparar cronograma”.</p></div>
+<div class="actions"><button class="secondary" id="exportar" type="button">Exportar plan CSV</button></div>
+</section>
+<section class="panel">
+<h2>3. Ficha de aptitud de cada madre</h2>
+<p>Antes de dividir una colonia, confirma en campo:</p>
+<div class="decision">
+<ul>
+<li>Población adulta abundante, cubriendo bien los cuadros.</li>
+<li>Cría sana, compacta y en cantidad suficiente para sostener la división.</li>
+<li>Reina identificada y con postura firme; sin señales de reemplazo fallido.</li>
+<li>Reservas suficientes y entrada de alimento acorde a la zona.</li>
+<li>Sanidad controlada, especialmente Varroa y signos de enfermedad.</li>
+<li>Cuadros, nodrizas y alimento disponibles sin desarmar otras colonias débiles.</li>
+</ul>
+</div>
+<div class="decision danger"><strong>Regla de decisión:</strong> si falla población, cría, reservas o sanidad, esa madre queda fuera de la división por ahora. No contar una colonia como productora de tres núcleos hasta comprobar que puede sostenerlos.</div>
+</section>
+<section class="panel">
+<h2>4. Campaña guardada en este teléfono</h2>
+<div id="guardadas" class="muted">Todavía no hay una campaña guardada.</div>
+<div class="actions"><button class="secondary" id="cargar" type="button">Cargar última campaña</button><button class="secondary" id="borrar" type="button">Borrar solo este plan</button></div>
+<p class="muted">Este plan se guarda en el navegador de este dispositivo. No modifica colmenas, fichas de reinas ni datos de Firebase. Exporta una copia si quieres conservarla fuera del teléfono.</p>
+</section>
+</main>
+<script>
+(function(){
+ const KEY="apiecuador-plan-nucleos-v1";
+ const $=id=>document.getElementById(id);
+ const fields=["nombre","apiario","fecha","candidatas","objetivo","modelo"];
+ let plan=null;
+ function dateAdd(iso,n){const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+ function showDate(iso){if(!iso)return "Sin fecha";const [y,m,d]=iso.split("-");return d+"/"+m+"/"+y;}
+ const stages=[
+  {offset:0,title:"Evaluación inicial de colonias",detail:"Inspeccionar candidatas: población, cría, reina, reservas y sanidad. Clasificar aptas, dudosas y no aptas."},
+  {offset:7,title:"Confirmar fuerza y disponibilidad",detail:"Revisar evolución, entrada de néctar/alimento y espacio. Descartar madres que hayan perdido fuerza."},
+  {offset:14,title:"Preparar material y núcleos",detail:"Alistar cámaras, cuadros, alimentadores, alimento y ubicación. Definir madres y destino de cada núcleo."},
+  {offset:21,title:"Decisión final y divisiones selectivas",detail:"Dividir solo madres que sigan fuertes el día de trabajo. Registrar cuadros, cría, reservas, reina y responsable."},
+  {offset:28,title:"Control temprano de núcleos",detail:"Comprobar población, alimento, cría y comportamiento. Corregir falta de alimento o desequilibrio sin esperar."},
+  {offset:42,title:"Revisión de reina y postura",detail:"Confirmar presencia de reina, huevos o postura. No dar por fecundada una reina hasta observar evidencia."}
+ ];
+ function readForm(){return {nombre:$("nombre").value.trim(),apiario:$("apiario").value.trim(),fecha:$("fecha").value,candidatas:Number($("candidatas").value)||0,objetivo:Number($("objetivo").value)||0,modelo:$("modelo").value,hecho:{},fechas:{}};}
+ function render(){
+  const host=$("tareas");if(!plan){host.innerHTML='<p class="empty">Completa los datos y pulsa “Preparar cronograma”.</p>';return;}
+  host.innerHTML="";
+  stages.forEach((s,i)=>{
+   const date=plan.fechas[i]||dateAdd(plan.fecha,s.offset);
+   const row=document.createElement("div");row.className="task";
+   const check=document.createElement("input");check.type="checkbox";check.checked=!!plan.hecho[i];check.setAttribute("aria-label","Marcar tarea completada");
+   check.addEventListener("change",()=>{plan.hecho[i]=check.checked;save(false);});
+   const content=document.createElement("div");
+   const label=document.createElement("label");label.textContent=s.title;
+   const small=document.createElement("small");small.textContent=s.detail;
+   const dateInput=document.createElement("input");dateInput.type="date";dateInput.value=date;dateInput.setAttribute("aria-label","Fecha de "+s.title);
+   dateInput.addEventListener("change",()=>{plan.fechas[i]=dateInput.value;save(false);});
+   content.append(label,small,dateInput);row.append(check,content);host.append(row);
+  });
+ }
+ function save(show=true){if(!plan)return;try{localStorage.setItem(KEY,JSON.stringify(plan));$("guardadas").textContent=plan.nombre+" · "+plan.apiario+" · evaluación "+showDate(plan.fecha);if(show)$("estado").textContent="Campaña guardada en este teléfono. Los demás registros no se modificaron.";}catch(e){$("estado").textContent="No se pudo guardar en este navegador. Exporta el CSV como respaldo.";}}
+ function generate(){const data=readForm();if(!data.fecha){$("estado").textContent="Indica la fecha de evaluación.";return;}plan={...data,hecho:{},fechas:{}};render();save(true);}
+ $("generar").addEventListener("click",generate);
+ $("guardar").addEventListener("click",()=>{if(!plan)generate();else save(true);});
+ $("cargar").addEventListener("click",()=>{try{const p=JSON.parse(localStorage.getItem(KEY)||"null");if(!p){$("estado").textContent="No hay una campaña guardada en este teléfono.";return;}plan=p;fields.forEach(k=>$(k).value=p[k]??"");render();$("estado").textContent="Última campaña cargada.";}catch(e){$("estado").textContent="No se pudo leer la campaña guardada."; }});
+ $("borrar").addEventListener("click",()=>{if(!confirm("¿Borrar únicamente el planificador de núcleos guardado en este teléfono? No se borrarán colmenas ni otros módulos."))return;localStorage.removeItem(KEY);plan=null;render();$("guardadas").textContent="Todavía no hay una campaña guardada.";$("estado").textContent="Plan eliminado. Los demás datos siguen intactos.";});
+ $("exportar").addEventListener("click",()=>{if(!plan){$("estado").textContent="Primero prepara una campaña.";return;}const rows=[["Tarea","Fecha","Completada","Detalle"],...stages.map((s,i)=>[s.title,plan.fechas[i]||dateAdd(plan.fecha,s.offset),plan.hecho[i]?"Sí":"No",s.detail])];const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(";")).join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="plan-nucleos-febrero-2027.csv";a.click();URL.revokeObjectURL(url);});
+ try{const p=JSON.parse(localStorage.getItem(KEY)||"null");if(p){$("guardadas").textContent=p.nombre+" · "+(p.apiario||"Sin apiario")+" · evaluación "+showDate(p.fecha);}}catch(e){}
+})();
+</script>
+</body></html>
