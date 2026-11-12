@@ -89,7 +89,7 @@ label{font-weight:750}
 </style>
 </head><body>
 <header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🐝 Calendario Apícola y Tareas</h1><p>Lleva una lista de labores por fecha y apiario: revisiones, alimentación, cosecha, recambio de reinas y más.</p></div></header>
-<main><div class="notice"><strong>ApiEcuador planifica; Calendario solo avisa.</strong> Guarda aquí los traslarves futuros. En cada tarea puedes preparar un archivo de calendario con aviso un día antes. Después abre el archivo en el teléfono y confirma que el evento y la notificación quedaron guardados. Los registros siguen guardados solo en este navegador y teléfono; conserva una copia de seguridad.</div>
+<main><div class="notice"><strong>ApiEcuador planifica; Calendario solo avisa.</strong> Aquí aparecen tus tareas manuales, el seguimiento de reinas y las revisiones del Planificador de Núcleos. Al abrir esta página se actualizan las tareas automáticas desde sus módulos de origen; no se duplican y conservan el estado de completadas. En cada tarea puedes preparar un archivo de calendario para añadirlo al teléfono. Los registros siguen guardados solo en este navegador y teléfono; conserva una copia de seguridad.</div>
 <section class="panel"><h2>Nuevo registro</h2><form id="registro-form"><label for="fecha">Fecha prevista</label><input id="fecha" name="fecha" type="date" required>
 <label for="apiario">Apiario</label><input id="apiario" name="apiario" type="text" required>
 <label for="tipo">Tipo de tarea</label><select id="tipo" name="tipo" required><option value="">Seleccionar…</option><option>Inspección</option><option>Alimentación</option><option>Sanidad</option><option>Cría de reinas</option><option>Cosecha</option><option>Trashumancia</option><option>Mantenimiento</option><option>Otra</option></select>
@@ -118,6 +118,7 @@ label{font-weight:750}
  let rows=[];try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[];}
  function sincronizarDesdeCria(){
   let lots=[];try{lots=JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1")||"[]");if(!Array.isArray(lots))lots=[];}catch(e){lots=[];}
+  let campaign=null;try{campaign=JSON.parse(localStorage.getItem("apiecuador-plan-nucleos-v1")||"null");}catch(e){campaign=null;}
   let saved=[];try{saved=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(saved))saved=[];}catch(e){saved=[];}
   const generated=[];
   const addDays=(date,n)=>{const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
@@ -143,8 +144,24 @@ label{font-weight:750}
     generated.push({id,origenReina:row.id,fecha:m.fecha,apiario:row.apiario||"Sin apiario",tipo:"Cría de reinas",loteReina:row.lote||"Lote",tarea:m.tarea,prioridad:"Importante",avisoDias:String(m.avisoDias==null?notice:m.avisoDias),notas:"Seguimiento automático de "+(row.lote||"lote de reinas")+". Fecha de traslarve (Día 1): "+row.fecha+". Fechas orientativas: confirma el desarrollo real y adapta el manejo al clima.",completada:previous?!!previous.completada:false});
    });
   });
-  const ids=new Set(generated.map(t=>t.id));
-  const merged=saved.filter(t=>!String(t.id||"").startsWith("reina-"));
+  // Tareas automáticas del Planificador de Núcleos: IDs estables y sin duplicados.
+  if(campaign&&campaign.fecha&&/^\d{4}-\d{2}-\d{2}$/.test(campaign.fecha)){
+   const stages=[
+    {offset:0,tarea:"Evaluación inicial de colonias",detalle:"Inspeccionar población, cría, reina, reservas y sanidad; clasificar aptas, dudosas y no aptas."},
+    {offset:7,tarea:"Confirmar fuerza y disponibilidad",detalle:"Revisar evolución, alimento y espacio; descartar madres que hayan perdido fuerza."},
+    {offset:14,tarea:"Preparar material y núcleos",detalle:"Alistar cámaras, cuadros, alimentadores, alimento y ubicación."},
+    {offset:21,tarea:"Decisión final y divisiones selectivas",detalle:"Dividir solo madres que sigan fuertes; registrar cuadros, cría, reservas y reina."},
+    {offset:28,tarea:"Control temprano de núcleos",detalle:"Comprobar población, alimento, cría y comportamiento."},
+    {offset:42,tarea:"Revisión de reina y postura",detalle:"Confirmar presencia de reina, huevos o postura; no darla por fecundada sin evidencia."}
+   ];
+   const addDays=(date,n)=>{const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+   stages.forEach((s,i)=>{
+    const id="nucleos-"+i,previous=saved.find(t=>t.id===id);
+    const fecha=campaign.fechas&&campaign.fechas[i]?campaign.fechas[i]:addDays(campaign.fecha,s.offset);
+    generated.push({id,origenNucleos:true,fecha,apiario:campaign.apiario||"Sin apiario",tipo:"Plan de núcleos",loteReina:"",tarea:"🐝 "+s.tarea,prioridad:"Importante",avisoDias:"0",notas:"Campaña: "+(campaign.nombre||"Plan de núcleos")+". "+s.detalle+" Dividir únicamente colonias aptas tras comprobar su fuerza real.",completada:previous?!!previous.completada:!!(campaign.hecho&&campaign.hecho[i])});
+   });
+  }
+  const merged=saved.filter(t=>!String(t.id||"").startsWith("reina-")&&!String(t.id||"").startsWith("nucleos-"));
   generated.forEach(t=>{const i=merged.findIndex(old=>old.id===t.id);if(i>=0)merged[i]=t;else merged.push(t);});
   try{localStorage.setItem(key,JSON.stringify(merged));return JSON.parse(localStorage.getItem(key)||"[]");}catch(e){return saved;}
  }
@@ -161,8 +178,9 @@ label{font-weight:750}
    if(lc){card.style.borderLeft="7px solid "+lc[0];card.style.background="linear-gradient(90deg,"+lc[1]+" 0%,#ffffff 46%)";}
    else if(due&&due<=today){card.style.borderColor="#d9a441";card.style.background="#fffaf0";}
    const heading=(row.loteReina?row.loteReina+" · ":"")+((row.tarea||row.tipo)||"Registro");
-   const automatic=!!row.origenReina;
-   const management=automatic?'<p class="muted"><strong>🔗 Tarea automática:</strong> cambia su fecha o elimina el lote desde Cría de Reinas. Aquí puedes marcarla como completada y preparar el aviso.</p>':'';
+   const automatic=!!(row.origenReina||row.origenNucleos);
+   const sourceLabel=row.origenReina?"Cría de Reinas":"Planificador de Núcleos";
+   const management=automatic?'<p class="muted"><strong>🔗 Tarea automática:</strong> procede de '+esc(sourceLabel)+'. Cambia la fecha en el módulo de origen. Aquí puedes marcarla como completada y preparar el aviso.</p>':'';
    const editDelete=automatic?'':'<button class="secondary" type="button" data-edit="'+esc(row.id)+'">Editar / reprogramar</button><button class="delete" type="button" data-delete="'+esc(row.id)+'">Eliminar</button>';
    card.innerHTML='<h3>'+esc(heading)+'</h3><p><strong>Estado:</strong> '+(row.completada?'Completada':'Pendiente')+'</p>'+fields.filter(f=>row[f.id]).map(f=>'<p><strong>'+esc(f.label)+':</strong> '+esc(row[f.id])+'</p>').join("")+management+'<div class="actions"><button class="primary" type="button" data-calendar="'+esc(row.id)+'">Preparar aviso para Calendario</button>'+editDelete+'<button class="secondary" type="button" data-done="'+esc(row.id)+'">'+(row.completada?'Marcar pendiente':'Marcar completada')+'</button></div>';
    list.appendChild(card);
