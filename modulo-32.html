@@ -35,7 +35,7 @@ label{display:block;font-weight:750;margin:12px 0 6px;font-size:15px}input,selec
 <h2>2. Cronograma de trabajo</h2>
 <p class="muted">Las fechas se calculan desde la primera evaluación y puedes cambiarlas. Marca cada labor cuando realmente esté hecha.</p>
 <div id="tareas"><p class="empty">Completa los datos y pulsa “Preparar cronograma”.</p></div>
-<div class="actions"><button class="secondary" id="exportar" type="button">Exportar plan CSV</button></div>
+<div class="actions"><a href="./modulo-23.html" style="display:inline-flex;align-items:center;justify-content:center;flex:1 1 180px;min-height:52px;padding:12px 16px;border-radius:12px;background:#245c43;color:#fff;text-decoration:none;font-weight:750">Abrir Calendario y avisos</a><button class="secondary" id="exportar" type="button">Exportar plan CSV</button></div><p class="muted">Al guardar esta campaña y abrir el Calendario, sus seis revisiones aparecerán automáticamente. Las fechas y tareas se actualizan desde este plan; el calendario permite marcar cada labor y preparar su aviso a las 8:00.</p>
 </section>
 <section class="panel">
 <h2>3. Ficha de aptitud de cada madre</h2>
@@ -83,7 +83,7 @@ label{display:block;font-weight:750;margin:12px 0 6px;font-size:15px}input,selec
    const date=plan.fechas[i]||dateAdd(plan.fecha,s.offset);
    const row=document.createElement("div");row.className="task";
    const check=document.createElement("input");check.type="checkbox";check.checked=!!plan.hecho[i];check.setAttribute("aria-label","Marcar tarea completada");
-   check.addEventListener("change",()=>{plan.hecho[i]=check.checked;save(false);});
+   check.addEventListener("change",()=>{plan.hecho[i]=check.checked;save(false);try{const rows=JSON.parse(localStorage.getItem("apiecuador-modulo-23-v1")||"[]");const task=Array.isArray(rows)?rows.find(t=>t.id==="nucleos-"+i):null;if(task){task.completada=check.checked;localStorage.setItem("apiecuador-modulo-23-v1",JSON.stringify(rows));}}catch(e){}});
    const content=document.createElement("div");
    const label=document.createElement("label");label.textContent=s.title;
    const small=document.createElement("small");small.textContent=s.detail;
