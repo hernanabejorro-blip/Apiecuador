@@ -154,7 +154,6 @@ label{font-weight:750}
     {offset:28,tarea:"Control temprano de núcleos",detalle:"Comprobar población, alimento, cría y comportamiento."},
     {offset:42,tarea:"Revisión de reina y postura",detalle:"Confirmar presencia de reina, huevos o postura; no darla por fecundada sin evidencia."}
    ];
-   const addDays=(date,n)=>{const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
    stages.forEach((s,i)=>{
     const id="nucleos-"+i,previous=saved.find(t=>t.id===id);
     const fecha=campaign.fechas&&campaign.fechas[i]?campaign.fechas[i]:addDays(campaign.fecha,s.offset);
