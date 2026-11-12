@@ -154,7 +154,8 @@ label{font-weight:750}
 </details>
 <div class="notice"><strong>Registro recomendado para cada tanda:</strong> celdas transferidas → aceptadas → operculadas → celdas distribuidas → reinas nacidas → reinas con postura. Así podrás calcular resultados reales y mejorar cada ciclo. Si tienes dudas sobre la configuración de la criadora, consulta a un apicultor con experiencia en cría de reinas antes de reorganizar cuadros o retirar la reina.</div>
 </section>
-<section class="panel"><h2 id="form-title">Nuevo registro</h2><form id="registro-form"><input id="registro-id" type="hidden"><label for="lote">Número identificador del lote</label><input id="lote" name="lote" type="text" readonly placeholder="Se asigna al guardar"><p class="muted">Cada tanda tendrá su número propio (Lote 001, Lote 002…). El número se conserva aunque edites el registro.</p><label for="fecha">Fecha del traslarve</label><input id="fecha" name="fecha" type="date" required>
+<section class="panel" id="lote-tr120"><h2>🐝 Preparar el primer registro: TR-120</h2><p>Completa automáticamente los datos ya confirmados. Antes de guardar, añade el apiario y la línea genética de la reina madre; no los inventamos.</p><div class="actions"><button class="primary" id="preparar-tr120" type="button">Cargar datos del lote TR-120</button></div></section>
+<section class="panel"><h2 id="form-title">Nuevo registro</h2><form id="registro-form"><input id="registro-id" type="hidden"><label for="lote">Número identificador del lote</label><input id="lote" name="lote" type="text" maxlength="60" placeholder="Ej.: TR-120 o Lote 001"><p class="muted">Cada tanda tendrá su número propio (Lote 001, Lote 002…). El número se conserva aunque edites el registro.</p><label for="fecha">Fecha del traslarve</label><input id="fecha" name="fecha" type="date" required>
 <label for="apiario">Apiario / ubicación</label><input id="apiario" name="apiario" type="text" required>
 <label for="madre">Línea genética / raza de la reina madre</label><input id="madre" name="madre" type="text" required placeholder="Ej.: Buckfast, italiana, local...">
 <label for="madreId">Identificación individual de la reina madre</label><input id="madreId" name="madreId" type="text" placeholder="Ej.: RM-001 o nombre de la reina"><p class="muted">Usa siempre el mismo código para la misma reina madre. Así podremos reunir sus tandas y comparar sus resultados.</p>
@@ -162,6 +163,7 @@ label{font-weight:750}
 <label for="madreOrigen">Origen / procedencia de la reina madre</label><input id="madreOrigen" name="madreOrigen" type="text" placeholder="Ej.: criada en Tanda, comprada, hija de RM-...">
 <label for="madreNotas">Características de la madre</label><textarea id="madreNotas" name="madreNotas" rows="2" placeholder="Docilidad, producción, sanidad, comportamiento y observaciones..."></textarea>
 <label for="iniciadora">Colonia iniciadora o criadora</label><input id="iniciadora" name="iniciadora" type="text">
+<label for="criadorasDetalle">Distribución de cúpulas por criadora</label><textarea id="criadorasDetalle" name="criadorasDetalle" rows="4" placeholder="Ej.: Criadora 1: 20; Criadora 2: 20..."></textarea><p class="muted">Anota cuántas criadoras trabajaron y cuántas cúpulas recibió cada una. Esto permite comparar aceptación por criadora.</p>
 <label for="cantidad">Celdas transferidas</label><input id="cantidad" name="cantidad" type="number" step="1" min="1" required>
 <label for="aceptadas">Celdas aceptadas (revisión)</label><input id="aceptadas" name="aceptadas" type="number" min="0" step="1" placeholder="Completar al revisar"><p class="muted">Anota cuántas fueron aceptadas para calcular el porcentaje de aceptación de la tanda.</p>
 <label for="operculadas">Celdas operculadas</label><input id="operculadas" name="operculadas" type="number" min="0" step="1" placeholder="Completar al revisar">
@@ -179,7 +181,7 @@ label{font-weight:750}
 <script>
 (function(){
  const key="apiecuador-modulo-22-v1";
- const fields=[{"id":"lote","label":"Número de lote"},{"id":"fecha","label":"Fecha del traslarve"},{"id":"apiario","label":"Apiario / ubicación"},{"id":"madre","label":"Línea genética / raza de la reina madre"},{"id":"madreId","label":"Identificación de reina madre"},{"id":"madreEdad","label":"Edad de reina madre"},{"id":"madreOrigen","label":"Origen de reina madre"},{"id":"madreNotas","label":"Características de reina madre"},{"id":"iniciadora","label":"Colonia iniciadora o criadora"},{"id":"cantidad","label":"Celdas transferidas"},{"id":"aceptadas","label":"Celdas aceptadas"},{"id":"operculadas","label":"Celdas operculadas"},{"id":"distribuidas","label":"Celdas distribuidas a núcleos"},{"id":"nacidas","label":"Reinas nacidas"},{"id":"postura","label":"Reinas confirmadas en postura"},{"id":"larvas","label":"Edad aproximada de larvas / método"},{"id":"revision","label":"Fecha estimada de revisión de aceptación"},{"id":"fechaDistribucion","label":"Fecha estimada para sacar/proteger/distribuir celdas"},{"id":"nacimiento","label":"Fecha estimada de nacimiento"},{"id":"avisoDias","label":"Aviso con días de anticipación"},{"id":"fechaPostura","label":"Fecha estimada para revisar postura"},{"id":"resultado","label":"Resultado y observaciones"}];
+ const fields=[{"id":"lote","label":"Número de lote"},{"id":"fecha","label":"Fecha del traslarve"},{"id":"apiario","label":"Apiario / ubicación"},{"id":"madre","label":"Línea genética / raza de la reina madre"},{"id":"madreId","label":"Identificación de reina madre"},{"id":"madreEdad","label":"Edad de reina madre"},{"id":"madreOrigen","label":"Origen de reina madre"},{"id":"madreNotas","label":"Características de reina madre"},{"id":"iniciadora","label":"Colonia iniciadora o criadora"},{"id":"criadorasDetalle","label":"Distribución de cúpulas por criadora"},{"id":"cantidad","label":"Celdas transferidas"},{"id":"aceptadas","label":"Celdas aceptadas"},{"id":"operculadas","label":"Celdas operculadas"},{"id":"distribuidas","label":"Celdas distribuidas a núcleos"},{"id":"nacidas","label":"Reinas nacidas"},{"id":"postura","label":"Reinas confirmadas en postura"},{"id":"larvas","label":"Edad aproximada de larvas / método"},{"id":"revision","label":"Fecha estimada de revisión de aceptación"},{"id":"fechaDistribucion","label":"Fecha estimada para sacar/proteger/distribuir celdas"},{"id":"nacimiento","label":"Fecha estimada de nacimiento"},{"id":"avisoDias","label":"Aviso con días de anticipación"},{"id":"fechaPostura","label":"Fecha estimada para revisar postura"},{"id":"resultado","label":"Resultado y observaciones"}];
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
@@ -249,6 +251,21 @@ label{font-weight:750}
    list.appendChild(card);
   });
  }
+ document.getElementById("preparar-tr120").addEventListener("click",()=>{
+  if(editingId){status.textContent="Termina o cancela la edición actual antes de preparar un lote nuevo.";return;}
+  const set=(id,value)=>{const el=document.getElementById(id);if(el)el.value=value;};
+  set("lote","TR-120");
+  set("fecha","2026-11-11");
+  set("iniciadora","6 criadoras");
+  set("criadorasDetalle","Criadora 1: 20 cúpulas\\nCriadora 2: 20 cúpulas\\nCriadora 3: 20 cúpulas\\nCriadora 4: 20 cúpulas\\nCriadora 5: 20 cúpulas\\nCriadora 6: 20 cúpulas");
+  set("cantidad","120");
+  set("revision","2026-11-15");
+  set("fechaDistribucion","2026-11-20");
+  set("nacimiento","2026-11-21");
+  set("avisoDias","1");
+  status.textContent="Datos conocidos cargados. Completa apiario y línea genética de la madre, revisa las fechas y guarda el lote.";
+  document.getElementById("registro-form").scrollIntoView({behavior:"smooth",block:"start"});
+ });
  form.addEventListener("submit",e=>{
   e.preventDefault();const totalRaw=document.getElementById("cantidad").value;const total=Number(totalRaw);if(!Number.isInteger(total)||total<1){status.textContent="Las celdas transferidas deben ser un número entero mayor que cero.";return;}const prior=(...ids)=>{for(const id of ids){const value=document.getElementById(id).value;if(value!=="")return value;}return "";};const limits=[["aceptadas","Celdas aceptadas",String(total)],["operculadas","Celdas operculadas",prior("aceptadas")],["distribuidas","Celdas distribuidas",prior("operculadas","aceptadas")],["nacidas","Reinas nacidas",prior("distribuidas","operculadas","aceptadas")],["postura","Reinas en postura",prior("nacidas")]];for(const [id,label,limit] of limits){const value=document.getElementById(id).value;if(value!==""&&(!Number.isInteger(Number(value))||Number(value)<0)){status.textContent=label+" debe ser un número entero igual o mayor que cero.";return;}if(value!==""&&(limit===""||limit==null)){status.textContent="Antes de registrar "+label.toLowerCase()+", completa la cantidad de la etapa anterior.";return;}if(value!==""&&Number(value)>Number(limit)){status.textContent=label+" no puede superar la cantidad registrada en la etapa anterior.";return;}}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
