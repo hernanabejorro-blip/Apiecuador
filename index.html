@@ -6,7 +6,7 @@
 <link rel="icon" type="image/svg+xml" href="./icon.svg">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#245c43"><meta name="description" content="Panel de módulos de ApiEcuador para gestión apícola.">
-<link rel="manifest" href="./manifest.json"><link rel="icon" type="image/svg+xml" href="./icon.svg">
+
 <title>ApiEcuador · Gestión apícola</title>
 <style>
 :root{color-scheme:light;--amber:#8d4b00;--cream:#fcf9f2;--green:#1e8642;--ink:#1c1c18}
@@ -405,7 +405,12 @@ footer{color:#536b5b;text-align:center;font-weight:600}
 }
 @media(prefers-reduced-motion:reduce){.centro-accion,.campo-dock a{scroll-behavior:auto}}
 </style>
+<style id="apiecuador-salto-contenido">
+.skip-link{position:absolute;left:12px;top:-80px;z-index:2000;padding:12px 16px;border-radius:10px;background:#f2b632;color:#17271f;font-weight:800;text-decoration:none;box-shadow:0 3px 12px #0004}
+.skip-link:focus{top:12px;outline:3px solid #173f32;outline-offset:3px}
+</style>
 </head><body>
+<a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
 <header><div class="wrap"><div class="brand"><span class="bee">🐝</span><div><h1>ApiEcuador</h1><div>Gestión apícola · Panel de módulos</div></div></div>
 <p>Herramientas de campo para cosecha, floración, sanidad y trashumancia.</p></div></header>
 <section class="portada-hero" aria-label="Bienvenida a ApiEcuador">
@@ -526,7 +531,7 @@ footer{color:#536b5b;text-align:center;font-weight:600}
   <p id="estado-personalizar" role="status" aria-live="polite"></p>
 </section>
 
-  <main class="wrap">
+  <main class="wrap" id="contenido-principal" tabindex="-1">
 <div class="note"><strong>Antes de trabajar:</strong> los módulos de Panel de Apiario y Cuadrilla guardan sus registros en este teléfono y comparten datos de apiarios. Otras herramientas pueden tener funciones distintas. Mantén una copia de seguridad actualizada; la sincronización automática entre teléfonos todavía no está configurada. Para abrir la aplicación publicada necesitas conexión a internet.</div>
 <section aria-label="Orientación de uso" style="margin:8px 0 16px;padding:14px 16px;border:1px solid #dce5d8;border-radius:14px;background:#fff">
 <h2 style="font-size:19px;color:#173f32;margin:0 0 6px">Tu jornada apícola, en un solo lugar</h2>
