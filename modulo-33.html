@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#245c43"><link rel="manifest" href="./manifest.json"><title>Seguimiento productivo · ApiEcuador</title>
+<style>
+:root{color-scheme:light;--g:#245c43;--cream:#fcf9f2;--ink:#1c1c18;--line:#dfe6da}*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:17px system-ui,sans-serif;line-height:1.5}header{background:linear-gradient(125deg,#173f32,#36734c);color:#fff;padding:23px 17px}header .wrap,main{max-width:920px;margin:auto}.back{display:inline-flex;align-items:center;min-height:50px;padding:9px 14px;border:1px solid #ffffff55;border-radius:12px;color:#fff;text-decoration:none;margin-bottom:12px;font-weight:700}h1{font-size:clamp(25px,5vw,35px);line-height:1.2;margin:0 0 7px}header p{margin:0;color:#eaf3e8}main{padding:18px 14px 36px}.notice,.panel,.record{padding:16px;border-radius:16px;margin-bottom:13px}.notice{background:#fff3dc;border:1px solid #e9d2a8}.panel,.record{background:#fff;border:1px solid var(--line);box-shadow:0 4px 14px #173f3208}h2{font-size:21px;color:var(--g);margin:0 0 10px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}label{display:block;font-weight:700;font-size:15px;margin:13px 0 6px}input,select,textarea{width:100%;min-height:54px;padding:12px;border:1px solid #d2dccc;border-radius:11px;background:#fff;color:var(--ink);font:17px system-ui}textarea{min-height:90px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}button,.linkbtn{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:12px 15px;border:0;border-radius:12px;font:750 16px system-ui;text-decoration:none;cursor:pointer}.primary,.linkbtn{background:var(--g);color:#fff}.secondary{background:#f3eee3;color:#594b3b}.danger{background:#fae8e5;color:#8b2f22}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;margin:12px 0}.stat{background:#f4f7f1;border:1px solid var(--line);border-radius:13px;padding:12px}.stat strong{display:block;color:var(--g);font-size:23px}.stat span,.muted{font-size:14px;color:#65584b}.status{min-height:1.4em;color:var(--g);font-size:14px}.record{padding:13px;box-shadow:none}.record h3{margin:0 0 5px;color:var(--g);font-size:17px}.record p{margin:4px 0;font-size:14px}.record .actions button{min-height:44px;font-size:14px}.empty{color:#65584b;font-size:14px}.tip{background:#edf5e9;border:1px solid #cbdcc4;border-radius:12px;padding:12px;font-size:14px}.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}@media(max-width:520px){header{padding:20px 15px}main{padding:14px 11px 28px}.panel,.notice{padding:14px}.actions button,.actions a{flex:1 1 100%}.two{grid-template-columns:1fr}}
+</style></head><body>
+<header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🍯 Seguimiento productivo por apiario</h1><p>Controla la carga de miel, las medias alzas y la evolución de cada apiario.</p></div></header>
+<main>
+<section class="notice"><strong>🌳 Observación de campo · 14/11/2026</strong><p style="margin:6px 0 0">Se informó fuerte entrada de néctar y polen en eucalipto después de las lluvias, con miel líquida visible al sacudir los pañales de cría. Es una observación de actividad, no kilos cosechados ni miel madura confirmada.</p></section>
+<section class="panel"><h2>Registrar revisión productiva</h2><p class="muted">Registra el estado general del apiario en una visita. Los datos se guardan en una clave independiente: no modifica cosechas, inspecciones ni fichas existentes.</p>
+<form id="form"><input id="rid" type="hidden"><div class="grid">
+<div><label for="date">Fecha de revisión *</label><input id="date" type="date" required></div>
+<div><label for="apiary">Apiario *</label><select id="apiary" required><option value="">Selecciona un apiario</option></select><input id="apiary-manual" maxlength="100" placeholder="O escribe el nombre si no aparece"></div>
+<div><label for="hives">Colmenas revisadas *</label><input id="hives" type="number" min="1" max="10000" required inputmode="numeric" placeholder="Ej.: 70"></div>
+<div><label for="supers">Total de medias alzas colocadas</label><input id="supers" type="number" min="0" max="50000" value="0" inputmode="numeric"></div>
+<div><label for="brood">Medias alzas con cría</label><input id="brood" type="number" min="0" max="50000" value="0" inputmode="numeric"></div>
+<div><label for="nectar">Medias alzas con néctar/miel en carga</label><input id="nectar" type="number" min="0" max="50000" value="0" inputmode="numeric"></div>
+<div><label for="capped">Medias alzas con miel mayoritariamente operculada</label><input id="capped" type="number" min="0" max="50000" value="0" inputmode="numeric"></div>
+<div><label for="twoPlus">Colmenas con 2 o más medias alzas</label><input id="twoPlus" type="number" min="0" max="10000" value="0" inputmode="numeric"></div>
+<div><label for="nectarFlow">Entrada de néctar observada</label><select id="nectarFlow"><option value="No evaluada">No evaluada</option><option value="Baja">Baja</option><option value="Media">Media</option><option value="Fuerte">Fuerte</option><option value="Muy fuerte">Muy fuerte</option></select></div>
+<div><label for="pollen">Entrada de polen observada</label><select id="pollen"><option value="No evaluada">No evaluada</option><option value="Baja">Baja</option><option value="Media">Media</option><option value="Fuerte">Fuerte</option><option value="Muy fuerte">Muy fuerte</option></select></div>
+<div><label for="flora">Floración principal</label><input id="flora" maxlength="100" value="Eucalipto" placeholder="Ej.: Eucalipto"></div>
+<div><label for="kg">Kilos cosechados en esta visita (solo si pesaste)</label><input id="kg" type="number" min="0" step="0.01" value="0" inputmode="decimal"></div>
+</div><label for="notes">Observaciones</label><textarea id="notes" maxlength="1200" placeholder="Fuerza general, reservas, postura, clima, evolución..."></textarea>
+<div class="tip" style="margin-top:12px"><strong>Importante:</strong> las medias alzas con cría no se cuentan como miel cosechable. La miel operculada tampoco se declara lista automáticamente: antes de extraer, comprueba madurez y humedad. Los kilos solo se registran si fueron realmente pesados.</div>
+<div class="actions"><button class="primary" type="submit" id="save">Guardar revisión</button><button class="secondary" type="button" id="clear">Limpiar</button><a class="linkbtn" href="./modulo-04.html">Registrar cosecha pesada</a></div><p class="status" id="status" role="status" aria-live="polite"></p></form></section>
+<section class="panel"><h2>Resumen del apiario seleccionado</h2><div class="stats"><div class="stat"><strong id="avgSupers">—</strong><span>Medias alzas por colmena revisada</span></div><div class="stat"><strong id="broodShare">—</strong><span>Medias alzas con cría</span></div><div class="stat"><strong id="loadShare">—</strong><span>Medias alzas en carga</span></div><div class="stat"><strong id="cappedShare">—</strong><span>Medias alzas operculadas</span></div></div><p class="muted" id="summary">Selecciona un apiario para consultar su última revisión.</p></section>
+<section class="panel"><h2>Historial de revisiones productivas</h2><label for="filter">Filtrar por apiario</label><input id="filter" type="search" placeholder="Escribe el nombre del apiario"><div class="actions"><button class="secondary" id="csv" type="button">Descargar CSV</button></div><div id="list"><p class="empty">Todavía no hay revisiones guardadas.</p></div></section>
+<section class="panel"><h2>Producción real anual</h2><p class="muted">Los kilos y el rendimiento anual por apiario se calculan en el módulo de cosechas, usando únicamente registros pesados.</p><a class="linkbtn" href="./modulo-04.html">📊 Abrir producción anual y cosechas</a></section>
+</main>
+<script>
+(function(){
+"use strict";
+const KEY="apiecuador-produccion-apiario-v1",API="apiecuador-apiarios-v1",$=id=>document.getElementById(id);
+const fields=["date","hives","supers","brood","nectar","capped","twoPlus","nectarFlow","pollen","flora","kg","notes"];
+let data=read();
+function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function apiaries(){try{const v=JSON.parse(localStorage.getItem(API)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
+function names(){return [...new Set(apiaries().map(a=>String(a.nombre||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"))}
+function fillApiaries(){const sel=$("apiary"),old=sel.value;sel.innerHTML='<option value="">Selecciona un apiario</option>'+names().map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join("");if(names().includes(old))sel.value=old}
+function apiaryName(){return $("apiary-manual").value.trim()||$("apiary").value.trim()}
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));return true}catch(e){$("status").textContent="No se pudo guardar. Descarga el CSV y comprueba el espacio del teléfono.";return false}}
+function clear(){ $("form").reset();$("rid").value="";$("date").value=today();$("supers").value=$("brood").value=$("nectar").value=$("capped").value=$("twoPlus").value=$("kg").value="0";$("flora").value="Eucalipto";$("save").textContent="Guardar revisión";$("apiary-manual").value="";$("status").textContent=""}
+function render(){
+ const q=$("filter").value.toLowerCase().trim(),rows=data.filter(r=>(r.apiary||"").toLowerCase().includes(q)).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+ $("list").innerHTML="";
+ if(!rows.length){$("list").innerHTML='<p class="empty">Todavía no hay revisiones que coincidan.</p>';}else rows.forEach(r=>{
+ const el=document.createElement("article");el.className="record";
+ const h=document.createElement("h3");h.textContent=r.apiary+" · "+r.date;el.append(h);
+ const p=document.createElement("p");p.textContent=r.hives+" colmenas revisadas · "+r.supers+" medias alzas ("+(Number(r.supers)/Math.max(1,Number(r.hives))).toFixed(2)+" por colmena)";el.append(p);
+ const p2=document.createElement("p");p2.textContent="Cría: "+r.brood+" · En carga: "+r.nectar+" · Operculadas: "+r.capped+" · Con 2+ alzas: "+r.twoPlus;el.append(p2);
+ const p3=document.createElement("p");p3.textContent="Néctar: "+r.nectarFlow+" · Polen: "+r.pollen+" · Floración: "+(r.flora||"No indicada")+" · Cosecha pesada: "+Number(r.kg||0).toFixed(2)+" kg";el.append(p3);
+ if(r.notes){const p4=document.createElement("p");p4.textContent=r.notes;el.append(p4)}
+ const actions=document.createElement("div");actions.className="actions";
+ const edit=document.createElement("button");edit.className="secondary";edit.textContent="Editar";edit.onclick=()=>load(r.id);
+ const del=document.createElement("button");del.className="danger";del.textContent="Eliminar";del.onclick=()=>remove(r.id);
+ actions.append(edit,del);el.append(actions);$("list").append(el);
+ });
+ updateSummary();
+}
+function updateSummary(){
+ const n=apiaryName()||$("apiary").value,rows=data.filter(r=>r.apiary===n).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+ const r=rows[0],fmt=(a,b)=>b>0?(100*a/b).toFixed(0)+"%":"—";
+ $("avgSupers").textContent=r&&r.hives>0?(Number(r.supers)/Number(r.hives)).toFixed(2):"—";
+ $("broodShare").textContent=r?fmt(r.brood,r.supers):"—";
+ $("loadShare").textContent=r?fmt(r.nectar,r.supers):"—";
+ $("cappedShare").textContent=r?fmt(r.capped,r.supers):"—";
+ $("summary").textContent=r?"Última revisión: "+r.date+" · "+r.hives+" colmenas · Néctar: "+r.nectarFlow+" · Polen: "+r.pollen+". Los porcentajes comparan medias alzas registradas, no kilos.":"No hay revisiones guardadas para este apiario.";
+}
+function load(id){const r=data.find(x=>x.id===id);if(!r)return;fields.forEach(f=>$(f).value=r[f]??"");$("rid").value=id;$("apiary").value=names().includes(r.apiary)?r.apiary:"";$("apiary-manual").value=names().includes(r.apiary)?"":r.apiary;$("save").textContent="Guardar cambios";window.scrollTo({top:0,behavior:"smooth"})}
+function remove(id){if(!confirm("¿Eliminar solo esta revisión productiva? No se borrarán cosechas ni inspecciones."))return;data=data.filter(r=>r.id!==id);if(persist())render()}
+$("form").addEventListener("submit",e=>{e.preventDefault();const apiary=apiaryName();if(!apiary){$("status").textContent="Selecciona o escribe el nombre del apiario.";return}
+ const r={id:$("rid").value||"prod-"+Date.now(),apiary,updatedAt:new Date().toISOString()};
+ fields.forEach(f=>r[f]=$(f).value);["hives","supers","brood","nectar","capped","twoPlus","kg"].forEach(f=>r[f]=Number(r[f])||0);
+ if(r.supers<r.brood+r.nectar+r.capped){$("status").textContent="Revisa las cantidades: la suma de alzas con cría, en carga y operculadas supera el total. Si una alza tiene más de un estado, evita contarla dos veces.";return}
+ if(r.twoPlus>r.hives){$("status").textContent="Las colmenas con 2 o más medias alzas no pueden superar las colmenas revisadas.";return}
+ if($("rid").value)data=data.map(x=>x.id===r.id?r:x);else data.push(r);
+ if(persist()){$("status").textContent="Revisión productiva guardada en este teléfono.";clear();render()}
+});
+$("clear").addEventListener("click",clear);$("filter").addEventListener("input",render);$("apiary").addEventListener("change",updateSummary);$("apiary-manual").addEventListener("input",updateSummary);
+$("csv").addEventListener("click",()=>{const cols=["date","apiary","hives","supers","brood","nectar","capped","twoPlus","nectarFlow","pollen","flora","kg","notes"];const csv=[cols.join(";"),...data.map(r=>cols.map(k=>'"'+String(r[k]??"").replace(/"/g,'""')+'"').join(";"))].join("\r\n");const url=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="apiecuador-seguimiento-productivo.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);$("status").textContent="CSV preparado para guardar en Descargas."});
+fillApiaries();$("date").value=today();render();
+})();
+</script></body></html>
