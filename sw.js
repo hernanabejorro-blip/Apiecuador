@@ -1,4 +1,4 @@
-const CACHE_NAME = "apiecuador-v71";
+const CACHE_NAME = "apiecuador-v72";
 
 // Archivos principales para abrir ApiEcuador y sus módulos recientes sin conexión.
 // Las fotografías externas y los enlaces oficiales siguen necesitando Internet.
@@ -45,7 +45,8 @@ const ASSETS = [
   "./modulo-29.html",
   "./modulo-30.html",
   "./modulo-31.html",
-  "./modulo-32.html"
+  "./modulo-32.html",
+  "./modulo-33.html"
 ];
 
 self.addEventListener("install", (event) => {
