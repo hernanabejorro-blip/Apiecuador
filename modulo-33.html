@@ -73,7 +73,6 @@ function remove(id){if(!confirm("¿Eliminar solo esta revisión productiva? No s
 $("form").addEventListener("submit",e=>{e.preventDefault();const apiary=apiaryName();if(!apiary){$("status").textContent="Selecciona o escribe el nombre del apiario.";return}
  const r={id:$("rid").value||"prod-"+Date.now(),apiary,updatedAt:new Date().toISOString()};
  fields.forEach(f=>r[f]=$(f).value);["hives","supers","brood","nectar","capped","twoPlus","kg"].forEach(f=>r[f]=Number(r[f])||0);
- if(r.supers<r.brood+r.nectar+r.capped){$("status").textContent="Revisa las cantidades: la suma de alzas con cría, en carga y operculadas supera el total. Si una alza tiene más de un estado, evita contarla dos veces.";return}
  if(r.twoPlus>r.hives){$("status").textContent="Las colmenas con 2 o más medias alzas no pueden superar las colmenas revisadas.";return}
  if($("rid").value)data=data.map(x=>x.id===r.id?r:x);else data.push(r);
  if(persist()){$("status").textContent="Revisión productiva guardada en este teléfono.";clear();render()}
