@@ -1,10 +1,11 @@
-const CACHE_NAME = "apiecuador-v68";
+const CACHE_NAME = "apiecuador-v69";
 
 // Archivos principales para abrir ApiEcuador y sus módulos recientes sin conexión.
 // Las fotografías externas y los enlaces oficiales siguen necesitando Internet.
 const ASSETS = [
   "./",
   "./index.html",
+  "./asistente-jornada.html",
   "./manifest.json",
   "./icon.svg",
   "./icon-192.png",
