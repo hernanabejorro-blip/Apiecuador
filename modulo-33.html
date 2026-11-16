@@ -19,7 +19,7 @@
 <div><label for="nectarFlow">Entrada de néctar observada</label><select id="nectarFlow"><option value="No evaluada">No evaluada</option><option value="Baja">Baja</option><option value="Media">Media</option><option value="Fuerte">Fuerte</option><option value="Muy fuerte">Muy fuerte</option></select></div>
 <div><label for="pollen">Entrada de polen observada</label><select id="pollen"><option value="No evaluada">No evaluada</option><option value="Baja">Baja</option><option value="Media">Media</option><option value="Fuerte">Fuerte</option><option value="Muy fuerte">Muy fuerte</option></select></div>
 <div><label for="flora">Floración principal</label><input id="flora" maxlength="100" value="Eucalipto" placeholder="Ej.: Eucalipto"></div>
-<div><label for="kg">Kilos cosechados en esta visita (solo si pesaste)</label><input id="kg" type="number" min="0" step="0.01" value="0" inputmode="decimal"></div>
+<div><label for="kg">Kilos cosechados en esta visita (solo si pesaste)</label><input id="kg" type="number" min="0" step="0.01" placeholder="Solo si pesaste" inputmode="decimal"></div>
 </div><label for="notes">Observaciones</label><textarea id="notes" maxlength="1200" placeholder="Fuerza general, reservas, postura, clima, evolución..."></textarea>
 <div class="tip" style="margin-top:12px"><p><strong>Manejo del apiario:</strong> una cámara Langstroth y al menos dos medias alzas, sin excluidor. La reina puede subir a poner; cuando nace esa cría, esos cuadros pueden quedar disponibles para almacenar miel.</p><p><strong>Estados de las medias alzas:</strong> registra las que tienen cría, las que están en carga y las que tienen miel mayoritariamente operculada. Los estados pueden solaparse; sus porcentajes no tienen que sumar 100% y nunca se convierten en kilos.</p><p><strong>Cosecha:</strong> la miel operculada no se declara lista automáticamente: comprueba madurez y humedad. Los kilos solo se registran si fueron pesados. Para el total anual, registra cada cosecha real en el módulo 04; los kilos anotados aquí no alimentan ese tablero.</p></div>
 <div class="actions"><button class="primary" type="submit" id="save">Guardar revisión</button><button class="secondary" type="button" id="clear">Limpiar</button><a class="linkbtn" href="./modulo-04.html">Registrar cosecha pesada</a></div><p class="status" id="status" role="status" aria-live="polite"></p></form></section>
@@ -41,7 +41,7 @@ function fillApiaries(){const sel=$("apiary"),old=sel.value;sel.innerHTML='<opti
 function apiaryName(){return $("apiary-manual").value.trim()||$("apiary").value.trim()}
 function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));return true}catch(e){$("status").textContent="No se pudo guardar. Descarga el CSV y comprueba el espacio del teléfono.";return false}}
-function clear(){ $("form").reset();$("rid").value="";$("date").value=today();$("supers").value=$("brood").value=$("nectar").value=$("capped").value=$("twoPlus").value=$("kg").value="0";$("flora").value="Eucalipto";$("save").textContent="Guardar revisión";$("apiary-manual").value="";$("status").textContent=""}
+function clear(){ $("form").reset();$("rid").value="";$("date").value=today();$("supers").value=$("brood").value=$("nectar").value=$("capped").value=$("twoPlus").value="0";$("kg").value="";$("flora").value="Eucalipto";$("save").textContent="Guardar revisión";$("apiary-manual").value="";$("status").textContent=""}
 function render(){
  const q=$("filter").value.toLowerCase().trim(),rows=data.filter(r=>(r.apiary||"").toLowerCase().includes(q)).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
  $("list").innerHTML="";
@@ -50,7 +50,7 @@ function render(){
  const h=document.createElement("h3");h.textContent=r.apiary+" · "+r.date;el.append(h);
  const p=document.createElement("p");p.textContent=r.hives+" colmenas revisadas · "+r.supers+" medias alzas ("+(Number(r.supers)/Math.max(1,Number(r.hives))).toFixed(2)+" por colmena)";el.append(p);
  const p2=document.createElement("p");p2.textContent="Cría: "+r.brood+" · En carga: "+r.nectar+" · Operculadas: "+r.capped+" · Con 2+ alzas: "+r.twoPlus;el.append(p2);
- const p3=document.createElement("p");p3.textContent="Néctar: "+r.nectarFlow+" · Polen: "+r.pollen+" · Floración: "+(r.flora||"No indicada")+" · Cosecha pesada: "+Number(r.kg||0).toFixed(2)+" kg";el.append(p3);
+ const p3=document.createElement("p");p3.textContent="Néctar: "+r.nectarFlow+" · Polen: "+r.pollen+" · Floración: "+(r.flora||"No indicada")+" · Cosecha pesada: "+(r.kg!==""&&r.kg!=null&&Number(r.kg)>0?Number(r.kg).toFixed(2)+" kg":"No registrada");el.append(p3);
  if(r.notes){const p4=document.createElement("p");p4.textContent=r.notes;el.append(p4)}
  const actions=document.createElement("div");actions.className="actions";
  const edit=document.createElement("button");edit.className="secondary";edit.textContent="Editar";edit.onclick=()=>load(r.id);
@@ -72,7 +72,7 @@ function load(id){const r=data.find(x=>x.id===id);if(!r)return;fields.forEach(f=
 function remove(id){if(!confirm("¿Eliminar solo esta revisión productiva? No se borrarán cosechas ni inspecciones."))return;data=data.filter(r=>r.id!==id);if(persist())render()}
 $("form").addEventListener("submit",e=>{e.preventDefault();const apiary=apiaryName();if(!apiary){$("status").textContent="Selecciona o escribe el nombre del apiario.";return}
  const r={id:$("rid").value||"prod-"+Date.now(),apiary,updatedAt:new Date().toISOString()};
- fields.forEach(f=>r[f]=$(f).value);["hives","supers","brood","nectar","capped","twoPlus","kg"].forEach(f=>r[f]=Number(r[f])||0);
+ fields.forEach(f=>r[f]=$(f).value);["hives","supers","brood","nectar","capped","twoPlus"].forEach(f=>r[f]=Number(r[f])||0);
  if(r.twoPlus>r.hives){$("status").textContent="Las colmenas con 2 o más medias alzas no pueden superar las colmenas revisadas.";return}
  if($("rid").value)data=data.map(x=>x.id===r.id?r:x);else data.push(r);
  if(persist()){$("status").textContent="Revisión productiva guardada en este teléfono.";clear();render()}
