@@ -97,7 +97,7 @@ label{font-weight:750}
 </main>
 <script>
 (function(){
- const keys=["apiecuador-apiarios-v1","apiecuador-alimentacion-campo-v1","apiecuador-floracion-observada-v1","apiecuador-floracion-para-trashumancia-v1","apiecuador-cuadrilla-v1","apiecuador-modulo-03-v1","apiecuador-modulo-04-v1","apiecuador-modulo-05-v1","apiecuador-modulo-06-v1","apiecuador-modulo-09-v1","apiecuador-modulo-11-v1","apiecuador-modulo-12-v1","apiecuador-modulo-21-v1","apiecuador-modulo-22-v1","apiecuador-modulo-23-v1","apiecuador-modulo-24-v1","apiecuador-modulo-25-v1","apiecuador-reinas-v1","apiecuador-floracion-v1","apiecuador-personalizacion-v1"];
+ const keys=["apiecuador-apiarios-v1","apiecuador-alimentacion-campo-v1","apiecuador-floracion-observada-v1","apiecuador-floracion-para-trashumancia-v1","apiecuador-cuadrilla-v1","apiecuador-modulo-03-v1","apiecuador-modulo-04-v1","apiecuador-modulo-05-v1","apiecuador-modulo-06-v1","apiecuador-modulo-09-v1","apiecuador-modulo-11-v1","apiecuador-modulo-12-v1","apiecuador-modulo-21-v1","apiecuador-modulo-22-v1","apiecuador-modulo-23-v1","apiecuador-modulo-24-v1","apiecuador-modulo-25-v1","apiecuador-produccion-apiario-v1","apiecuador-plan-nucleos-v1","apiecuador-reinas-v1","apiecuador-floracion-v1","apiecuador-personalizacion-v1"];
  const status=document.getElementById("estado");
  function inspect(key){const raw=localStorage.getItem(key);if(raw===null)return {exists:false,valid:true,value:null};try{return {exists:true,valid:true,value:JSON.parse(raw)}}catch(e){return {exists:true,valid:false,value:null,raw}}}
  function read(key){const result=inspect(key);return result.valid?result.value:null}
@@ -122,10 +122,18 @@ label{font-weight:750}
   try{
    const backup=JSON.parse(await file.text());
    if(!backup||backup.app!=="ApiEcuador"||backup.formatVersion!==1||!backup.data||typeof backup.data!=="object")throw new Error("formato");if(backup.integrity&&backup.integrity.algorithm==="SHA-256"){if(!(window.crypto&&crypto.subtle))throw new Error("integridad");const bytes=new TextEncoder().encode(JSON.stringify(backup.data));const digest=await crypto.subtle.digest("SHA-256",bytes);const actual=Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");if(actual!==backup.integrity.digest)throw new Error("integridad");}
-   const planned={};let found=0;
+   const planned={};let found=0,skippedExisting=0;
    Array.from(new Set([...keys,...Object.keys(backup.data).filter(k=>k.startsWith("apiecuador-"))])).forEach(k=>{
     if(!Object.prototype.hasOwnProperty.call(backup.data,k))return;
     const incoming=backup.data[k];
+    if(k==="apiecuador-plan-nucleos-v1"){
+     if(incoming&&typeof incoming==="object"&&!Array.isArray(incoming)){
+      const current=read(k);
+      if(current===null){planned[k]=incoming;found++;}
+      else skippedExisting++;
+     }
+     return;
+    }
     if(k==="apiecuador-personalizacion-v1"){
      if(incoming&&typeof incoming==="object"&&!Array.isArray(incoming)){
       const current=read(k);
@@ -155,7 +163,7 @@ label{font-weight:750}
    const before={};Object.keys(planned).forEach(k=>{before[k]=localStorage.getItem(k);});
    try{Object.keys(planned).forEach(k=>localStorage.setItem(k,JSON.stringify(planned[k])));}
    catch(writeError){Object.keys(planned).forEach(k=>{try{if(before[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,before[k]);}catch(ignore){}});throw writeError;}
-   status.textContent="Importación terminada. Los registros se combinaron sin reemplazar los existentes. Abre cada módulo para comprobarlos.";actualizarResumen();
+   status.textContent="Importación terminada. Los registros se combinaron sin reemplazar los existentes."+(skippedExisting?" Se conservó el plan de núcleos actual y no se sobrescribió con el del archivo.":"")+" Abre cada módulo para comprobarlos.";actualizarResumen();
   }catch(e){status.textContent=e&&e.message==="integridad"?"La huella de seguridad no coincide o no se pudo verificar. Importación cancelada; tus datos actuales se conservaron.":"No se pudo importar: el archivo no parece una copia válida de ApiEcuador o no hay espacio suficiente. Tus datos anteriores se conservaron."; }
  });
 document.getElementById("archivo").addEventListener("change",function(){const file=this.files&&this.files[0];const label=document.getElementById("archivo-seleccionado");if(!file){label.textContent="Selecciona una copia para revisar su nombre y tamaño antes de importarla.";return;}label.textContent="Archivo seleccionado: "+file.name+" · "+(file.size/1024).toFixed(1)+" KB. La huella se comprobará antes de combinarlo.";});
