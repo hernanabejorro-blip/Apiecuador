@@ -48,14 +48,14 @@ a{touch-action:manipulation}.back{display:inline-flex;align-items:center;gap:8px
 @media(prefers-reduced-motion:reduce){button:active,.button-link:active{transform:none}}
 </style>
 </head><body><header><div class="wrap"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>📅 Calendario apícola inteligente</h1><p>Próximas tareas, revisiones sanitarias y fechas de reinas.</p></div></header><main>
-<div class="notice"><strong>Cómo funciona:</strong> reúne las fechas que ya guardaste en los módulos de tareas, cría de reinas y tratamientos. No modifica ni borra tus registros. Las fechas son orientativas: confirma siempre el estado real de las colonias y las indicaciones de los productos.</div>
+<div class="notice"><strong>Cómo funciona:</strong> reúne las fechas que ya guardaste en los módulos de tareas, cría de reinas, tratamientos y control sanitario / Varroa. No modifica ni borra tus registros. Las fechas son orientativas: confirma siempre el estado real de las colonias y las indicaciones de los productos.</div>
 <section class="panel"><h2>Agenda de trabajo</h2><p class="meta">Ordenada por fecha, desde la más próxima. Se actualiza al abrir o recargar esta página.</p><div class="toolbar"><button class="primary" id="todos" type="button">Todas las fechas</button><button class="secondary" id="proximos" type="button">Próximos 7 días</button><button class="secondary" id="actualizar" type="button">Actualizar agenda</button></div><div id="agenda" aria-live="polite"><p class="empty">Cargando tus fechas guardadas…</p></div><p class="status" id="estado"></p></section>
 <section class="panel"><h2>¿Quieres añadir una tarea?</h2><p>Para guardar una nueva tarea, abre el módulo de calendario y tareas. La agenda la mostrará cuando vuelvas aquí.</p><a class="linkbtn primary" href="./modulo-23.html">Abrir Calendario y Tareas →</a></section>
 <section class="panel"><h2>🌼 Planificar con la floración</h2><p>Antes de mover colmenas, compara las observaciones de floración de la zona y el año, revisa el acceso y confirma que la floración esté activa en el terreno. El calendario floral registra observaciones; no predice por sí solo la próxima floración.</p><a class="linkbtn primary" href="./modulo-31.html">Abrir Calendario Floral de Ecuador →</a></section>
 <section class="panel"><h2>Consejo de Abejorro 🐝</h2><p>Revisa esta agenda al comenzar la jornada y después de cambios de clima. En cría de reinas, la fecha estimada de nacimiento es una guía: comprueba el desarrollo de las celdas y evita manipulaciones innecesarias.</p><p class="meta">Esta página no envía notificaciones automáticas; para ver cambios, abre o actualiza ApiEcuador.</p></section>
 </main><script>
 (function(){
-const keys={tareas:"apiecuador-modulo-23-v1",reinas:"apiecuador-modulo-22-v1",sanidad:"apiecuador-modulo-24-v1"};
+const keys={tareas:"apiecuador-modulo-23-v1",reinas:"apiecuador-modulo-22-v1",sanidad:"apiecuador-modulo-24-v1",varroa:"apiecuador-modulo-03-v1"};
 const agenda=document.getElementById("agenda"),estado=document.getElementById("estado");let onlyNext=false;
 function localDate(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
 function parseDate(v){if(!v||typeof v!=="string")return null;const m=v.match(/^(\d{4})-(\d{2})-(\d{2})/);if(!m)return null;const d=new Date(+m[1],+m[2]-1,+m[3]);return Number.isNaN(d.getTime())?null:d;}
@@ -67,9 +67,10 @@ function render(){
  // Los hitos de reinas ya se sincronizan como tareas identificadas en el módulo 23.
  // No se vuelven a leer desde el módulo 22 para evitar mostrar dos veces aceptación/nacimiento.
  read(keys.sanidad).forEach(r=>{const d=parseDate(r.revision);if(d)events.push({date:d,title:"Revisión posterior al tratamiento",apiario:r.apiario||"Apiario sin indicar",detail:[r.tipo,r.producto,r.colmenas? r.colmenas+" colmenas":""].filter(Boolean).join(" · "),source:"Alimentación y tratamientos"});});
+ read(keys.varroa).forEach(r=>{const d=parseDate(r.next);if(d)events.push({date:d,title:"Próxima revisión sanitaria / Varroa",apiario:r.apiary||"Apiario sin indicar",detail:[r.method,r.product,r.hives?"Colmenas: "+r.hives:"",r.after?"Control previo: "+r.after:""].filter(Boolean).join(" · "),source:"Control sanitario y Varroa"});});
  events.sort((a,b)=>a.date-b.date);
  const visible=events.filter(e=>!onlyNext||(e.date>=now&&e.date<=limit));
- if(!visible.length){agenda.innerHTML='<p class="empty">'+(events.length?"No hay tareas en los próximos 7 días. Pulsa “Todas las fechas” para ver el resto.":"Todavía no hay fechas en los registros que puede leer esta agenda. Añade tareas o fechas en los módulos 22, 23 y 24.")+'</p>';return;}
+ if(!visible.length){agenda.innerHTML='<p class="empty">'+(events.length?"No hay tareas en los próximos 7 días. Pulsa “Todas las fechas” para ver el resto.":"Todavía no hay fechas en los registros que puede leer esta agenda. Añade tareas o fechas en los módulos 03, 22, 23 y 24.")+'</p>';return;}
  agenda.innerHTML="";
  visible.forEach(e=>{const diff=Math.round((e.date-now)/86400000);const label=diff<0?"Vencida":diff===0?"Hoy":diff===1?"Mañana":"En "+diff+" días";const cls=diff<0?"late":diff===0?"today":"";const div=document.createElement("article");div.className="event";const h=document.createElement("h3");h.textContent=e.title;const badge=document.createElement("span");badge.className="pill "+cls;badge.textContent=label;h.appendChild(badge);const meta=document.createElement("div");meta.className="meta";meta.textContent=fmt(e.date)+" · "+e.apiario+" · "+e.source;div.append(h,meta);if(e.detail){const p=document.createElement("p");p.className="meta";p.textContent=e.detail;div.appendChild(p)}agenda.appendChild(div);});
  estado.textContent="Fechas encontradas: "+events.length+".";
