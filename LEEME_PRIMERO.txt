@@ -6,8 +6,10 @@ archivos PWA y herramientas de respaldo. No es un APK.
 
 ARCHIVOS PRINCIPALES
 - index.html: menú principal y acceso a los módulos.
-- modulo-01.html a modulo-31.html: módulos de gestión apícola.
-- floraciones-ecuador.html, explorador-zonas-meliferas.html,
+- modulo-01.html a modulo-33.html: módulos de gestión apícola.
+- modulo-32.html: planificador de núcleos con mes y año seleccionables.
+- modulo-33.html: seguimiento productivo por apiario; sus registros son locales.
+- asistente-jornada.html, floraciones-ecuador.html, explorador-zonas-meliferas.html,
   atlas-superficies-forestales.html y documentos-trashumancia.html:
   herramientas complementarias.
 - manifest.json: configuración de instalación PWA e iconos.
