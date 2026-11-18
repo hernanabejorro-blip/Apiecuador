@@ -84,7 +84,7 @@ button:active,.button-link:active{transform:scale(.985)}
 <div class="annual-stat"><strong id="annual-apiaries">0</strong><span>Apiarios con cosecha</span></div>
 <div class="annual-stat"><strong id="annual-yield">—</strong><span>Rendimiento medio kg/colmena</span></div>
 </div>
-<p class="muted">El rendimiento se calcula solo cuando registras el número de colmenas productivas del apiario. Se utiliza el último recuento informado de cada apiario en el año; si falta, mostramos los kilos sin estimar el rendimiento.</p>
+<p class="muted">El rendimiento general solo se calcula si todos los apiarios con cosecha tienen un recuento de colmenas productivas en ese año. Se utiliza el último recuento informado de cada apiario. Si falta algún dato, el total de kilos sigue visible, pero el promedio general se marca como incompleto; cada apiario conserva su cálculo individual cuando tiene recuento.</p>
 <h3 style="margin:18px 0 8px">Detalle por apiario</h3>
 <div id="annual-apiary-list"><p class="empty">Todavía no hay cosechas para este año.</p></div>
 </section><section class="panel"><h2>Historial de cosechas</h2><label for="search">Buscar lote o apiario</label><input id="search" type="search" placeholder="Escribe para filtrar"><p class="muted" id="summary"></p><div class="actions"><button class="secondary" id="csv" type="button">Descargar CSV</button></div><div id="list"></div></section></main>
@@ -113,10 +113,11 @@ button:active,.button-link:active{transform:scale(.985)}
   });
   const apiaries=[...groups.entries()].sort((a,b)=>b[1].kg-a[1].kg);
   const activeTotal=apiaries.reduce((n,x)=>n+x[1].active,0);
+  const hasCompleteCounts=apiaries.length>0&&apiaries.every(([,g])=>g.active>0);
   $("annual-kg").textContent=fmt(total)+" kg";
   $("annual-harvests").textContent=String(data.length);
   $("annual-apiaries").textContent=String(apiaries.length);
-  $("annual-yield").textContent=activeTotal>0?fmt(total/activeTotal)+" kg":"—";
+  $("annual-yield").textContent=hasCompleteCounts&&activeTotal>0?fmt(total/activeTotal)+" kg":"Incompleto";
   list.innerHTML="";
   if(!apiaries.length){const p=document.createElement("p");p.className="empty";p.textContent="Todavía no hay cosechas para este año.";list.append(p);return}
   apiaries.forEach(([name,g])=>{
