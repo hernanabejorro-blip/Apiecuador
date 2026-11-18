@@ -158,12 +158,12 @@ label{font-weight:750}
     incoming.forEach(r=>{const sig=r&&r.id!=null?"id:"+r.id:JSON.stringify(r);if(!seen.has(sig)){merged.push(r);seen.add(sig);}});
     planned[k]=merged;found++;
    });
-   if(!found)throw new Error("vacio");
+   if(!found&&!skippedExisting)throw new Error("vacio");
    const unreadable=Object.keys(planned).filter(k=>!inspect(k).valid);if(unreadable.length){status.textContent="Importación detenida para proteger datos actuales que no se pueden leer: "+unreadable.join(", ")+". No se modificó ningún registro.";return;}
    const before={};Object.keys(planned).forEach(k=>{before[k]=localStorage.getItem(k);});
    try{Object.keys(planned).forEach(k=>localStorage.setItem(k,JSON.stringify(planned[k])));}
    catch(writeError){Object.keys(planned).forEach(k=>{try{if(before[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,before[k]);}catch(ignore){}});throw writeError;}
-   status.textContent="Importación terminada. Los registros se combinaron sin reemplazar los existentes."+(skippedExisting?" Se conservó el plan de núcleos actual y no se sobrescribió con el del archivo.":"")+" Abre cada módulo para comprobarlos.";actualizarResumen();
+   status.textContent=found?"Importación terminada. Los registros se combinaron sin reemplazar los existentes."+(skippedExisting?" Se conservó el plan de núcleos actual y no se sobrescribió con el del archivo.":"")+" Abre cada módulo para comprobarlos.":"No había registros nuevos para combinar. Se conservó el plan de núcleos que ya existe en este teléfono.";actualizarResumen();
   }catch(e){status.textContent=e&&e.message==="integridad"?"La huella de seguridad no coincide o no se pudo verificar. Importación cancelada; tus datos actuales se conservaron.":"No se pudo importar: el archivo no parece una copia válida de ApiEcuador o no hay espacio suficiente. Tus datos anteriores se conservaron."; }
  });
 document.getElementById("archivo").addEventListener("change",function(){const file=this.files&&this.files[0];const label=document.getElementById("archivo-seleccionado");if(!file){label.textContent="Selecciona una copia para revisar su nombre y tamaño antes de importarla.";return;}label.textContent="Archivo seleccionado: "+file.name+" · "+(file.size/1024).toFixed(1)+" KB. La huella se comprobará antes de combinarlo.";});
