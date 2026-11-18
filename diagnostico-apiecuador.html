@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#245c43">
+<link rel="manifest" href="./manifest.json">
+<title>Estado de ApiEcuador · Diagnóstico</title>
+<style>
+:root{color-scheme:light;--g:#194b38;--gold:#c58a28;--bg:#fcf8ed;--line:#e8d5a7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#20251f;font:17px system-ui,sans-serif;line-height:1.5}
+header{padding:22px 16px;background:linear-gradient(125deg,#153e30,#39734e);color:#fff}
+main{max-width:900px;margin:auto;padding:18px 13px 36px}
+.back{display:inline-flex;align-items:center;min-height:48px;padding:9px 13px;border:1px solid #ffffff66;border-radius:12px;color:#fff;text-decoration:none;font-weight:700;margin-bottom:12px}
+h1{font-size:clamp(24px,5vw,34px);margin:0 0 5px}header p{margin:0;color:#eaf3e8}
+.panel{background:#fff;border:1px solid var(--line);border-radius:17px;padding:16px;margin-bottom:13px;box-shadow:0 5px 18px #173f3210}
+h2{font-size:20px;color:var(--g);margin:0 0 9px}
+button{min-height:54px;padding:12px 17px;border:0;border-radius:12px;background:var(--g);color:#fff;font:750 16px system-ui;cursor:pointer}
+button:disabled{opacity:.6}.muted{font-size:14px;color:#65584b}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0}
+.stat{border:1px solid var(--line);background:#fffdf7;border-radius:13px;padding:12px}.stat strong{display:block;font-size:25px;color:var(--g)}.stat span{font-size:13px;color:#65584b}
+ul{padding:0;list-style:none;margin:0;display:grid;gap:7px}
+li{display:flex;justify-content:space-between;gap:12px;padding:10px 11px;border-radius:11px;background:#f7f5ed;align-items:center}
+.status{font-size:13px;font-weight:800;white-space:nowrap}.ok{color:#247044}.bad{color:#a52c2c}.wait{color:#88620c}
+.note{padding:12px;border-radius:12px;background:#fff5df;border:1px solid #ead5a8;font-size:14px}
+@media(max-width:520px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}li{align-items:flex-start;font-size:14px}main{padding:14px 11px}}
+</style>
+</head>
+<body>
+<header><div style="max-width:900px;margin:auto"><a class="back" href="./index.html">← Volver a ApiEcuador</a><h1>🛠️ Estado de ApiEcuador</h1><p>Comprobación de archivos y funcionamiento básico, sin modificar tus registros.</p></div></header>
+<main>
+<section class="panel">
+<h2>Diagnóstico de la aplicación</h2>
+<p class="muted">Comprueba que las páginas principales respondan en el sitio publicado. Esta revisión no valida cada operación interna ni sustituye una prueba funcional en el teléfono.</p>
+<button id="run" type="button">Ejecutar comprobación</button>
+<p id="progress" class="muted" role="status" aria-live="polite">Pulsa el botón para comenzar.</p>
+<div class="summary">
+<div class="stat"><strong id="passed">—</strong><span>Archivos disponibles</span></div>
+<div class="stat"><strong id="failed">—</strong><span>Archivos con problema</span></div>
+<div class="stat"><strong id="total">—</strong><span>Comprobaciones</span></div>
+</div>
+<ul id="results"><li>Esperando la comprobación…</li></ul>
+</section>
+<section class="panel">
+<h2>Almacenamiento de este teléfono</h2>
+<p id="storage" class="muted">Consultando disponibilidad…</p>
+<p class="note">Este diagnóstico solo consulta el espacio estimado y la cantidad de claves locales. No lee el contenido de tus registros, no guarda datos de prueba y no borra caché, archivos ni información.</p>
+</section>
+<section class="panel">
+<h2>Service Worker y conexión</h2>
+<ul>
+<li><span>Conexión del navegador</span><strong id="online" class="status wait">Consultando…</strong></li>
+<li><span>Service Worker compatible</span><strong id="sw-support" class="status wait">Consultando…</strong></li>
+<li><span>Service Worker activo</span><strong id="sw-active" class="status wait">Consultando…</strong></li>
+</ul>
+<p class="muted" id="sw-detail"></p>
+</section>
+<section class="panel">
+<h2>Qué hacer si aparece un problema</h2>
+<p class="muted">Primero guarda una copia de seguridad desde el módulo Copias de seguridad. Si un archivo falla, vuelve a ejecutar la comprobación con conexión estable y comparte el nombre del archivo afectado. No borres los datos del sitio ni desinstales la aplicación como método de prueba.</p>
+<a href="./modulo-27.html" style="display:inline-flex;align-items:center;min-height:48px;padding:10px 14px;border-radius:11px;background:#245c43;color:#fff;text-decoration:none;font-weight:750">💾 Abrir copias de seguridad</a>
+</section>
+</main>
+<script>
+(function(){
+"use strict";
+const files=[
+"./","./index.html","./asistente-jornada.html","./manifest.json","./sw.js","./icon.svg","./icon-192.png","./icon-512.png",
+"./documentos-trashumancia.html","./floraciones-ecuador.html","./explorador-zonas-meliferas.html","./atlas-superficies-forestales.html",
+"./modulo-01.html","./modulo-02.html","./modulo-03.html","./modulo-04.html","./modulo-05.html","./modulo-06.html","./modulo-07.html","./modulo-08.html","./modulo-09.html","./modulo-10.html","./modulo-11.html","./modulo-12.html","./modulo-13.html","./modulo-14.html","./modulo-15.html","./modulo-16.html","./modulo-17.html","./modulo-18.html","./modulo-19.html","./modulo-20.html","./modulo-21.html","./modulo-22.html","./modulo-23.html","./modulo-24.html","./modulo-25.html","./modulo-26.html","./modulo-27.html","./modulo-28.html","./modulo-29.html","./modulo-30.html","./modulo-31.html","./modulo-32.html","./modulo-33.html"
+];
+const $=id=>document.getElementById(id);
+function state(id,ok,yes,no){const el=$(id);el.textContent=ok?yes:no;el.className="status "+(ok?"ok":"bad")}
+async function check(){
+ const btn=$("run");btn.disabled=true;$("progress").textContent="Comprobando "+files.length+" archivos…";
+ const results=[];
+ for(let i=0;i<files.length;i++){
+  const path=files[i];
+  try{
+   const response=await fetch(path,{method:"HEAD",cache:"no-store"});
+   results.push({path,ok:response.ok,status:response.status});
+  }catch(error){results.push({path,ok:false,status:"Sin respuesta"});}
+  $("progress").textContent="Revisados "+(i+1)+" de "+files.length+" archivos…";
+ }
+ const good=results.filter(x=>x.ok).length,bad=results.length-good;
+ $("passed").textContent=good;$("failed").textContent=bad;$("total").textContent=results.length;
+ $("results").innerHTML=results.map(x=>'<li><span>'+x.path.replaceAll("&","&amp;").replaceAll("<","&lt;")+'</span><strong class="status '+(x.ok?"ok":"bad")+'">'+(x.ok?"DISPONIBLE":"ERROR "+x.status)+'</strong></li>').join("");
+ $("progress").textContent=bad===0?"Comprobación terminada: todos los archivos respondieron correctamente.":"Comprobación terminada: revisa los archivos marcados con error.";
+ btn.disabled=false;
+}
+$("run").addEventListener("click",check);
+try{
+ $("online").textContent=navigator.onLine?"Con conexión":"Sin conexión";$("online").className="status "+(navigator.onLine?"ok":"bad");
+ const keys=Object.keys(localStorage);$("storage").textContent="Se detectaron "+keys.length+" claves de almacenamiento local en este origen. No se ha leído el contenido de ninguna clave.";
+}catch(e){$("storage").textContent="El navegador no permitió consultar el almacenamiento local."}
+if("storage" in navigator&&navigator.storage.estimate){
+ navigator.storage.estimate().then(x=>{const used=Number(x.usage||0),quota=Number(x.quota||0);$("storage").textContent+=" Espacio estimado utilizado: "+(used/1048576).toFixed(1)+" MB de "+(quota/1048576).toFixed(0)+" MB disponibles según el navegador.";}).catch(()=>{});
+}
+if("serviceWorker" in navigator){
+ state("sw-support",true,"Compatible","No compatible");
+ navigator.serviceWorker.getRegistration("./").then(reg=>{
+  const active=!!(reg&&reg.active);state("sw-active",active, "Activo","Sin registro activo");
+  $("sw-detail").textContent=reg&&reg.active?"El navegador informa un Service Worker activo para esta aplicación.":"No se encontró un Service Worker activo en este momento.";
+ }).catch(()=>{state("sw-active",false,"Activo","No se pudo consultar");});
+}else{state("sw-support",false,"Compatible","No compatible");state("sw-active",false,"Activo","No disponible")}
+})();
+</script>
+</body>
+</html>
