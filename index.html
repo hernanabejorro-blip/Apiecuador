@@ -189,6 +189,20 @@ input,select,textarea{scroll-margin-top:12px}
 @media(max-width:520px){button,input[type="button"],input[type="submit"]{min-height:46px}}
 </style>
 <style id="apiecuador-redisenio-2026">
+/* Historial de colmenas: lectura rápida, táctil y adaptable */
+.centro-historial-cab{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.centro-historial-cab h3{margin:0 0 5px}
+.centro-historial-cab .centro-nota{margin:0;max-width:620px}
+.centro-historial-cab>a,.centro-historial-enlaces a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 13px;border-radius:12px;background:#edf5e9;color:#194b38;text-decoration:none;font-weight:750;border:1px solid #cbdcc4}
+.centro-historial-lista{display:grid;gap:9px;margin-top:13px}
+.centro-inspeccion{padding:13px 14px;border:1px solid #dce5d8;border-radius:13px;background:#fff}
+.centro-inspeccion-cab{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:7px}
+.centro-inspeccion-cab strong{color:#194b38}
+.centro-inspeccion p{margin:4px 0;color:#465348;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+.centro-inspeccion small{color:#6a746b}
+.centro-historial-enlaces{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.centro-historial-enlaces a{font-size:13px}
+@media(max-width:520px){.centro-historial-cab>a,.centro-historial-enlaces a{width:100%}.centro-inspeccion{padding:12px}}
 /* REDISEÑO 2026 · Portada inmersiva y accesible; conserva enlaces, módulos y lógica */
 :root{--forest:#102f27;--forest2:#1c4c3b;--gold:#f2b632;--cream2:#f5f1e7}
 body{background:radial-gradient(ellipse at 85% 4%,#e7eadb 0,transparent 32%),linear-gradient(180deg,#f4f1e7 0%,#fbfaf6 52%,#f1f4ed 100%);color:#17271f}
@@ -366,6 +380,8 @@ footer{color:#536b5b;text-align:center;font-weight:600}
 .centro-sub{margin:6px 0 13px;color:#665a48}
 .centro-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .centro-stat{background:#fff;border:1px solid #e6d4a8;border-radius:16px;padding:13px;box-shadow:0 5px 16px #65480d0c;min-width:0}
+.centro-stat-link{display:block;color:inherit;text-decoration:none;transition:transform .16s ease,border-color .16s ease}
+.centro-stat-link:hover,.centro-stat-link:focus-visible{border-color:#bd8a2e;transform:translateY(-2px)}
 .centro-stat strong{display:block;font-size:clamp(24px,4vw,32px);line-height:1.1;color:#194b38;font-variant-numeric:tabular-nums}
 .centro-stat span{display:block;margin-top:6px;color:#655744;font-size:13px;font-weight:700}
 .centro-stat.urgente strong{color:#a72d2d}
@@ -429,13 +445,24 @@ footer{color:#536b5b;text-align:center;font-weight:600}
   <div class="centro-stat hoy"><strong id="cuenta-hoy">—</strong><span>🟠 Para hoy</span></div>
   <div class="centro-stat manana"><strong id="cuenta-manana">—</strong><span>🟡 Para mañana</span></div>
   <div class="centro-stat"><strong id="cuenta-colmenas">—</strong><span>🐝 Apiarios registrados</span></div>
+  <div class="centro-stat"><strong id="cuenta-colmenas-declaradas">—</strong><span>🏠 Colmenas declaradas en apiarios</span></div>
   <div class="centro-stat"><strong id="cuenta-reinas">—</strong><span>👑 Lotes de reinas activos</span></div>
   <div class="centro-stat"><strong id="cuenta-inspecciones">—</strong><span>🔍 Inspecciones registradas</span></div>
+  <a class="centro-stat centro-stat-link" href="./modulo-04.html" aria-label="Abrir producción de miel"><strong id="cuenta-cosecha-kg">—</strong><span>🍯 Kg cosechados este año</span></a>
+  <a class="centro-stat centro-stat-link" href="./modulo-04.html" aria-label="Abrir registro de cosechas"><strong id="cuenta-cosechas">—</strong><span>🧺 Cosechas registradas este año</span></a>
  </div>
  <div class="centro-panel">
   <h3>📋 Lo próximo que debes atender</h3>
   <div class="centro-tareas" id="centro-lista-tareas"><p class="centro-vacio">Consultando tus tareas guardadas…</p></div>
   <p class="centro-nota" id="centro-nota">El resumen consulta los datos de este teléfono. No cambia ni completa tareas automáticamente.</p>
+ </div>
+ <div class="centro-panel centro-historial-panel">
+  <div class="centro-historial-cab">
+   <div><h3>🐝 Actividad reciente de las colmenas</h3><p class="centro-nota">Últimas inspecciones guardadas en este teléfono. Son observaciones de campo, no diagnósticos automáticos.</p></div>
+   <a href="./modulo-21.html">＋ Nueva inspección</a>
+  </div>
+  <div id="centro-historial-colmenas" class="centro-historial-lista" aria-live="polite"><p class="centro-vacio">Consultando inspecciones…</p></div>
+  <div class="centro-historial-enlaces"><a href="./modulo-21.html">Ver y editar inspecciones →</a><a href="./modulo-30.html">Seguimiento individual de reinas →</a></div>
  </div>
  <div class="centro-panel">
   <h3>⚡ Entrar directo al trabajo</h3>
@@ -444,6 +471,7 @@ footer{color:#536b5b;text-align:center;font-weight:600}
    <a class="centro-accion" href="./modulo-21.html">🔍 Inspeccionar colmenas</a>
    <a class="centro-accion" href="./modulo-22.html">👑 Cría de reinas</a>
    <a class="centro-accion" href="./modulo-23.html">📅 Calendario y tareas</a>
+   <a class="centro-accion" href="./modulo-04.html">🍯 Producción de miel</a>
    <a class="centro-accion" href="./modulo-27.html">💾 Copia de seguridad</a>
    <a class="centro-accion" href="./explorador-zonas-meliferas.html">🌳 Atlas melífero</a>
    <a class="centro-accion" href="./modulo-06.html">🚚 Planificar trashumancia</a>
@@ -737,11 +765,38 @@ buscador.addEventListener("input", function () {
   $("cuenta-hoy").textContent=dueToday.length;
   $("cuenta-manana").textContent=dueTomorrow.length;
   $("cuenta-colmenas").textContent=apiaries.length;
+  // Suma de la cantidad declarada por el usuario en cada ficha de apiario.
+  // No equivale a un inventario inspeccionado ni se modifica ningún registro.
+  const declaredHives=apiaries.reduce((sum,a)=>sum+Math.max(0,Number(String(a&&a.colmenas||"").replace(",","."))||0),0);
+  $("cuenta-colmenas-declaradas").textContent=declaredHives.toLocaleString("es-EC",{maximumFractionDigits:0});
   const lots=arrayRead("apiecuador-modulo-22-v1").filter(r=>r&&!r.cerrado).length;
   const inspections=arrayRead("apiecuador-modulo-21-v1");
   $("cuenta-reinas").textContent=lots;
   $("cuenta-inspecciones").textContent=inspections.length;
-  $("centro-saludo").textContent="Tienes "+lots+" lote(s) de reinas activos, "+inspections.length+" inspección(es) registradas y "+apiaries.length+" apiario(s) guardados en este teléfono.";
+  // Historial breve de colmenas: lectura de inspecciones existentes, sin duplicar ni escribir datos.
+  const historyTarget=$("centro-historial-colmenas");
+  if(historyTarget){
+   const recent=inspections.filter(r=>r&&typeof r==="object").slice().sort((a,b)=>String(b.fecha||"").localeCompare(String(a.fecha||""))).slice(0,5);
+   if(!recent.length){
+    historyTarget.innerHTML='<p class="centro-vacio">Todavía no hay inspecciones guardadas. Cuando registres una revisión, aquí aparecerán la reina, la cría, las reservas y las observaciones sanitarias que hayas anotado.</p>';
+   }else{
+    historyTarget.innerHTML=recent.map(r=>{
+     const identity=[r.apiario||"Apiario sin nombre",r.colmena?"Colmena "+r.colmena:"Código de colmena pendiente"].join(" · ");
+     const observations=[r.reina?"Reina: "+r.reina:"Reina: sin dato",r.cria?"Cría: "+r.cria:"Cría: sin dato",r.reservas?"Reservas: "+r.reservas:"Reservas: sin dato"].join(" · ");
+     const health=r.sanidad?"Sanidad / plagas: "+r.sanidad:"Sanidad / plagas: sin observación anotada";
+     const action=r.accion?"Acción: "+r.accion:"Sin acción u observación adicional";
+     return '<article class="centro-inspeccion"><div class="centro-inspeccion-cab"><strong>'+esc(identity)+'</strong><small>'+formatDate(r.fecha)+'</small></div><p>'+esc(observations)+'</p><p>'+esc(health)+'</p><p>'+esc(action)+'</p></article>';
+    }).join("");
+   }
+  }
+  // Lectura únicamente del registro oficial de cosechas; no modifica ni duplica datos.
+  const harvests=arrayRead("apiecuador-modulo-04-v1");
+  const currentYear=today.slice(0,4);
+  const harvestsThisYear=harvests.filter(r=>r&&String(r.date||"").slice(0,4)===currentYear);
+  const harvestKg=harvestsThisYear.reduce((sum,r)=>sum+(Number(r.kg)||0),0);
+  $("cuenta-cosecha-kg").textContent=harvestKg.toLocaleString("es-EC",{minimumFractionDigits:0,maximumFractionDigits:2})+" kg";
+  $("cuenta-cosechas").textContent=String(harvestsThisYear.length);
+  $("centro-saludo").textContent="Tienes "+lots+" lote(s) de reinas activos, "+inspections.length+" inspección(es) registradas y "+apiaries.length+" apiario(s) guardados en este teléfono. Las colmenas son la suma declarada en las fichas; la producción muestra solo cosechas pesadas registradas.";
   const urgent=pending.slice().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha))).slice(0,6);
   const target=$("centro-lista-tareas");
   if(!urgent.length){
