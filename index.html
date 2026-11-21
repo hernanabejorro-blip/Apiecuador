@@ -431,6 +431,7 @@ footer{color:#536b5b;text-align:center;font-weight:600}
   <div class="centro-stat hoy"><strong id="cuenta-hoy">—</strong><span>🟠 Para hoy</span></div>
   <div class="centro-stat manana"><strong id="cuenta-manana">—</strong><span>🟡 Para mañana</span></div>
   <div class="centro-stat"><strong id="cuenta-colmenas">—</strong><span>🐝 Apiarios registrados</span></div>
+  <div class="centro-stat"><strong id="cuenta-colmenas-declaradas">—</strong><span>🏠 Colmenas declaradas en apiarios</span></div>
   <div class="centro-stat"><strong id="cuenta-reinas">—</strong><span>👑 Lotes de reinas activos</span></div>
   <div class="centro-stat"><strong id="cuenta-inspecciones">—</strong><span>🔍 Inspecciones registradas</span></div>
   <a class="centro-stat centro-stat-link" href="./modulo-04.html" aria-label="Abrir producción de miel"><strong id="cuenta-cosecha-kg">—</strong><span>🍯 Kg cosechados este año</span></a>
@@ -742,6 +743,10 @@ buscador.addEventListener("input", function () {
   $("cuenta-hoy").textContent=dueToday.length;
   $("cuenta-manana").textContent=dueTomorrow.length;
   $("cuenta-colmenas").textContent=apiaries.length;
+  // Suma de la cantidad declarada por el usuario en cada ficha de apiario.
+  // No equivale a un inventario inspeccionado ni se modifica ningún registro.
+  const declaredHives=apiaries.reduce((sum,a)=>sum+Math.max(0,Number(String(a&&a.colmenas||"").replace(",","."))||0),0);
+  $("cuenta-colmenas-declaradas").textContent=declaredHives.toLocaleString("es-EC",{maximumFractionDigits:0});
   const lots=arrayRead("apiecuador-modulo-22-v1").filter(r=>r&&!r.cerrado).length;
   const inspections=arrayRead("apiecuador-modulo-21-v1");
   $("cuenta-reinas").textContent=lots;
@@ -753,7 +758,7 @@ buscador.addEventListener("input", function () {
   const harvestKg=harvestsThisYear.reduce((sum,r)=>sum+(Number(r.kg)||0),0);
   $("cuenta-cosecha-kg").textContent=harvestKg.toLocaleString("es-EC",{minimumFractionDigits:0,maximumFractionDigits:2})+" kg";
   $("cuenta-cosechas").textContent=String(harvestsThisYear.length);
-  $("centro-saludo").textContent="Tienes "+lots+" lote(s) de reinas activos, "+inspections.length+" inspección(es) registradas y "+apiaries.length+" apiario(s) guardados en este teléfono. La producción muestra solo cosechas pesadas registradas.";
+  $("centro-saludo").textContent="Tienes "+lots+" lote(s) de reinas activos, "+inspections.length+" inspección(es) registradas y "+apiaries.length+" apiario(s) guardados en este teléfono. Las colmenas son la suma declarada en las fichas; la producción muestra solo cosechas pesadas registradas.";
   const urgent=pending.slice().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha))).slice(0,6);
   const target=$("centro-lista-tareas");
   if(!urgent.length){
