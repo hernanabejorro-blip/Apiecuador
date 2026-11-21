@@ -195,6 +195,13 @@ input,select,textarea{scroll-margin-top:12px}
 .centro-historial-cab .centro-nota{margin:0;max-width:620px}
 .centro-historial-cab>a,.centro-historial-enlaces a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 13px;border-radius:12px;background:#edf5e9;color:#194b38;text-decoration:none;font-weight:750;border:1px solid #cbdcc4}
 .centro-historial-lista{display:grid;gap:9px;margin-top:13px}
+.centro-produccion-lista{display:grid;gap:9px;margin-top:13px}
+.centro-produccion-fila{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border:1px solid #dce5d8;border-radius:13px;background:#fff;text-decoration:none}
+.centro-produccion-fila strong{display:block;color:#194b38;font-size:16px;overflow-wrap:anywhere}
+.centro-produccion-fila span{display:block;color:#655744;font-size:13px;margin-top:3px}
+.centro-produccion-kg{font-size:20px!important;font-weight:850;color:#194b38!important;white-space:nowrap;font-variant-numeric:tabular-nums}
+@media(max-width:520px){.centro-produccion-fila{align-items:flex-start;padding:12px;gap:8px}.centro-produccion-kg{font-size:18px!important}}
+
 .centro-inspeccion{padding:13px 14px;border:1px solid #dce5d8;border-radius:13px;background:#fff}
 .centro-inspeccion-cab{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:7px}
 .centro-inspeccion-cab strong{color:#194b38}
@@ -451,6 +458,13 @@ footer{color:#536b5b;text-align:center;font-weight:600}
   <a class="centro-stat centro-stat-link" href="./modulo-04.html#historial" aria-label="Abrir historial de cosechas"><strong id="cuenta-cosecha-kg">—</strong><span>🍯 Kg cosechados este año</span></a>
   <a class="centro-stat centro-stat-link" href="./modulo-04.html#historial" aria-label="Abrir historial de cosechas"><strong id="cuenta-cosechas">—</strong><span>🧺 Cosechas registradas este año</span></a>
  </div>
+ <section class="centro-panel centro-produccion" aria-labelledby="centro-produccion-titulo">
+  <div class="centro-historial-cab">
+   <div><h3 id="centro-produccion-titulo">🍯 Producción por apiario · año actual</h3><p class="centro-nota">Solo cosechas extraídas y pesadas que están registradas. El rendimiento por colmena aparece únicamente cuando anotaste el número de colmenas productivas.</p></div>
+   <a href="./modulo-04.html">Ver producción completa →</a>
+  </div>
+  <div id="centro-produccion-apiarios" class="centro-produccion-lista" aria-live="polite"><p class="centro-vacio">Consultando cosechas registradas…</p></div>
+ </section>
  <div class="centro-panel">
   <h3>📋 Lo próximo que debes atender</h3>
   <div class="centro-tareas" id="centro-lista-tareas"><p class="centro-vacio">Consultando tus tareas guardadas…</p></div>
@@ -775,6 +789,27 @@ buscador.addEventListener("input", function () {
   const harvestKg=harvestsThisYear.reduce((sum,r)=>sum+(Number(r.kg)||0),0);
   $("cuenta-cosecha-kg").textContent=harvestKg.toLocaleString("es-EC",{minimumFractionDigits:0,maximumFractionDigits:2})+" kg";
   $("cuenta-cosechas").textContent=String(harvestsThisYear.length);
+   // Resumen productivo por apiario: misma regla del módulo de cosechas.
+   // No suma estimaciones ni usa colmenas declaradas como denominador.
+   const productionTarget=$("centro-produccion-apiarios");
+   if(productionTarget){
+    const groups=new Map();
+    harvestsThisYear.forEach(r=>{
+     const name=String(r.apiary||"Sin nombre").trim()||"Sin nombre";
+     if(!groups.has(name))groups.set(name,{kg:0,count:0,lastDate:"",active:0});
+     const g=groups.get(name);g.kg+=Number(r.kg)||0;g.count++;
+     if(Number(r.activeHives)>0&&String(r.date||"")>=g.lastDate){g.lastDate=String(r.date||"");g.active=Number(r.activeHives);}
+    });
+    const ranked=[...groups.entries()].sort((a,b)=>b[1].kg-a[1].kg);
+    if(!ranked.length){
+     productionTarget.innerHTML='<p class="centro-vacio">Todavía no hay cosechas pesadas registradas este año. Cuando registres una extracción real, aparecerá aquí.</p>';
+    }else{
+     productionTarget.innerHTML=ranked.slice(0,5).map(([name,g])=>{
+      const yieldText=g.active>0?(g.kg/g.active).toLocaleString("es-EC",{minimumFractionDigits:2,maximumFractionDigits:2})+" kg/colmena · "+g.active+" productivas al último recuento":"Rendimiento por colmena pendiente";
+      return '<a class="centro-produccion-fila" href="./modulo-04.html#historial" aria-label="Ver cosechas de '+esc(name)+'"><span><strong>'+esc(name)+'</strong><span>'+g.count+' cosecha(s) · '+esc(yieldText)+'</span></span><strong class="centro-produccion-kg">'+g.kg.toLocaleString("es-EC",{minimumFractionDigits:0,maximumFractionDigits:2})+' kg</strong></a>';
+     }).join("")+(ranked.length>5?'<p class="centro-nota">Se muestran los 5 apiarios con más kilos registrados. Abre Producción de miel para consultar el detalle completo.</p>':"");
+    }
+   }
   $("centro-saludo").textContent="Tienes "+lots+" lote(s) de reinas activos, "+inspections.length+" inspección(es) registradas y "+apiaries.length+" apiario(s) guardados en este teléfono. Las colmenas son la suma declarada en las fichas; la producción muestra solo cosechas pesadas registradas.";
   const urgent=pending.slice().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha))).slice(0,6);
   const target=$("centro-lista-tareas");
