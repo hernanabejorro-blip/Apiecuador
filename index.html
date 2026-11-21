@@ -366,6 +366,8 @@ footer{color:#536b5b;text-align:center;font-weight:600}
 .centro-sub{margin:6px 0 13px;color:#665a48}
 .centro-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .centro-stat{background:#fff;border:1px solid #e6d4a8;border-radius:16px;padding:13px;box-shadow:0 5px 16px #65480d0c;min-width:0}
+.centro-stat-link{display:block;color:inherit;text-decoration:none;transition:transform .16s ease,border-color .16s ease}
+.centro-stat-link:hover,.centro-stat-link:focus-visible{border-color:#bd8a2e;transform:translateY(-2px)}
 .centro-stat strong{display:block;font-size:clamp(24px,4vw,32px);line-height:1.1;color:#194b38;font-variant-numeric:tabular-nums}
 .centro-stat span{display:block;margin-top:6px;color:#655744;font-size:13px;font-weight:700}
 .centro-stat.urgente strong{color:#a72d2d}
@@ -431,6 +433,8 @@ footer{color:#536b5b;text-align:center;font-weight:600}
   <div class="centro-stat"><strong id="cuenta-colmenas">—</strong><span>🐝 Apiarios registrados</span></div>
   <div class="centro-stat"><strong id="cuenta-reinas">—</strong><span>👑 Lotes de reinas activos</span></div>
   <div class="centro-stat"><strong id="cuenta-inspecciones">—</strong><span>🔍 Inspecciones registradas</span></div>
+  <a class="centro-stat centro-stat-link" href="./modulo-04.html" aria-label="Abrir producción de miel"><strong id="cuenta-cosecha-kg">—</strong><span>🍯 Kg cosechados este año</span></a>
+  <a class="centro-stat centro-stat-link" href="./modulo-04.html" aria-label="Abrir registro de cosechas"><strong id="cuenta-cosechas">—</strong><span>🧺 Cosechas registradas este año</span></a>
  </div>
  <div class="centro-panel">
   <h3>📋 Lo próximo que debes atender</h3>
@@ -444,6 +448,7 @@ footer{color:#536b5b;text-align:center;font-weight:600}
    <a class="centro-accion" href="./modulo-21.html">🔍 Inspeccionar colmenas</a>
    <a class="centro-accion" href="./modulo-22.html">👑 Cría de reinas</a>
    <a class="centro-accion" href="./modulo-23.html">📅 Calendario y tareas</a>
+   <a class="centro-accion" href="./modulo-04.html">🍯 Producción de miel</a>
    <a class="centro-accion" href="./modulo-27.html">💾 Copia de seguridad</a>
    <a class="centro-accion" href="./explorador-zonas-meliferas.html">🌳 Atlas melífero</a>
    <a class="centro-accion" href="./modulo-06.html">🚚 Planificar trashumancia</a>
@@ -741,7 +746,14 @@ buscador.addEventListener("input", function () {
   const inspections=arrayRead("apiecuador-modulo-21-v1");
   $("cuenta-reinas").textContent=lots;
   $("cuenta-inspecciones").textContent=inspections.length;
-  $("centro-saludo").textContent="Tienes "+lots+" lote(s) de reinas activos, "+inspections.length+" inspección(es) registradas y "+apiaries.length+" apiario(s) guardados en este teléfono.";
+  // Lectura únicamente del registro oficial de cosechas; no modifica ni duplica datos.
+  const harvests=arrayRead("apiecuador-modulo-04-v1");
+  const currentYear=today.slice(0,4);
+  const harvestsThisYear=harvests.filter(r=>r&&String(r.date||"").slice(0,4)===currentYear);
+  const harvestKg=harvestsThisYear.reduce((sum,r)=>sum+(Number(r.kg)||0),0);
+  $("cuenta-cosecha-kg").textContent=harvestKg.toLocaleString("es-EC",{minimumFractionDigits:0,maximumFractionDigits:2})+" kg";
+  $("cuenta-cosechas").textContent=String(harvestsThisYear.length);
+  $("centro-saludo").textContent="Tienes "+lots+" lote(s) de reinas activos, "+inspections.length+" inspección(es) registradas y "+apiaries.length+" apiario(s) guardados en este teléfono. La producción muestra solo cosechas pesadas registradas.";
   const urgent=pending.slice().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha))).slice(0,6);
   const target=$("centro-lista-tareas");
   if(!urgent.length){
