@@ -511,5 +511,20 @@ if(!rows.length){
 root.innerHTML=rows.slice(0,30).map(r=>'<article class="record"><h3>🌼 '+esc(r.plant)+' <span class="tag">'+esc(r.source)+'</span></h3><p><strong>Zona:</strong> '+esc(r.place||"No indicada")+(r.altitude?' · '+esc(r.altitude)+' m':'')+'</p><p><strong>Fechas:</strong> '+esc(r.start||"sin inicio")+(r.end?' a '+esc(r.end):'')+' · <strong>Año:</strong> '+esc(r.year||"no indicado")+'</p><p><strong>Tipo / evidencia:</strong> '+esc(r.type)+' · <strong>Recurso:</strong> '+esc(r.resource||"no indicado")+(r.activity?' · <strong>Actividad:</strong> '+esc(r.activity):"")+'</p>'+(r.notes?'<p><strong>Fuente / notas:</strong> '+esc(r.notes)+'</p>':'')+'</article>').join("")+(rows.length>30?'<p class="muted">Se muestran los 30 registros más recientes. Los demás siguen guardados en sus herramientas originales.</p>':'');
 })();
 </script>
+<script id="apiecuador-etiquetas-floracion-v1">
+(function(){
+ const type=document.getElementById("recordType");
+ const start=document.querySelector('label[for="start"]');
+ const end=document.querySelector('label[for="end"]');
+ if(!type||!start||!end)return;
+ function updateLabels(){
+  const estimate=type.value==="estimate";
+  start.textContent=estimate?"Inicio previsto *":"Inicio observado *";
+  end.textContent=estimate?"Fin previsto (opcional)":"Fin observado (opcional)";
+ }
+ type.addEventListener("change",updateLabels);
+ updateLabels();
+})();
+</script>
 </body>
 </html>
