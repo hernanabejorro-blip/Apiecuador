@@ -184,10 +184,10 @@ label{font-weight:750}
  const form=document.getElementById("registro-form");
  const list=document.getElementById("registros");
  const status=document.getElementById("estado");
- let rows=[];let editingId=null;try{rows=JSON.parse(localStorage.getItem(key)||"[]");if(!Array.isArray(rows))rows=[];}catch(e){rows=[]}
+ let rows=[];let editingId=null;let storageReadError=false;try{const raw=localStorage.getItem(key);if(raw!==null){const parsed=JSON.parse(raw);if(!Array.isArray(parsed))throw new Error("Formato de lotes no válido");rows=parsed;}}catch(e){storageReadError=true;rows=[];}window.__apiecuadorQueenStorageReadError=storageReadError;
  function lotNumber(n){return "Lote "+String(n).padStart(3,"0")}
  function nextLotNumber(){let max=0;rows.forEach(r=>{const m=String(r.lote||"").match(/Lote\s+(\d+)/i);if(m)max=Math.max(max,Number(m[1]));});return lotNumber(max+1)}
- rows.forEach((r,i)=>{if(!r.lote)r.lote=lotNumber(i+1);});try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
+ if(!storageReadError){rows.forEach((r,i)=>{if(!r.lote)r.lote=lotNumber(i+1);});try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}}
  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
  function firstRecorded(...values){return values.find(v=>v!==""&&v!=null);}
  function renderMotherHistory(){
@@ -234,6 +234,7 @@ label{font-weight:750}
   }).join("");
  }
  function render(){
+  if(storageReadError){list.innerHTML='<p class="empty" role="alert">No se pudieron leer los lotes guardados. Guardado, edición, eliminación, importación y sincronización bloqueados para proteger tus datos. Conserva el almacenamiento y recupera una copia antes de continuar.</p>';status.textContent="Protección activa: no se modificaron los lotes existentes.";return;}
   renderMotherHistory();list.innerHTML="";
   if(!rows.length){list.innerHTML='<p class="empty">Todavía no hay registros. Completa el formulario para comenzar.</p>';return;}
   rows.slice().reverse().sort((a,b)=>Number(!!a.cerrado)-Number(!!b.cerrado)).forEach(row=>{
@@ -264,7 +265,7 @@ label{font-weight:750}
   });
  }
  form.addEventListener("submit",e=>{
-  e.preventDefault();const totalRaw=document.getElementById("cantidad").value;const total=Number(totalRaw);if(!Number.isInteger(total)||total<1){status.textContent="Las celdas transferidas deben ser un número entero mayor que cero.";return;}const prior=(...ids)=>{for(const id of ids){const value=document.getElementById(id).value;if(value!=="")return value;}return "";};const limits=[["aceptadas","Celdas aceptadas",String(total)],["operculadas","Celdas operculadas",prior("aceptadas")],["distribuidas","Celdas distribuidas",prior("operculadas","aceptadas")],["nacidas","Reinas nacidas",prior("distribuidas","operculadas","aceptadas")],["postura","Reinas en postura",prior("nacidas")]];for(const [id,label,limit] of limits){const value=document.getElementById(id).value;if(value!==""&&(!Number.isInteger(Number(value))||Number(value)<0)){status.textContent=label+" debe ser un número entero igual o mayor que cero.";return;}if(value!==""&&(limit===""||limit==null)){status.textContent="Antes de registrar "+label.toLowerCase()+", completa la cantidad de la etapa anterior.";return;}if(value!==""&&Number(value)>Number(limit)){status.textContent=label+" no puede superar la cantidad registrada en la etapa anterior.";return;}}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
+  e.preventDefault();if(storageReadError){status.textContent="Guardado bloqueado: no se pudieron leer los lotes existentes. Recupera una copia antes de continuar.";return;}const totalRaw=document.getElementById("cantidad").value;const total=Number(totalRaw);if(!Number.isInteger(total)||total<1){status.textContent="Las celdas transferidas deben ser un número entero mayor que cero.";return;}const prior=(...ids)=>{for(const id of ids){const value=document.getElementById(id).value;if(value!=="")return value;}return "";};const limits=[["aceptadas","Celdas aceptadas",String(total)],["operculadas","Celdas operculadas",prior("aceptadas")],["distribuidas","Celdas distribuidas",prior("operculadas","aceptadas")],["nacidas","Reinas nacidas",prior("distribuidas","operculadas","aceptadas")],["postura","Reinas en postura",prior("nacidas")]];for(const [id,label,limit] of limits){const value=document.getElementById(id).value;if(value!==""&&(!Number.isInteger(Number(value))||Number(value)<0)){status.textContent=label+" debe ser un número entero igual o mayor que cero.";return;}if(value!==""&&(limit===""||limit==null)){status.textContent="Antes de registrar "+label.toLowerCase()+", completa la cantidad de la etapa anterior.";return;}if(value!==""&&Number(value)>Number(limit)){status.textContent=label+" no puede superar la cantidad registrada en la etapa anterior.";return;}}const row={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
   fields.forEach(f=>{row[f.id]=String(new FormData(form).get(f.id)||"").trim();});
   if(editingId){row.id=editingId;const previous=rows.find(r=>r.id===editingId);if(previous&&previous.cerrado)row.cerrado=true;rows=rows.map(r=>r.id===editingId?row:r);}else{row.cerrado=false;rows.push(row);}
   try{localStorage.setItem(key,JSON.stringify(rows));const synced=sincronizarTareasCalendario();form.reset();document.getElementById("lote").value=nextLotNumber();editingId=null;document.getElementById("registro-id").value="";document.getElementById("form-title").textContent="Nuevo registro";document.getElementById("guardar").textContent="Guardar registro";document.getElementById("cancelar-edicion").hidden=true;render();status.textContent=synced>=0?"Registro guardado. "+synced+" revisiones sincronizadas con Calendario Apícola; abre o actualiza ese módulo para verlas.":"Registro guardado, pero no se pudo sincronizar el calendario en este navegador.";}
@@ -280,8 +281,9 @@ label{font-weight:750}
   if(r.nacimiento===datePlus(r.fecha,11))r.nacimiento=datePlus(r.fecha,10);
   if(r.fechaPostura===datePlus(r.fecha,25))r.fechaPostura=datePlus(r.fecha,24);
  });
- try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
+ if(!storageReadError)try{localStorage.setItem(key,JSON.stringify(rows));}catch(e){}
  function sincronizarTareasCalendario(){
+  if(storageReadError)return -1;
   const calendarKey="apiecuador-modulo-23-v1";
   let tasks=[];try{tasks=JSON.parse(localStorage.getItem(calendarKey)||"[]");if(!Array.isArray(tasks))tasks=[];}catch(e){tasks=[];}
   const generated=[];
@@ -335,7 +337,7 @@ label{font-weight:750}
   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
   status.textContent="Calendario preparado con "+tareas.length+" tareas y avisos "+(diasAviso===0?"el mismo día":diasAviso+" día(s) antes")+". Importa el archivo en el calendario del teléfono y comprueba que las notificaciones estén activadas.";
  }
- list.addEventListener("click",e=>{const archive=e.target.closest("[data-archive]");if(archive){const row=rows.find(r=>r.id===archive.dataset.archive);if(!row)return;const closing=!row.cerrado;if(closing&&!confirm("Cerrar y archivar "+(row.lote||"este lote")+"? El registro no se borrará y los avisos de Google Calendar permanecerán intactos."))return;row.cerrado=closing;try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent=closing?(row.lote||"El lote")+" quedó cerrado y archivado. Sus datos y avisos se conservaron.":"Se reabrió "+(row.lote||"el lote")+". Sus datos y avisos se conservaron.";}catch(err){status.textContent="No se pudo guardar el estado del lote.";}return;}const reminder=e.target.closest("[data-reminder]");if(reminder){const row=rows.find(r=>r.id===reminder.dataset.reminder);if(row)crearCalendario(row);return;} 
+ list.addEventListener("click",e=>{if(storageReadError){status.textContent="Edición y eliminación bloqueadas para proteger los lotes existentes.";return;}const archive=e.target.closest("[data-archive]");if(archive){const row=rows.find(r=>r.id===archive.dataset.archive);if(!row)return;const closing=!row.cerrado;if(closing&&!confirm("Cerrar y archivar "+(row.lote||"este lote")+"? El registro no se borrará y los avisos de Google Calendar permanecerán intactos."))return;row.cerrado=closing;try{localStorage.setItem(key,JSON.stringify(rows));render();status.textContent=closing?(row.lote||"El lote")+" quedó cerrado y archivado. Sus datos y avisos se conservaron.":"Se reabrió "+(row.lote||"el lote")+". Sus datos y avisos se conservaron.";}catch(err){status.textContent="No se pudo guardar el estado del lote.";}return;}const reminder=e.target.closest("[data-reminder]");if(reminder){const row=rows.find(r=>r.id===reminder.dataset.reminder);if(row)crearCalendario(row);return;} 
   const edit=e.target.closest("[data-edit]");
   if(edit){const row=rows.find(r=>r.id===edit.dataset.edit);if(!row)return;fields.forEach(f=>{form.elements[f.id].value=row[f.id]||"";});document.getElementById("lote").value=row.lote||"Lote";editingId=row.id;document.getElementById("registro-id").value=row.id;document.getElementById("form-title").textContent="Editar registro de cría de reinas";document.getElementById("guardar").textContent="Guardar cambios";document.getElementById("cancelar-edicion").hidden=false;status.textContent="Edita los datos y pulsa Guardar cambios.";window.scrollTo({top:0,behavior:"smooth"});return;}
   const b=e.target.closest("[data-delete]");if(!b)return;
@@ -359,6 +361,7 @@ label{font-weight:750}
  document.getElementById("cancelar-edicion").addEventListener("click",cancelEdit);
  document.getElementById("limpiar").addEventListener("click",()=>{if(editingId){cancelEdit();return;}form.reset();status.textContent="Formulario limpio.";});
  document.getElementById("exportar").addEventListener("click",()=>{
+  if(storageReadError){status.textContent="Exportación bloqueada: no se pudieron leer los lotes guardados. Recupera una copia antes de continuar.";return;}
   const cell=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
   const csv=[fields.map(f=>cell(f.label)).join(","),...rows.map(r=>fields.map(f=>cell(r[f.id])).join(","))].join("\r\n");
   const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
@@ -368,6 +371,7 @@ label{font-weight:750}
   status.textContent="Respaldo CSV preparado. Guárdalo en un lugar seguro.";
  });
  document.getElementById("exportar-json").addEventListener("click",()=>{
+  if(storageReadError){status.textContent="Exportación bloqueada: no se pudieron leer los lotes guardados. Recupera una copia antes de continuar.";return;}
   const payload={app:"ApiEcuador",modulo:"cria-reinas-traslarve",version:1,exportado:new Date().toISOString(),registros:rows};
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
   const url=URL.createObjectURL(blob),a=document.createElement("a");
@@ -378,6 +382,7 @@ label{font-weight:750}
  const fileInput=document.getElementById("archivo-json");
  document.getElementById("importar-json").addEventListener("click",()=>fileInput.click());
  fileInput.addEventListener("change",async()=>{
+  if(storageReadError){status.textContent="Importación bloqueada: primero recupera una copia segura del almacenamiento actual.";fileInput.value="";return;}
   const file=fileInput.files&&fileInput.files[0];if(!file)return;
   try{
    const parsed=JSON.parse(await file.text());
@@ -551,6 +556,7 @@ const pendingCalendarKey = "apiecuador-calendar-pending-action-v1";
 // En Android/PWA el navegador puede cerrar el popup al volver de Google.
 // El flujo redirect devuelve el permiso a esta misma página sin depender de una ventana emergente.
 calendarPersistenceReady.then(() => getRedirectResult(calendarAuth)).then(async function(result) {
+  if(window.__apiecuadorQueenStorageReadError){calendarStatus.textContent="No se programaron avisos porque no se pudieron leer los lotes guardados. Recupera primero una copia.";return;}
   const pendingRaw = localStorage.getItem(pendingCalendarKey);
   if (!pendingRaw) return;
   let pending;
@@ -576,6 +582,7 @@ calendarPersistenceReady.then(() => getRedirectResult(calendarAuth)).then(async 
     calendarButton.disabled = false;
   }
 }).catch(function(error) {
+  if(window.__apiecuadorQueenStorageReadError){calendarStatus.textContent="No se modificaron los avisos: primero recupera los lotes guardados.";return;}
   const pendingRaw = localStorage.getItem(pendingCalendarKey);
   if (!pendingRaw) return;
   localStorage.removeItem(pendingCalendarKey);
@@ -583,6 +590,7 @@ calendarPersistenceReady.then(() => getRedirectResult(calendarAuth)).then(async 
   calendarButton.disabled = false;
 });
 calendarButton.addEventListener("click", async () => {
+  if(window.__apiecuadorQueenStorageReadError){calendarStatus.textContent="Programación bloqueada: no se pudieron leer los lotes guardados. Recupera una copia antes de continuar.";return;}
   const original = calendarButton.textContent;
   calendarButton.disabled = true;
   calendarStatus.textContent = "Preparando autorización segura de Google…";
@@ -638,6 +646,7 @@ calendarButton.addEventListener("click", async () => {
   }
 });
   document.getElementById("registros").addEventListener("click", async function(event) {
+  if(window.__apiecuadorQueenStorageReadError){calendarStatus.textContent="Eliminación de avisos bloqueada para proteger los lotes guardados.";return;}
   const button = event.target.closest("[data-delete-google]"); if (!button) return;
   const rowId = button.dataset.deleteGoogle; let savedRows = [];
   try { savedRows = JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1") || "[]"); } catch (_) {}
