@@ -64,7 +64,7 @@ label{display:block;font-weight:750;margin:12px 0 6px;font-size:15px}input,selec
  const KEY="apiecuador-plan-nucleos-v1";
  const $=id=>document.getElementById(id);
  const fields=["nombre","apiario","candidatas","objetivo","modelo"];
- let plan=null;
+ let plan=null,autoNameValue="";
  function dateAdd(iso,n){const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
  function showDate(iso){if(!iso)return "Sin fecha";const [y,m,d]=iso.split("-");return d+"/"+m+"/"+y;}
  const stages=[
@@ -80,13 +80,16 @@ label{display:block;font-weight:750;margin:12px 0 6px;font-size:15px}input,selec
   for(let y=year-1;y<=year+10;y++){const o=document.createElement("option");o.value=String(y);o.textContent=String(y);$("anio").append(o);}
   $("mes").value=String(month);$("anio").value=String(year);
   $("fecha").value=year+"-"+String(month).padStart(2,"0")+"-01";
-  $("nombre").value="Núcleos · "+$("mes").selectedOptions[0].text+" "+year;
+  autoNameValue="Núcleos · "+$("mes").selectedOptions[0].text+" "+year;
+  $("nombre").value=autoNameValue;
   $("mes").addEventListener("change",syncPeriod);$("anio").addEventListener("change",syncPeriod);
  }
  function syncPeriod(){
   const y=Number($("anio").value),m=Number($("mes").value);
   $("fecha").value=y+"-"+String(m).padStart(2,"0")+"-01";
-  $("nombre").value="Núcleos · "+$("mes").selectedOptions[0].text+" "+y;
+  const currentName=$("nombre").value.trim();
+  const nextName="Núcleos · "+$("mes").selectedOptions[0].text+" "+y;
+  if(!currentName||currentName===autoNameValue){$("nombre").value=nextName;autoNameValue=nextName;}
  }
  function readForm(){return {nombre:$("nombre").value.trim(),apiario:$("apiario").value.trim(),fecha:$("fecha").value,candidatas:Number($("candidatas").value)||0,objetivo:Number($("objetivo").value)||0,modelo:$("modelo").value,hecho:{},fechas:{}};}
  function render(){
