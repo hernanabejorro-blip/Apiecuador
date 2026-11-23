@@ -285,7 +285,7 @@ label{font-weight:750}
  function sincronizarTareasCalendario(){
   if(storageReadError)return -1;
   const calendarKey="apiecuador-modulo-23-v1";
-  let tasks=[];try{tasks=JSON.parse(localStorage.getItem(calendarKey)||"[]");if(!Array.isArray(tasks))tasks=[];}catch(e){tasks=[];}
+  let tasks=[];try{const raw=localStorage.getItem(calendarKey);if(raw!==null){tasks=JSON.parse(raw);if(!Array.isArray(tasks))throw new Error("Formato de calendario no válido");}}catch(e){return -1;}
   const generated=[];
   rows.forEach(row=>{
    if(!row.fecha||!/^\d{4}-\d{2}-\d{2}$/.test(row.fecha))return;
@@ -648,7 +648,7 @@ calendarButton.addEventListener("click", async () => {
   document.getElementById("registros").addEventListener("click", async function(event) {
   if(window.__apiecuadorQueenStorageReadError){calendarStatus.textContent="Eliminación de avisos bloqueada para proteger los lotes guardados.";return;}
   const button = event.target.closest("[data-delete-google]"); if (!button) return;
-  const rowId = button.dataset.deleteGoogle; let savedRows = [];
+  const rowId = button.dataset.deleteGoogle; let savedRows = []; let tasks = []; const taskKey = "apiecuador-modulo-23-v1"; try { const raw = localStorage.getItem(taskKey); if (raw !== null) { tasks = JSON.parse(raw); if (!Array.isArray(tasks)) throw new Error("Formato de calendario no válido"); } } catch (_) { calendarStatus.textContent = "No se pueden eliminar avisos: las tareas locales del calendario no se pueden leer. No se hizo ningún cambio."; return; }
   try { savedRows = JSON.parse(localStorage.getItem("apiecuador-modulo-22-v1") || "[]"); } catch (_) {}
   const row = savedRows.find(function(item) { return String(item.id) === String(rowId); });
   if (!row) { calendarStatus.textContent = "No encuentro ese lote guardado."; return; }
@@ -668,7 +668,7 @@ calendarButton.addEventListener("click", async () => {
     for (const item of items) { await calendarRequest(token, "https://www.googleapis.com/calendar/v3/calendars/primary/events/" + encodeURIComponent(item.id), {method:"DELETE"}); deleted++; }
    }
    localStorage.setItem("apiecuador-modulo-22-v1", JSON.stringify(savedRows.filter(function(item){return String(item.id)!==String(rowId);})));
-   const taskKey="apiecuador-modulo-23-v1"; let tasks=[]; try {tasks=JSON.parse(localStorage.getItem(taskKey)||"[]");} catch (_) {}
+   // Las tareas del calendario se validaron antes de contactar con Google.
    localStorage.setItem(taskKey,JSON.stringify(tasks.filter(function(task){return String(task.origenReina||"")!==String(rowId) && !String(task.id||"").startsWith("reina-"+rowId+"-");})));
    calendarStatus.textContent="Eliminado "+(row.lote||"el lote")+" y "+deleted+" aviso(s) de Google Calendar. Los demás lotes se conservaron."; window.location.reload();
   } catch (error) { calendarStatus.textContent=googleErrorMessage(error)+" El lote guardado se conserva; vuelve a intentarlo."; button.disabled=false; }
