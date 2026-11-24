@@ -104,6 +104,33 @@ button:active,.button-link:active{transform:scale(.985)}
 .button-link{display:inline-block;background:var(--green);color:white;text-decoration:none;border-radius:10px;padding:11px 14px;font:600 14px system-ui}.secondary-link{background:#eee9df;color:#453b30}.actions a{margin:0}
 </style>
 </section>
+<section class="panel" id="campana-quimis-2027">
+<h2>🐝 Plan maestro 2027 · Tanda → Quimis</h2>
+<div class="notice"><strong>Objetivo confirmado:</strong> trasladar <strong>200 colmenas PRODUCTIVAS</strong> a Quimis, Jipijapa, Manabí, para la campaña de miel de 2027. Los núcleos que sigan desarrollándose en Tanda permanecen allí y son adicionales: no se descuentan de estas 200.</div>
+<div class="grid">
+<div class="item"><strong>200 productivas</strong><p class="muted">Cantidad objetivo que viajará a Quimis. La selección final se hará por fuerza, reina, cría, reservas y sanidad.</p></div>
+<div class="item"><strong>Tanda · reproducción</strong><p class="muted">Mantener allí los núcleos y las colonias que todavía necesiten crecer. Su cantidad se registra aparte.</p></div>
+<div class="item"><strong>Mayo–junio 2027</strong><p class="muted">Ventana preliminar de traslado. Reconocer el terreno y confirmar floración activa antes de fijar el día de salida.</p></div>
+<div class="item"><strong>Junio–agosto 2027</strong><p class="muted">Ventana principal de seguimiento de floración y posible cosecha en Quimis; no es una garantía ni una fecha fija de retiro.</p></div>
+</div>
+<h3>🍯 Escenarios de cosecha para 200 productivas</h3>
+<div class="grid">
+<div class="item"><strong>5 L/colmena</strong><p class="muted">1.000 litros · escenario prudente de planificación</p></div>
+<div class="item"><strong>10 L/colmena</strong><p class="muted">2.000 litros · escenario intermedio</p></div>
+<div class="item"><strong>15 L/colmena</strong><p class="muted">3.000 litros · escenario favorable</p></div>
+</div>
+<p class="muted">Son cálculos hipotéticos para presupuestar, no rendimientos comprobados ni promesas de producción. La cosecha real dependerá de la floración, lluvia, competencia floral, fuerza de las colonias y manejo. No comprometer gastos contando con el escenario favorable.</p>
+<h3>🚚 Transporte y capacidad del destino</h3>
+<ul>
+<li>La cantidad de viajes se calculará con la capacidad segura real del vehículo, no con una cifra supuesta.</li>
+<li>Como ejemplo editable: si se verifican 70 colmenas seguras por viaje, para 200 harán falta 3 viajes coordinados.</li>
+<li>Antes de confirmar 200 en Quimis, verificar superficie melífera útil, apiarios vecinos, agua, acceso, permiso, agroquímicos y capacidad floral del sitio.</li>
+<li>Regresar a Pichincha cuando termine la entrada rentable y las colonias puedan viajar con reservas suficientes; no fijar el regreso solo por calendario.</li>
+</ul>
+<div class="notice"><strong>Fechas todavía no cerradas:</strong> abril–mayo para reconocimiento y preparación; mayo–junio como ventana de traslado. Las fechas exactas de salida, llegada, floración y retorno se completarán con observaciones actuales de campo. No convertir antecedentes históricos en pronósticos.</div>
+<div class="actions"><button type="button" id="load-campaign-2027">Cargar las 200 colmenas en el formulario</button></div>
+<p class="muted">Este plan maestro queda visible en ApiEcuador. El botón solo completa el formulario; no guarda ni modifica rutas existentes. Para crear el registro de campaña, revisa los datos y pulsa “Guardar ruta”.</p>
+</section>
 <section class="panel"><h2>Planificar traslado</h2><form id="form"><input id="editId" type="hidden"><div class="grid">
 <div><label for="name">Nombre de la ruta</label><input id="name" maxlength="100" placeholder="Ej. Traslado de temporada" required></div>
 <div><label for="origin">Origen / apiario actual</label><input id="origin" maxlength="100" placeholder="Sector o apiario" required></div>
@@ -231,6 +258,19 @@ $('flower-year-filter').addEventListener('change',renderFlowerHints);
   renderFlowerHints();
  });
 $('flora').addEventListener('input',renderFlowerHints);
+$('load-campaign-2027').addEventListener('click',()=>{
+ reset();
+ $('name').value='Campaña de miel 2027 · Tanda a Quimis';
+ $('origin').value='Tanda, Quito, Pichincha';
+ $('destination').value='Quimis, Jipijapa, Manabí';
+ $('colonies').value='200';
+ $('flora').value='Bosque seco: ceibo, algarrobo y flora acompañante';
+ $('statusRoute').value='Planificada';
+ $('notes').value='OBJETIVO: trasladar 200 colmenas productivas a Quimis en mayo-junio de 2027. Los núcleos en desarrollo permanecen en Tanda y son adicionales; no se descuentan de las 200. Reconocer el sitio en abril-mayo y confirmar floración activa, capacidad floral para 200 colmenas, apiarios vecinos, agua, acceso, permiso y riesgo de agroquímicos. Fechas exactas pendientes de verificación en campo. Escenarios hipotéticos de cosecha: 5 L/colmena = 1.000 L; 10 L = 2.000 L; 15 L = 3.000 L. No son garantías. Verificar capacidad segura del transporte; con 70 colmenas por viaje serían 3 viajes coordinados. Regresar cuando termine la entrada rentable y haya reservas suficientes.';
+ renderFlowerHints();renderAtlasHints();renderCapacity();
+ $('status').textContent='Plan 2027 cargado en el formulario: 200 colmenas productivas para Quimis. Completa las fechas reales y la capacidad segura del transporte; confirma la capacidad floral del terreno. Todavía no se ha guardado.';
+ $('form').scrollIntoView({behavior:'smooth',block:'start'});
+});
 $('form').addEventListener('submit',e=>{e.preventDefault();if(storageReadError){$('status').textContent='Guardado bloqueado por seguridad: primero hay que recuperar la lectura de las rutas existentes.';return}if($('arrive').value&&$('depart').value>$('arrive').value){$('status').textContent='Revisa las fechas: la llegada no puede ser anterior a la salida.';return}if($('bloomStart').value&&$('bloomEnd').value&&$('bloomStart').value>$('bloomEnd').value){$('status').textContent='Revisa la floración: el fin no puede ser anterior al inicio.';return}const id=$('editId').value||String(Date.now()),r={id};fields.forEach(k=>r[k]=$(k).value.trim());checks.forEach(k=>r[k]=$(k).checked);rows=rows.filter(x=>x.id!==id);rows.unshift(r);if(!persist())return;const arrival=r.arrive||r.depart;const hasBloom=!!(r.bloomStart||r.bloomEnd);const completeBloom=!!(r.bloomStart&&r.bloomEnd);const overlaps=(!r.bloomStart||arrival>=r.bloomStart)&&(!r.bloomEnd||r.depart<=r.bloomEnd);reset();render();const pending=checks.filter(k=>!r[k]).map(k=>({'checkDocs':'documentación','checkSite':'sitio de destino','checkWater':'agua y acceso','checkSecure':'sujeción de colmenas','checkBloom':'floración activa','checkPesticide':'riesgo de agroquímicos','checkOwner':'permiso del propietario','checkCapacity':'capacidad de carga'}[k]));let message='Ruta guardada en este dispositivo.';if(hasBloom&&!completeBloom)message+=' Aviso floral: solo indicaste una parte del periodo previsto; completa inicio y fin si los conoces. No inventes fechas y confirma la floración en el campo.';if(completeBloom&&!overlaps)message+=' ATENCIÓN: las fechas del traslado ('+r.depart+' a '+(r.arrive||r.depart)+') no parecen coincidir con el periodo previsto de floración ('+r.bloomStart+' a '+r.bloomEnd+'). Revisa las fechas y confirma la floración en el campo antes de salir.';if(pending.length)message+=' Antes de salir, revisa: '+pending.join(', ')+'.';$('status').textContent=message});
 function reset(){$('form').reset();$('editId').value='';$('save').textContent='Guardar ruta';$('cancel').hidden=true}
 $('cancel').addEventListener('click',()=>{reset();$('status').textContent='Edición cancelada.'});$('filter').addEventListener('input',render);
